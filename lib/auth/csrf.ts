@@ -6,7 +6,7 @@ import { SessionManager } from './session'
  * Uses double-submit cookie pattern for stateless CSRF protection
  */
 export class CSRFProtection {
-  private static readonly CSRF_HEADER_NAME = 'x-csrf-token'
+  private static readonly CSRF_HEADER_NAME = 'X-CSRF-Token'
   private static readonly CSRF_FORM_FIELD = '_csrf_token'
   
   /**

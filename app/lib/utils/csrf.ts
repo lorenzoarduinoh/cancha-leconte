@@ -12,7 +12,13 @@ export function getCSRFToken(): string | null {
   const csrfCookie = cookies.find(c => c.trim().startsWith('cancha-csrf-token='));
   
   if (csrfCookie) {
-    return csrfCookie.split('=')[1];
+    const tokenValue = csrfCookie.split('=')[1];
+    // Handle empty cookie values
+    if (!tokenValue || tokenValue.trim() === '') {
+      return null;
+    }
+    // Decode URL-encoded cookie values
+    return decodeURIComponent(tokenValue);
   }
   
   return null;
@@ -24,10 +30,32 @@ export function getCSRFToken(): string | null {
 export async function fetchWithCSRF(url: string, options: RequestInit = {}): Promise<Response> {
   const csrfToken = getCSRFToken();
   
-  const headers = {
-    ...options.headers,
-    ...(csrfToken && { 'x-csrf-token': csrfToken }),
-  };
+  // For state-changing operations, require CSRF token
+  const method = options.method?.toUpperCase();
+  const requiresCSRF = method && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(method);
+  
+  if (requiresCSRF && !csrfToken) {
+    throw new Error('CSRF token not found');
+  }
+  
+  // Handle both plain objects and Headers instances
+  let headers: Record<string, string> = {};
+  
+  if (options.headers) {
+    if (options.headers instanceof Headers) {
+      // Convert Headers to plain object, preserving original case
+      for (const [key, value] of options.headers.entries()) {
+        headers[key] = value;
+      }
+    } else {
+      // Copy plain object
+      headers = { ...options.headers as Record<string, string> };
+    }
+  }
+  
+  if (csrfToken) {
+    headers['X-CSRF-Token'] = csrfToken;
+  }
   
   return fetch(url, {
     ...options,

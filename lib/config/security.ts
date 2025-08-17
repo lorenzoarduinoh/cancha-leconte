@@ -55,7 +55,7 @@ export const SECURITY_CONFIG = {
   // CSRF Protection
   CSRF: {
     TOKEN_LENGTH: 32,
-    HEADER_NAME: 'x-csrf-token',
+    HEADER_NAME: 'X-CSRF-Token',
     FORM_FIELD_NAME: '_csrf_token',
     COOKIE_DURATION_HOURS: 24
   },
@@ -170,6 +170,16 @@ export class SecurityConfigValidator {
       'SESSION_SECRET'
     ]
 
+    // Add admin credentials validation for production
+    if (SECURITY_CONFIG.ENVIRONMENT.PRODUCTION) {
+      required_env_vars.push(
+        'ADMIN_SANTIAGO_USERNAME',
+        'ADMIN_SANTIAGO_PASSWORD',
+        'ADMIN_AGUSTIN_USERNAME',
+        'ADMIN_AGUSTIN_PASSWORD'
+      )
+    }
+
     const missing_vars = required_env_vars.filter(
       var_name => !process.env[var_name]
     )
@@ -194,6 +204,30 @@ export class SecurityConfigValidator {
       throw new Error(
         `SESSION_SECRET must be at least ${SECURITY_CONFIG.JWT.SECRET_MIN_LENGTH} characters long`
       )
+    }
+
+    // Validate admin passwords in production
+    if (SECURITY_CONFIG.ENVIRONMENT.PRODUCTION) {
+      const admin_passwords = [
+        process.env.ADMIN_SANTIAGO_PASSWORD,
+        process.env.ADMIN_AGUSTIN_PASSWORD
+      ]
+
+      admin_passwords.forEach((password, index) => {
+        if (password) {
+          const admin_name = index === 0 ? 'SANTIAGO' : 'AGUSTIN'
+          if (password.length < SECURITY_CONFIG.PASSWORD.MIN_LENGTH) {
+            throw new Error(
+              `ADMIN_${admin_name}_PASSWORD must be at least ${SECURITY_CONFIG.PASSWORD.MIN_LENGTH} characters long`
+            )
+          }
+          if (password.includes('change_this') || password.includes('password')) {
+            throw new Error(
+              `ADMIN_${admin_name}_PASSWORD appears to be a default/weak password. Please use a strong password.`
+            )
+          }
+        }
+      })
     }
   }
 

@@ -141,11 +141,10 @@ export default function AdminLoginPage() {
         Saltar al contenido principal
       </a>
       
-      <div className="w-full max-w-md" id="main-content">
+      <div className="w-full max-w-md mx-auto" id="main-content">
         {/* Brand Section */}
         <div className="text-center mb-8">
           <h1 className="brand-title">Cancha Leconte</h1>
-          <p className="brand-subtitle">Sistema de Gestión</p>
         </div>
 
         {/* Login Card */}
@@ -180,7 +179,7 @@ export default function AdminLoginPage() {
                   id="username"
                   type="text"
                   label="Usuario"
-                  placeholder="lecon"
+                  placeholder=""
                   {...register('username')}
                   error={errors.username?.message}
                   disabled={isLoading || showSuccess}
@@ -241,12 +240,6 @@ export default function AdminLoginPage() {
           </CardContent>
         </Card>
 
-        {/* Footer */}
-        <div className="login-footer">
-          <p className="text-center text-sm text-gray-600 mt-6">
-            Sistema exclusivo para administradores
-          </p>
-        </div>
       </div>
     </div>
   );

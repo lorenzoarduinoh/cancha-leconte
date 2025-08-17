@@ -9,7 +9,7 @@ import { JWTPayload, AdminUser, AdminSession, SessionConfig } from './types'
  */
 export class SessionManager {
   private static readonly JWT_SECRET = new TextEncoder().encode(
-    process.env.JWT_SECRET || 'fallback-secret-key-for-development-only'
+    process.env.JWT_SECRET!
   )
   
   private static readonly COOKIE_NAME = 'cancha-admin-session'
@@ -42,13 +42,14 @@ export class SessionManager {
 
       // Generate session token
       const session_token = this.generateSecureToken()
+      const session_token_hash = this.hashToken(session_token)
 
-      // Create session in database
+      // Create session in database (store hash, not plain token)
       const { data: session, error } = await supabase
         .from('admin_sessions')
         .insert({
           user_id: user.id,
-          session_token,
+          session_token: session_token_hash,
           expires_at: expires_at.toISOString(),
           remember_me,
           ip_address: request_context.ip_address,
@@ -74,6 +75,7 @@ export class SessionManager {
         name: user.name,
         role: user.role,
         session_id: session.id,
+        session_token_hash: session_token_hash, // Include hash for verification
         iat: Math.floor(Date.now() / 1000),
         exp: Math.floor(expires_at.getTime() / 1000),
         remember_me
@@ -118,6 +120,11 @@ export class SessionManager {
         .single()
 
       if (sessionError || !session) {
+        return { valid: false }
+      }
+
+      // Verify session token hash matches (additional security layer)
+      if (jwt_payload.session_token_hash && session.session_token !== jwt_payload.session_token_hash) {
         return { valid: false }
       }
 
@@ -326,6 +333,14 @@ export class SessionManager {
   private static generateSecureToken(): string {
     const crypto = require('crypto')
     return crypto.randomBytes(32).toString('hex')
+  }
+
+  /**
+   * Hash a token for secure storage
+   */
+  private static hashToken(token: string): string {
+    const crypto = require('crypto')
+    return crypto.createHash('sha256').update(token).digest('hex')
   }
 }
 

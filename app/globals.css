@@ -535,6 +535,7 @@ body {
   margin: 0 0 var(--space-xs) 0;
   line-height: var(--line-height-tight);
   letter-spacing: var(--letter-spacing-tight);
+  text-align: center;
 }
 
 .brand-subtitle {

@@ -122,15 +122,21 @@ export class PasswordUtils {
   static getPasswordStrength(password: string): number {
     let score = 0
     
-    // Length check
+    // Length check 
     if (password.length >= 8) score++
     if (password.length >= 12) score++
     
-    // Character variety checks
-    if (/[a-z]/.test(password)) score++
-    if (/[A-Z]/.test(password)) score++
-    if (/[0-9]/.test(password)) score++
-    if (/[^A-Za-z0-9]/.test(password)) score++
+    // Character variety checks (require all 4 types for highest score)
+    const hasLower = /[a-z]/.test(password)
+    const hasUpper = /[A-Z]/.test(password)
+    const hasNumber = /[0-9]/.test(password)
+    const hasSymbol = /[^A-Za-z0-9]/.test(password)
+    
+    // Base score for character types (more restrictive)
+    const charTypes = [hasLower, hasUpper, hasNumber, hasSymbol].filter(Boolean).length
+    
+    if (charTypes >= 3) score++  // Need at least 3 types for 1 point
+    if (charTypes >= 4) score++  // Need all 4 types for max points
     
     // Reduce score for common patterns
     if (this.isCommonPassword(password)) score = Math.max(0, score - 2)
