@@ -5,7 +5,8 @@
       "Bash(npm install:*)",
       "Bash(npm uninstall:*)",
       "Bash(npm update)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git remote add:*)"
     ],
     "deny": [],
     "ask": []
