@@ -1,0 +1,18 @@
+“Cancha Leconte” es una Web App para administrar la cancha de mis amigos “Santiago Leconte” y “Agustin Goldfarb”. La misma tendrá el objetivo de hacerles más fácil la tarea de crear partidos, hacer que sus amigos (incluido yo) nos unamos, y podrán llevar un registro de quien pago por la cancha, ver historial de partidos, configurar partidos, entre otras funcionalidades explicadas más abajo. Sus amigos podrán unirse a los partidos mediante un link y recibirán notificaciones pertinentes al mismo. 
+Santiago y Agustin (Admins):
+-	Podrán loguerse como administradores, tendrán que crear su cuenta de administradores 
+-	Podrán crear partidos, configurando fecha, hora, cantidad máxima de jugadores, cantidad mínima, y precio de la cancha para ese partido, y generar un link de partido para mandar a sus amigos
+-	Podrán editar partidos ya creados, y cambiar cualquiera de las características ya mencionadas 
+-	Podrán cancelar partidos
+-	Podrán cerrar la inscripción al partido cuando ellos quieran o se haya completado el número máximo de jugadores 
+-	Una vez cerrada la inscripción podrán armar los equipos de manera random o hacerlo de manera manual 
+-	Una vez finalizado el partido podrán ver que jugadores pagaron la cancha y cuantos faltan por pagar y podrán poner por cuantos goles gano el equipo ganador 
+-	Podrán ver un historial de partidos, donde se verán todos los partidos jugados en la cancha hasta el momento y podrán acceder a la información de cada partido 
+-	Podrán ver una sección de estadísticas con, cantidad de partidos jugados en la cancha, cantidad de plata que se ganó, cantidad de jugadores que jugaron en la cancha
+Amigos: 
+-	Podrán ingresar al link de partido enviado por los administradores e inscribirse al partido poniendo su nombre y su número de teléfono 
+-	Recibirán una notificación de WhatsApp una hora antes del partido confirmando su participación y la ubicación de la cancha 
+-	Una vez finalizado el partido recibirán una notificación por WhatsApp con el link de mercado pago para que puedan pagar la cancha
+-	Recibirán una notificación por WhatsApp 24 hs después del partido si no pagaron la cancha para recordarles que deben pagar y con el link de mercado pago   
+
+Esta web App es solo para la cancha de mis amigos, no pretende escalar a mas canchas, es solo un proyecto personal y no deben crearse nuevas funcionalidades a parte de las ya descriptas porque no quiero que el proyecto se haga muy complejo

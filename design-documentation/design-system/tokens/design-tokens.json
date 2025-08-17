@@ -1,0 +1,136 @@
+{
+  "color": {
+    "primary": {
+      "50": { "value": "#E8F5E8" },
+      "100": { "value": "#C8E6C9" },
+      "200": { "value": "#A5D6A7" },
+      "300": { "value": "#81C784" },
+      "400": { "value": "#66BB6A" },
+      "500": { "value": "#4CAF50" },
+      "600": { "value": "#43A047" },
+      "700": { "value": "#388E3C" },
+      "800": { "value": "#2E7D32" },
+      "900": { "value": "#1B5E20" }
+    },
+    "secondary": {
+      "50": { "value": "#FFF8E1" },
+      "100": { "value": "#FFECB3" },
+      "200": { "value": "#FFE082" },
+      "300": { "value": "#FFD54F" },
+      "400": { "value": "#FFCA28" },
+      "500": { "value": "#FFC107" },
+      "600": { "value": "#FFB300" },
+      "700": { "value": "#FFA000" },
+      "800": { "value": "#FF8F00" },
+      "900": { "value": "#FF6F00" }
+    },
+    "accent": {
+      "primary": { "value": "#1976D2" },
+      "secondary": { "value": "#F57C00" }
+    },
+    "semantic": {
+      "success": { "value": "#4CAF50" },
+      "warning": { "value": "#FF9800" },
+      "error": { "value": "#F44336" },
+      "info": { "value": "#2196F3" }
+    },
+    "neutral": {
+      "50": { "value": "#FAFAFA" },
+      "100": { "value": "#F5F5F5" },
+      "200": { "value": "#EEEEEE" },
+      "300": { "value": "#E0E0E0" },
+      "400": { "value": "#BDBDBD" },
+      "500": { "value": "#9E9E9E" },
+      "600": { "value": "#757575" },
+      "700": { "value": "#616161" },
+      "800": { "value": "#424242" },
+      "900": { "value": "#212121" }
+    },
+    "white": { "value": "#FFFFFF" },
+    "black": { "value": "#000000" }
+  },
+  "spacing": {
+    "xs": { "value": "4px" },
+    "sm": { "value": "8px" },
+    "md": { "value": "16px" },
+    "lg": { "value": "24px" },
+    "xl": { "value": "32px" },
+    "2xl": { "value": "48px" },
+    "3xl": { "value": "64px" }
+  },
+  "typography": {
+    "fontFamily": {
+      "primary": { "value": "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" },
+      "monospace": { "value": "JetBrains Mono, Consolas, 'Courier New', monospace" }
+    },
+    "fontWeight": {
+      "light": { "value": "300" },
+      "regular": { "value": "400" },
+      "medium": { "value": "500" },
+      "semibold": { "value": "600" },
+      "bold": { "value": "700" }
+    },
+    "fontSize": {
+      "xs": { "value": "12px" },
+      "sm": { "value": "14px" },
+      "base": { "value": "16px" },
+      "lg": { "value": "18px" },
+      "xl": { "value": "20px" },
+      "2xl": { "value": "24px" },
+      "3xl": { "value": "32px" },
+      "4xl": { "value": "36px" }
+    },
+    "lineHeight": {
+      "tight": { "value": "1.2" },
+      "normal": { "value": "1.5" },
+      "relaxed": { "value": "1.75" }
+    },
+    "letterSpacing": {
+      "tight": { "value": "-0.02em" },
+      "normal": { "value": "0em" },
+      "wide": { "value": "0.02em" }
+    }
+  },
+  "borderRadius": {
+    "none": { "value": "0" },
+    "sm": { "value": "4px" },
+    "base": { "value": "8px" },
+    "lg": { "value": "12px" },
+    "xl": { "value": "16px" },
+    "full": { "value": "9999px" }
+  },
+  "boxShadow": {
+    "sm": { "value": "0 1px 2px rgba(0, 0, 0, 0.05)" },
+    "base": { "value": "0 2px 4px rgba(0, 0, 0, 0.1)" },
+    "md": { "value": "0 2px 8px rgba(0, 0, 0, 0.1)" },
+    "lg": { "value": "0 4px 16px rgba(0, 0, 0, 0.15)" },
+    "xl": { "value": "0 8px 32px rgba(0, 0, 0, 0.2)" }
+  },
+  "animation": {
+    "duration": {
+      "micro": { "value": "150ms" },
+      "short": { "value": "250ms" },
+      "medium": { "value": "400ms" },
+      "long": { "value": "600ms" }
+    },
+    "easing": {
+      "easeOut": { "value": "cubic-bezier(0.0, 0, 0.2, 1)" },
+      "easeInOut": { "value": "cubic-bezier(0.4, 0, 0.6, 1)" },
+      "easeIn": { "value": "cubic-bezier(0.4, 0, 1, 1)" }
+    }
+  },
+  "breakpoints": {
+    "mobile": { "value": "320px" },
+    "tablet": { "value": "768px" },
+    "desktop": { "value": "1024px" },
+    "wide": { "value": "1440px" }
+  },
+  "zIndex": {
+    "base": { "value": "0" },
+    "dropdown": { "value": "1000" },
+    "sticky": { "value": "1020" },
+    "fixed": { "value": "1030" },
+    "modal": { "value": "1040" },
+    "tooltip": { "value": "1070" }
+  }
+}
