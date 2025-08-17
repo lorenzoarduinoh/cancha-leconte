@@ -206,7 +206,7 @@ export class RateLimiter {
     }
     
     // Fallback to connection remote address
-    return request.ip || '127.0.0.1'
+    return '127.0.0.1'
   }
 
   /**

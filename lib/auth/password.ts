@@ -57,7 +57,7 @@ export class PasswordUtils {
     const result = passwordValidationSchema.safeParse(password)
     
     if (!result.success) {
-      const errorMessage = result.error.errors
+      const errorMessage = result.error.issues
         .map(err => err.message)
         .join(', ')
       throw new Error(errorMessage)

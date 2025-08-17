@@ -235,7 +235,7 @@ export function getRequestContext(request: NextRequest): {
   // Get IP address (handle various proxy headers)
   const forwarded_for = request.headers.get('x-forwarded-for')
   const real_ip = request.headers.get('x-real-ip')
-  const ip_address = forwarded_for?.split(',')[0]?.trim() || real_ip || request.ip || '127.0.0.1'
+  const ip_address = forwarded_for?.split(',')[0]?.trim() || real_ip || '127.0.0.1'
 
   return {
     ip_address,

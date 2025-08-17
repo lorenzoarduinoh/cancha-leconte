@@ -3,7 +3,8 @@ import { z } from 'zod'
 // Database types
 export interface AdminUser {
   id: string
-  email: string
+  username: string
+  email?: string
   name: string
   role: 'admin'
   is_active: boolean
@@ -35,7 +36,7 @@ export interface LoginAttempt {
 
 // API Request/Response types
 export interface LoginRequest {
-  email: string
+  username: string
   password: string
   remember_me?: boolean
 }
@@ -44,7 +45,7 @@ export interface LoginResponse {
   success: true
   user: {
     id: string
-    email: string
+    username: string
     name: string
     role: 'admin'
   }
@@ -65,7 +66,7 @@ export interface SessionValidationResponse {
   valid: true
   user: {
     id: string
-    email: string
+    username: string
     name: string
     role: 'admin'
   }
@@ -94,10 +95,10 @@ export interface LogoutErrorResponse {
 
 // Validation schemas using Zod
 export const loginRequestSchema = z.object({
-  email: z.string()
-    .email('Formato de email inválido')
-    .min(1, 'El email es requerido')
-    .max(255, 'Email demasiado largo'),
+  username: z.string()
+    .min(3, 'El usuario debe tener al menos 3 caracteres')
+    .max(50, 'Usuario demasiado largo')
+    .regex(/^[a-zA-Z0-9_-]+$/, 'Usuario debe contener solo letras, números, guiones y guiones bajos'),
   password: z.string()
     .min(8, 'La contraseña debe tener al menos 8 caracteres')
     .max(255, 'Contraseña demasiado larga'),
@@ -126,13 +127,14 @@ export interface AuthContextType {
 // JWT payload type
 export interface JWTPayload {
   sub: string // user id
-  email: string
+  username: string
   name: string
   role: 'admin'
   session_id: string
   iat: number
   exp: number
   remember_me: boolean
+  [key: string]: any
 }
 
 // Rate limiting types

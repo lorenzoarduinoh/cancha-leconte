@@ -14,12 +14,12 @@ export class AdminUserSeeder {
       const supabase = createServerClient()
 
       // Get admin credentials from environment
-      const santiago_email = process.env.ADMIN_SANTIAGO_EMAIL
+      const santiago_username = process.env.ADMIN_SANTIAGO_USERNAME
       const santiago_password = process.env.ADMIN_SANTIAGO_PASSWORD
-      const agustin_email = process.env.ADMIN_AGUSTIN_EMAIL
+      const agustin_username = process.env.ADMIN_AGUSTIN_USERNAME
       const agustin_password = process.env.ADMIN_AGUSTIN_PASSWORD
 
-      if (!santiago_email || !santiago_password || !agustin_email || !agustin_password) {
+      if (!santiago_username || !santiago_password || !agustin_username || !agustin_password) {
         throw new Error('Admin credentials not found in environment variables')
       }
 
@@ -28,24 +28,24 @@ export class AdminUserSeeder {
       // Check if admin users already exist
       const { data: existing_users } = await supabase
         .from('admin_users')
-        .select('email')
-        .in('email', [santiago_email, agustin_email])
+        .select('username')
+        .in('username', [santiago_username, agustin_username])
 
-      const existing_emails = existing_users?.map(user => user.email) || []
+      const existing_usernames = existing_users?.map(user => user.username) || []
 
       // Prepare admin users data
       const admin_users = [
         {
-          email: santiago_email,
+          username: santiago_username,
           password: santiago_password,
           name: 'Santiago',
-          skip: existing_emails.includes(santiago_email)
+          skip: existing_usernames.includes(santiago_username)
         },
         {
-          email: agustin_email,
+          username: agustin_username,
           password: agustin_password,
           name: 'Agustin',
-          skip: existing_emails.includes(agustin_email)
+          skip: existing_usernames.includes(agustin_username)
         }
       ]
 
@@ -69,7 +69,7 @@ export class AdminUserSeeder {
           const { data, error } = await supabase
             .from('admin_users')
             .insert({
-              email: admin_user.email.toLowerCase().trim(),
+              username: admin_user.username.toLowerCase().trim(),
               password_hash,
               name: admin_user.name,
               role: 'admin' as const,
@@ -101,11 +101,11 @@ export class AdminUserSeeder {
   /**
    * Update admin user password
    */
-  static async updateAdminPassword(email: string, new_password: string): Promise<void> {
+  static async updateAdminPassword(username: string, new_password: string): Promise<void> {
     try {
       const supabase = createServerClient()
 
-      console.log(`🔑 Updating password for admin user: ${email}`)
+      console.log(`🔑 Updating password for admin user: ${username}`)
 
       // Validate password strength
       PasswordUtils.validatePasswordStrength(new_password)
@@ -120,7 +120,7 @@ export class AdminUserSeeder {
           password_hash,
           updated_at: new Date().toISOString()
         })
-        .eq('email', email.toLowerCase().trim())
+        .eq('username', username.toLowerCase().trim())
         .eq('is_active', true)
         .select()
         .single()
@@ -139,10 +139,10 @@ export class AdminUserSeeder {
         .delete()
         .eq('user_id', data.id)
 
-      console.log(`✅ Password updated successfully for: ${email}`)
+      console.log(`✅ Password updated successfully for: ${username}`)
 
     } catch (error) {
-      console.error(`❌ Failed to update password for ${email}:`, error)
+      console.error(`❌ Failed to update password for ${username}:`, error)
       throw error
     }
   }
@@ -150,11 +150,11 @@ export class AdminUserSeeder {
   /**
    * Deactivate admin user
    */
-  static async deactivateAdminUser(email: string): Promise<void> {
+  static async deactivateAdminUser(username: string): Promise<void> {
     try {
       const supabase = createServerClient()
 
-      console.log(`🔒 Deactivating admin user: ${email}`)
+      console.log(`🔒 Deactivating admin user: ${username}`)
 
       const { data, error } = await supabase
         .from('admin_users')
@@ -162,7 +162,7 @@ export class AdminUserSeeder {
           is_active: false,
           updated_at: new Date().toISOString()
         })
-        .eq('email', email.toLowerCase().trim())
+        .eq('username', username.toLowerCase().trim())
         .select()
         .single()
 
@@ -180,10 +180,10 @@ export class AdminUserSeeder {
         .delete()
         .eq('user_id', data.id)
 
-      console.log(`✅ Admin user deactivated: ${email}`)
+      console.log(`✅ Admin user deactivated: ${username}`)
 
     } catch (error) {
-      console.error(`❌ Failed to deactivate admin user ${email}:`, error)
+      console.error(`❌ Failed to deactivate admin user ${username}:`, error)
       throw error
     }
   }
@@ -191,11 +191,11 @@ export class AdminUserSeeder {
   /**
    * Reactivate admin user
    */
-  static async reactivateAdminUser(email: string): Promise<void> {
+  static async reactivateAdminUser(username: string): Promise<void> {
     try {
       const supabase = createServerClient()
 
-      console.log(`🔓 Reactivating admin user: ${email}`)
+      console.log(`🔓 Reactivating admin user: ${username}`)
 
       const { data, error } = await supabase
         .from('admin_users')
@@ -203,7 +203,7 @@ export class AdminUserSeeder {
           is_active: true,
           updated_at: new Date().toISOString()
         })
-        .eq('email', email.toLowerCase().trim())
+        .eq('username', username.toLowerCase().trim())
         .select()
         .single()
 
@@ -215,10 +215,10 @@ export class AdminUserSeeder {
         throw new Error('Admin user not found')
       }
 
-      console.log(`✅ Admin user reactivated: ${email}`)
+      console.log(`✅ Admin user reactivated: ${username}`)
 
     } catch (error) {
-      console.error(`❌ Failed to reactivate admin user ${email}:`, error)
+      console.error(`❌ Failed to reactivate admin user ${username}:`, error)
       throw error
     }
   }
@@ -232,7 +232,7 @@ export class AdminUserSeeder {
 
       const { data, error } = await supabase
         .from('admin_users')
-        .select('id, email, name, role, is_active, created_at, last_login_at')
+        .select('id, username, email, name, role, is_active, created_at, last_login_at')
         .order('created_at', { ascending: true })
 
       if (error) {
@@ -256,7 +256,8 @@ export class AdminUserSeeder {
         console.log(`
 ID: ${user.id}
 Name: ${user.name}
-Email: ${user.email}
+Username: ${user.username}
+Email: ${user.email || 'N/A'}
 Role: ${user.role}
 Status: ${status}
 Created: ${new Date(user.created_at).toLocaleString()}

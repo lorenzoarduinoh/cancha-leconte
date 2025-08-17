@@ -173,7 +173,7 @@ export class AuthErrorHandler {
       return forwarded_for.split(',')[0].trim()
     }
     
-    return real_ip || request.ip || '127.0.0.1'
+    return real_ip || '127.0.0.1'
   }
 
   /**

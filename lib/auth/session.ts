@@ -70,7 +70,7 @@ export class SessionManager {
       // Create JWT token
       const jwt_payload: JWTPayload = {
         sub: user.id,
-        email: user.email,
+        username: user.username,
         name: user.name,
         role: user.role,
         session_id: session.id,
@@ -115,7 +115,6 @@ export class SessionManager {
         .from('admin_sessions')
         .select('*')
         .eq('id', jwt_payload.session_id)
-        .eq('session_token', token.split('.').slice(-1)[0]) // Use last part as identifier
         .single()
 
       if (sessionError || !session) {
@@ -132,7 +131,7 @@ export class SessionManager {
       // Get user information
       const { data: user, error: userError } = await supabase
         .from('admin_users')
-        .select('id, email, name, role, is_active, created_at, updated_at, last_login_at')
+        .select('id, username, email, name, role, is_active, created_at, updated_at, last_login_at')
         .eq('id', jwt_payload.sub)
         .eq('is_active', true)
         .single()
@@ -184,7 +183,7 @@ export class SessionManager {
     response.cookies.set(this.COOKIE_NAME, token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax', // Changed from 'strict' to 'lax' for better compatibility
       expires,
       path: '/'
     })
@@ -197,7 +196,7 @@ export class SessionManager {
     response.cookies.set(this.COOKIE_NAME, '', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax',
       expires: new Date(0),
       path: '/'
     })

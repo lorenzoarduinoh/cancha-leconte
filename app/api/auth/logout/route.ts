@@ -117,21 +117,3 @@ export const GET = withAuth(
   }
 )
 
-/**
- * Handle unsupported methods
- */
-export async function handler(request: NextRequest) {
-  if (!['GET', 'POST'].includes(request.method)) {
-    const response = NextResponse.json(
-      { 
-        success: false, 
-        error: 'Método no permitido',
-        code: 'METHOD_NOT_ALLOWED'
-      },
-      { status: 405 }
-    )
-    
-    SecurityHeaders.applyHeaders(response)
-    return response
-  }
-}

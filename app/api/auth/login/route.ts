@@ -4,7 +4,7 @@ import { SessionManager } from '@/lib/auth/session'
 import { PasswordUtils } from '@/lib/auth/password'
 import { RateLimiter } from '@/lib/auth/rate-limiter'
 import { withPublicSecurity, getRequestContext, logAuthEvent } from '@/lib/auth/middleware'
-import { SecurityHeaders } from '@/lib/auth/csrf'
+import { SecurityHeaders, CSRFProtection } from '@/lib/auth/csrf'
 import { 
   loginRequestSchema, 
   LoginResponse, 
@@ -28,7 +28,7 @@ export const POST = withPublicSecurity(
       const validation_result = loginRequestSchema.safeParse(body)
       
       if (!validation_result.success) {
-        const error_message = validation_result.error.errors
+        const error_message = validation_result.error.issues
           .map(err => `${err.path.join('.')}: ${err.message}`)
           .join(', ')
         
@@ -38,14 +38,14 @@ export const POST = withPublicSecurity(
         )
       }
 
-      const { email, password, remember_me } = validation_result.data
+      const { username, password, remember_me } = validation_result.data
 
       // Check rate limiting specifically for login attempts
       const rate_limit_result = await RateLimiter.checkRateLimit(request, 'login')
       
       if (!rate_limit_result.allowed) {
         // Record failed attempt due to rate limiting
-        await RateLimiter.recordAttempt(request, email, false)
+        await RateLimiter.recordAttempt(request, username, false)
         
         throw new RateLimitError(
           'Demasiados intentos de inicio de sesión. Inténtalo de nuevo más tarde.',
@@ -55,26 +55,26 @@ export const POST = withPublicSecurity(
 
       const supabase = createServerClient()
 
-      // Find admin user by email
+      // Find admin user by username
       const { data: user, error: userError } = await supabase
         .from('admin_users')
         .select('*')
-        .eq('email', email.toLowerCase().trim())
+        .eq('username', username.toLowerCase().trim())
         .eq('is_active', true)
         .single()
 
       if (userError || !user) {
         // Record failed attempt
-        await RateLimiter.recordAttempt(request, email, false)
+        await RateLimiter.recordAttempt(request, username, false)
         
         // Log failed login attempt
         logAuthEvent('login_failure', request, { 
-          email,
+          username,
           reason: 'user_not_found'
         })
 
         throw new AuthenticationError(
-          'Email o contraseña incorrectos',
+          'Usuario o contraseña incorrectos',
           'INVALID_CREDENTIALS'
         )
       }
@@ -84,17 +84,17 @@ export const POST = withPublicSecurity(
       
       if (!is_password_valid) {
         // Record failed attempt
-        await RateLimiter.recordAttempt(request, email, false)
+        await RateLimiter.recordAttempt(request, username, false)
         
         // Log failed login attempt
         logAuthEvent('login_failure', request, { 
-          email,
+          username,
           user_id: user.id,
           reason: 'invalid_password'
         })
 
         throw new AuthenticationError(
-          'Email o contraseña incorrectos',
+          'Usuario o contraseña incorrectos',
           'INVALID_CREDENTIALS'
         )
       }
@@ -110,11 +110,11 @@ export const POST = withPublicSecurity(
       )
 
       // Record successful attempt
-      await RateLimiter.recordAttempt(request, email, true)
+      await RateLimiter.recordAttempt(request, username, true)
 
       // Log successful login
       logAuthEvent('login_success', request, { 
-        email,
+        username,
         user_id: user.id,
         remember_me,
         session_id: session.id
@@ -125,7 +125,7 @@ export const POST = withPublicSecurity(
         success: true,
         user: {
           id: user.id,
-          email: user.email,
+          username: user.username,
           name: user.name,
           role: user.role
         },
@@ -234,6 +234,7 @@ export const GET = withPublicSecurity(
       const response = NextResponse.json(response_data, { status: 200 })
       
       // Generate CSRF token for the login form
+      CSRFProtection.generateToken(response)
       SecurityHeaders.applyHeaders(response)
       
       return response
@@ -253,25 +254,7 @@ export const GET = withPublicSecurity(
   },
   {
     rate_limit: false,
-    csrf_protection: true
+    csrf_protection: false
   }
 )
 
-/**
- * Handle unsupported methods
- */
-export async function handler(request: NextRequest) {
-  if (!['GET', 'POST'].includes(request.method)) {
-    const response = NextResponse.json(
-      { 
-        success: false, 
-        error: 'Método no permitido',
-        code: 'METHOD_NOT_ALLOWED'
-      },
-      { status: 405 }
-    )
-    
-    SecurityHeaders.applyHeaders(response)
-    return response
-  }
-}
