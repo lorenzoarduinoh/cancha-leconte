@@ -112,7 +112,7 @@ global.console = {
 // Setup fetch mock
 global.fetch = jest.fn()
 
-// Mock crypto.randomBytes for Node.js environment
+// Mock crypto for Node.js environment
 Object.defineProperty(global, 'crypto', {
   value: {
     randomBytes: (size: number) => {
@@ -137,10 +137,54 @@ Object.defineProperty(global, 'crypto', {
         min = 0
       }
       return Math.floor(Math.random() * (max - min)) + min
+    },
+    getRandomValues: (arr: Uint8Array) => {
+      for (let i = 0; i < arr.length; i++) {
+        arr[i] = Math.floor(Math.random() * 256)
+      }
+      return arr
+    },
+    subtle: {
+      digest: jest.fn(),
+      encrypt: jest.fn(),
+      decrypt: jest.fn(),
+      sign: jest.fn(),
+      verify: jest.fn(),
+      generateKey: jest.fn(),
+      exportKey: jest.fn(),
+      importKey: jest.fn()
     }
   },
   writable: true,
 })
+
+// Mock Supabase client
+jest.mock('@supabase/supabase-js', () => ({
+  createClient: jest.fn(() => ({
+    auth: {
+      getUser: jest.fn(),
+      signOut: jest.fn(),
+      onAuthStateChange: jest.fn(() => ({ 
+        data: { subscription: { unsubscribe: jest.fn() } } 
+      }))
+    },
+    from: jest.fn(() => ({
+      select: jest.fn(() => ({
+        eq: jest.fn(() => ({
+          single: jest.fn(),
+          limit: jest.fn(),
+          order: jest.fn()
+        })),
+        limit: jest.fn(),
+        order: jest.fn()
+      })),
+      insert: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn()
+    })),
+    rpc: jest.fn()
+  }))
+}))
 
 // Clean up after each test
 afterEach(() => {

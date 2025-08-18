@@ -39,7 +39,7 @@ const customJestConfig = {
     '^@/(.*)$': '<rootDir>/$1',
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(jose|@supabase|@hookform|zod)/)',
+    'node_modules/(?!(jose|@supabase|@hookform|zod|@playwright)/)',
   ],
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   globals: {

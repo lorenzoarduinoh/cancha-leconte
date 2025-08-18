@@ -1,0 +1,41 @@
+{
+  "name": "@cancha/admin-dashboard-tests",
+  "version": "1.0.0",
+  "description": "Test suite for Admin Dashboard feature",
+  "private": true,
+  "scripts": {
+    "test": "jest --config jest.config.js",
+    "test:watch": "jest --config jest.config.js --watch",
+    "test:coverage": "jest --config jest.config.js --coverage",
+    "test:unit": "jest --config jest.config.js unit/",
+    "test:integration": "jest --config jest.config.js integration/",
+    "test:accessibility": "jest --config jest.config.js accessibility/",
+    "test:ci": "jest --config jest.config.js --ci --coverage --watchAll=false",
+    "test:debug": "jest --config jest.config.js --detectOpenHandles --verbose",
+    "test:update-snapshots": "jest --config jest.config.js --updateSnapshot",
+    "lint:tests": "eslint **/*.{ts,tsx} --fix"
+  },
+  "dependencies": {
+    "@testing-library/jest-dom": "^6.7.0",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "jest": "^30.0.5",
+    "jest-axe": "^9.0.0",
+    "jest-environment-jsdom": "^30.0.5",
+    "msw": "^2.0.0",
+    "ts-jest": "^29.4.1"
+  },
+  "jest": {
+    "projects": ["<rootDir>/jest.config.js"]
+  },
+  "keywords": [
+    "testing",
+    "admin-dashboard",
+    "react",
+    "nextjs",
+    "jest",
+    "accessibility"
+  ],
+  "author": "Cancha Development Team",
+  "license": "MIT"
+}
