@@ -17,11 +17,6 @@ This document outlines the complete technology stack for the Cancha Leconte web 
 - Vercel deployment optimization
 - Large ecosystem and community support
 
-**Alternatives Considered:**
-- React SPA: Lacks SSR capabilities and SEO benefits
-- Vue.js: Team not familiar with framework
-- Pure HTML/JS: Would require significant manual setup for modern features
-
 ### Backend & Database: Supabase
 **Selected:** Supabase (PostgreSQL-based)
 **Rationale:**
@@ -33,11 +28,6 @@ This document outlines the complete technology stack for the Cancha Leconte web 
 - Generous free tier suitable for project scale
 - Excellent TypeScript support and auto-generated types
 - Built-in file storage if needed
-
-**Alternatives Considered:**
-- Firebase: NoSQL not ideal for relational data structure needed
-- Custom Node.js backend: Unnecessary complexity for this scope
-- Prisma + PostgreSQL: Would require separate hosting and setup
 
 ### Styling: Tailwind CSS 4
 **Selected:** Tailwind CSS
@@ -102,10 +92,6 @@ This document outlines the complete technology stack for the Cancha Leconte web 
 - Excellent free tier for this project scope
 - Environment variable management
 
-**Alternatives Considered:**
-- Netlify: Good option but less Next.js optimized
-- AWS/GCP: Overkill and more complex for this scope
-- Traditional hosting: Would require manual setup and maintenance
 
 ### CI/CD: Vercel Git Integration
 **Selected:** Automatic deployments via Vercel

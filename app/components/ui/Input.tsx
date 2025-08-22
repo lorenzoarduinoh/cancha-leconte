@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef, useState } from 'react';
+import { forwardRef, useState, useId } from 'react';
 import { clsx } from 'clsx';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -11,15 +11,16 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, label, error, helperText, showPasswordToggle, id, ...props }, ref) => {
+  ({ className, type, label, error, helperText, showPasswordToggle, id, name, ...props }, ref) => {
     const [showPassword, setShowPassword] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
+    const generatedId = useId();
 
     const inputType = showPasswordToggle && type === 'password' 
       ? (showPassword ? 'text' : 'password') 
       : type;
 
-    const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
+    const inputId = id || `input-${generatedId}`;
     const errorId = error ? `${inputId}-error` : undefined;
     const helperId = helperText ? `${inputId}-helper` : undefined;
 
@@ -35,6 +36,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         <div className="input-container">
           <input
             id={inputId}
+            name={name}
             type={inputType}
             className={clsx(
               'form-input',

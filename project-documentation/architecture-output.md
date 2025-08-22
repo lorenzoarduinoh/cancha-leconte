@@ -1,13 +1,22 @@
-# Cancha Leconte - Technical Architecture Document
+# Arquitectura Técnica: Sistema de Edición de Nombres de Equipos
 
 ## Executive Summary
 
-### Project Overview
-Cancha Leconte is a web application designed to streamline soccer game organization for Santiago and Agustin's private field. The system handles game creation, friend registration, payment processing, and automated WhatsApp notifications for approximately 20-30 regular players and 100 games per year.
+Esta arquitectura define una solución completa para implementar la funcionalidad de edición inline de nombres de equipos en el sistema Cancha Leconte. La solución permite a los administradores personalizar los nombres "Equipo A" y "Equipo B" con nombres custom que persistan en la base de datos y se reflejen en tiempo real en toda la aplicación.
 
-### Key Architectural Decisions
-- **Frontend:** Next.js 15.4.6 with TypeScript and Tailwind CSS for rapid development and optimal UX
-- **Backend:** Supabase (PostgreSQL) providing database, authentication, and real-time features
+### Tecnologías Core
+- **Backend**: Next.js API Routes con Supabase PostgreSQL
+- **Frontend**: React con TypeScript y Tailwind CSS
+- **Estado**: React hooks locales con optimistic updates
+- **Validación**: Zod schemas para consistencia client/server
+- **Real-time**: Refetch automático después de cambios
+
+### Componentes del Sistema
+- Migración de base de datos para team names
+- API endpoints para CRUD de team names
+- Componente EditableTeamName para edición inline
+- Actualizaciones en TeamManagement y GameResultForm
+- Validaciones robustas y manejo de errores
 - **Deployment:** Vercel with automatic deployments and edge optimization
 - **Integrations:** WhatsApp Business Cloud API and MercadoPago for Argentine market requirements
 - **State Management:** React Context + useReducer for application state management

@@ -260,6 +260,51 @@ body {
   outline-offset: 2px;
 }
 
+.btn--whatsapp {
+  background: #25D366;
+  border: 2px solid #25D366;
+}
+
+.btn--whatsapp:hover:not(:disabled) {
+  background: #128C7E;
+  border-color: #128C7E;
+}
+
+.btn--whatsapp:focus {
+  outline: 2px solid #25D366;
+  outline-offset: 2px;
+}
+
+.btn--warning {
+  background: var(--color-warning);
+  border: 2px solid var(--color-warning);
+}
+
+.btn--warning:hover:not(:disabled) {
+  background: #F57C00;
+  border-color: #F57C00;
+}
+
+.btn--warning:focus {
+  outline: 2px solid var(--color-warning);
+  outline-offset: 2px;
+}
+
+.btn--success {
+  background: var(--color-success);
+  border: 2px solid var(--color-success);
+}
+
+.btn--success:hover:not(:disabled) {
+  background: #43A047;
+  border-color: #43A047;
+}
+
+.btn--success:focus {
+  outline: 2px solid var(--color-success);
+  outline-offset: 2px;
+}
+
 /* Form Component Styles */
 .form-field {
   margin-bottom: var(--space-md);
@@ -980,6 +1025,10 @@ body {
   border-bottom-width: 2px;
 }
 
+.border-b-3 {
+  border-bottom-width: 3px;
+}
+
 /* Additional utilities for dashboard */
 .bg-red-50 {
   background-color: #fef2f2;
@@ -1007,6 +1056,10 @@ body {
 
 .text-warning {
   color: var(--color-warning);
+}
+
+.bg-warning {
+  background-color: var(--color-warning);
 }
 
 .bg-warning\/20 {
@@ -1304,4 +1357,637 @@ body {
   .dashboard-span-3 {
     grid-column: span 3;
   }
+}
+
+/* Select Component Styles */
+.input-container {
+  position: relative;
+}
+
+.form-input select {
+  appearance: none;
+  background-image: none;
+  padding-right: 40px;
+}
+
+.select-arrow {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--color-neutral-600);
+}
+
+/* Textarea Component Styles */
+.form-textarea {
+  min-height: 80px;
+  resize: vertical;
+  font-family: var(--font-family-primary);
+  line-height: var(--line-height-normal);
+}
+
+.form-field-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: var(--space-xs);
+}
+
+.char-count {
+  font-size: var(--font-size-sm);
+  color: var(--color-neutral-500);
+  margin-left: auto;
+}
+
+/* Modal Component Styles */
+.modal-overlay {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  animation: fadeIn var(--duration-short) var(--ease-out);
+}
+
+.modal {
+  animation: modalIn var(--duration-short) var(--ease-out);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Badge Component Styles */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  transition: all var(--duration-short) var(--ease-out);
+}
+
+/* Game Form Specific Styles */
+.game-form-section {
+  margin-bottom: var(--space-xl);
+}
+
+.game-form-section:last-child {
+  margin-bottom: 0;
+}
+
+.cost-summary {
+  background: var(--color-success);
+  background: linear-gradient(135deg, var(--color-success) 0%, #43A047 100%);
+  color: white;
+  padding: var(--space-lg);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.cost-summary .amount {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-sm);
+}
+
+.cost-summary .breakdown {
+  font-size: var(--font-size-sm);
+  opacity: 0.9;
+}
+
+/* Game Status Indicators */
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.status-indicator--draft {
+  background: var(--color-neutral-100);
+  color: var(--color-neutral-700);
+}
+
+.status-indicator--open {
+  background: var(--color-success);
+  color: white;
+}
+
+.status-indicator--closed {
+  background: var(--color-warning);
+  color: white;
+}
+
+.status-indicator--in-progress {
+  background: var(--color-info);
+  color: white;
+}
+
+.status-indicator--completed {
+  background: var(--color-neutral-600);
+  color: white;
+}
+
+.status-indicator--cancelled {
+  background: var(--color-error);
+  color: white;
+}
+
+/* Game Card Styles */
+.game-card {
+  border: 1px solid var(--color-neutral-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  background: white;
+  transition: all var(--duration-short) var(--ease-out);
+  cursor: pointer;
+}
+
+.game-card:hover {
+  border-color: var(--color-primary-300);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.game-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-md);
+}
+
+.game-card-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-neutral-900);
+  margin: 0;
+  line-height: var(--line-height-tight);
+}
+
+.game-card-date {
+  font-size: var(--font-size-sm);
+  color: var(--color-neutral-600);
+  margin-bottom: var(--space-sm);
+}
+
+.game-card-players {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.game-card-players-count {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-primary);
+}
+
+.game-card-progress {
+  flex: 1;
+  height: 8px;
+  background: var(--color-neutral-200);
+  border-radius: var(--radius-base);
+  overflow: hidden;
+}
+
+.game-card-progress-bar {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: var(--radius-base);
+  transition: width var(--duration-short) var(--ease-out);
+}
+
+.game-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-neutral-200);
+}
+
+.game-card-actions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+/* Team Assignment Styles */
+.team-container {
+  border: 2px dashed var(--color-neutral-300);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  min-height: 200px;
+  background: var(--color-neutral-50);
+  transition: all var(--duration-short) var(--ease-out);
+}
+
+.team-container--active {
+  border-color: var(--color-primary);
+  background: var(--color-primary-50);
+}
+
+.team-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--color-neutral-300);
+}
+
+.team-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-neutral-900);
+}
+
+.team-count {
+  background: var(--color-primary);
+  color: white;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-base);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.player-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: white;
+  border: 1px solid var(--color-neutral-200);
+  border-radius: var(--radius-base);
+  margin-bottom: var(--space-sm);
+  cursor: grab;
+  transition: all var(--duration-short) var(--ease-out);
+}
+
+.player-item:hover {
+  border-color: var(--color-primary-300);
+  box-shadow: var(--shadow-sm);
+}
+
+.player-item:active {
+  cursor: grabbing;
+  transform: scale(0.98);
+}
+
+.player-avatar {
+  width: 32px;
+  height: 32px;
+  background: var(--color-primary);
+  color: white;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-sm);
+  flex-shrink: 0;
+}
+
+.player-name {
+  flex: 1;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-neutral-900);
+}
+
+.player-status {
+  font-size: var(--font-size-sm);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+}
+
+/* Team Management Read-Only States */
+.team-management--readonly {
+  opacity: 0.85;
+}
+
+.team-container--readonly {
+  border-style: solid;
+  border-color: var(--color-neutral-200);
+  background: var(--color-neutral-25);
+  cursor: not-allowed;
+}
+
+.team-container--readonly:hover {
+  border-color: var(--color-neutral-200);
+  background: var(--color-neutral-25);
+}
+
+.player-item--readonly {
+  cursor: default !important;
+  opacity: 0.9;
+  background: var(--color-neutral-50);
+  border-color: var(--color-neutral-150);
+}
+
+.player-item--readonly:hover {
+  border-color: var(--color-neutral-150);
+  box-shadow: none;
+  transform: none;
+}
+
+.player-item--readonly:active {
+  cursor: default;
+  transform: none;
+}
+
+.player-item--readonly .player-avatar {
+  opacity: 0.8;
+}
+
+.player-status--paid {
+  background: var(--color-success);
+  color: white;
+}
+
+.player-status--pending {
+  background: var(--color-warning);
+  color: white;
+}
+
+.player-status--failed {
+  background: var(--color-error);
+  color: white;
+}
+
+/* Analytics Dashboard Styles */
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+
+.analytics-card {
+  background: white;
+  border: 1px solid var(--color-neutral-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  text-align: center;
+}
+
+.analytics-value {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.analytics-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-neutral-600);
+  font-weight: var(--font-weight-medium);
+}
+
+.analytics-change {
+  font-size: var(--font-size-sm);
+  margin-top: var(--space-xs);
+}
+
+.analytics-change--positive {
+  color: var(--color-success);
+}
+
+.analytics-change--negative {
+  color: var(--color-error);
+}
+
+.analytics-change--neutral {
+  color: var(--color-neutral-600);
+}
+
+/* Loading States */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Error States */
+.error-boundary {
+  padding: var(--space-xl);
+  text-align: center;
+  background: var(--color-error);
+  color: white;
+  border-radius: var(--radius-lg);
+}
+
+.error-boundary h2 {
+  font-size: var(--font-size-xl);
+  margin-bottom: var(--space-md);
+}
+
+.error-boundary p {
+  margin-bottom: var(--space-lg);
+}
+
+/* Responsive adjustments for game management */
+@media (max-width: 767px) {
+  .game-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+  
+  .game-card-actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+  
+  .game-card-actions .btn {
+    flex: 1;
+  }
+  
+  .team-container {
+    margin-bottom: var(--space-lg);
+  }
+  
+  .analytics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+  }
+  
+  .analytics-value {
+    font-size: var(--font-size-2xl);
+  }
+}
+
+/* Game Detail Page Professional Enhancements */
+.game-detail-tabs {
+  transition: all var(--duration-short) var(--ease-out);
+}
+
+.game-detail-tabs:hover {
+  background: rgba(76, 175, 80, 0.05);
+}
+
+/* Enhanced Card Styles for Game Detail Page */
+.game-detail-card {
+  border-radius: 12px;
+  border: 1px solid var(--color-neutral-200);
+  background: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all var(--duration-short) var(--ease-out);
+}
+
+.game-detail-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: var(--color-neutral-300);
+}
+
+/* Enhanced Gap Utilities */
+.gap-8 {
+  gap: var(--space-xl);
+}
+
+/* Professional Button Group */
+.btn-group {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-group .btn {
+  min-height: 44px;
+  font-weight: 500;
+}
+
+/* Enhanced Typography */
+.game-title {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--color-neutral-900);
+  margin-bottom: 8px;
+}
+
+@media (min-width: 768px) {
+  .game-title {
+    font-size: 2.25rem;
+  }
+}
+
+/* Professional Status Badge */
+.status-badge-large {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  min-height: 32px;
+  border-radius: 20px;
+}
+
+/* Enhanced Spacing for Content Areas */
+.content-section {
+  padding: 32px 0;
+}
+
+.content-section:first-child {
+  padding-top: 24px;
+}
+
+/* Better Visual Hierarchy */
+.stat-item {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-neutral-100);
+}
+
+.stat-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.stat-label {
+  color: var(--color-neutral-600);
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.stat-value {
+  color: var(--color-neutral-900);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* Editable Team Name Component Styles */
+.editable-team-name {
+  position: relative;
+}
+
+.editable-team-name .group:focus-within .opacity-0 {
+  opacity: 1;
+}
+
+/* Always show edit icon on mobile for better UX */
+@media (max-width: 640px) {
+  .editable-team-name .group .opacity-0 {
+    opacity: 1;
+  }
+}
+
+/* Enhanced hover states for editable elements */
+.editable-team-name .group {
+  transition: all 0.2s ease-in-out;
+}
+
+.editable-team-name .group:hover {
+  background-color: var(--color-neutral-50);
+}
+
+.editable-team-name .group:focus {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 1px;
+}
+
+/* Smooth transitions for edit mode */
+.editable-team-name input {
+  transition: border-color 0.2s ease-in-out;
+}
+
+.editable-team-name .text-success {
+  color: var(--color-success);
+}
+
+.editable-team-name .text-error {
+  color: var(--color-error);
+}
+
+/* Loading spinner for team name saving */
+.editable-team-name .animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }

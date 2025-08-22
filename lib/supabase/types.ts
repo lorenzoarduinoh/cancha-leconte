@@ -117,6 +117,9 @@ export interface Database {
           min_players: number
           max_players: number
           field_cost_per_player: number
+          game_duration_minutes: number
+          team_a_name: string
+          team_b_name: string
           status: 'draft' | 'open' | 'closed' | 'in_progress' | 'completed' | 'cancelled'
           share_token: string
           teams_assigned_at: string | null
@@ -133,6 +136,9 @@ export interface Database {
           min_players: number
           max_players: number
           field_cost_per_player: number
+          game_duration_minutes?: number
+          team_a_name?: string
+          team_b_name?: string
           status?: 'draft' | 'open' | 'closed' | 'in_progress' | 'completed' | 'cancelled'
           share_token?: string
           teams_assigned_at?: string | null
@@ -149,6 +155,9 @@ export interface Database {
           min_players?: number
           max_players?: number
           field_cost_per_player?: number
+          game_duration_minutes?: number
+          team_a_name?: string
+          team_b_name?: string
           status?: 'draft' | 'open' | 'closed' | 'in_progress' | 'completed' | 'cancelled'
           share_token?: string
           teams_assigned_at?: string | null
@@ -170,6 +179,11 @@ export interface Database {
           payment_amount: number | null
           registered_at: string
           paid_at: string | null
+          registration_token: string | null
+          notification_sent_at: string | null
+          notification_status: 'pending' | 'sent' | 'delivered' | 'read' | 'failed'
+          cancellation_reason: string | null
+          cancelled_at: string | null
         }
         Insert: {
           id?: string
@@ -182,6 +196,11 @@ export interface Database {
           payment_amount?: number | null
           registered_at?: string
           paid_at?: string | null
+          registration_token?: string | null
+          notification_sent_at?: string | null
+          notification_status?: 'pending' | 'sent' | 'delivered' | 'read' | 'failed'
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
         }
         Update: {
           id?: string
@@ -194,6 +213,11 @@ export interface Database {
           payment_amount?: number | null
           registered_at?: string
           paid_at?: string | null
+          registration_token?: string | null
+          notification_sent_at?: string | null
+          notification_status?: 'pending' | 'sent' | 'delivered' | 'read' | 'failed'
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
         }
       }
       game_results: {
@@ -241,6 +265,11 @@ export interface Database {
           sent_at: string | null
           delivered_at: string | null
           created_at: string
+          registration_id: string | null
+          template_name: string | null
+          template_params: Json | null
+          retry_count: number
+          next_retry_at: string | null
         }
         Insert: {
           id?: string
@@ -254,6 +283,11 @@ export interface Database {
           sent_at?: string | null
           delivered_at?: string | null
           created_at?: string
+          registration_id?: string | null
+          template_name?: string | null
+          template_params?: Json | null
+          retry_count?: number
+          next_retry_at?: string | null
         }
         Update: {
           id?: string
@@ -267,6 +301,49 @@ export interface Database {
           sent_at?: string | null
           delivered_at?: string | null
           created_at?: string
+          registration_id?: string | null
+          template_name?: string | null
+          template_params?: Json | null
+          retry_count?: number
+          next_retry_at?: string | null
+        }
+      }
+      whatsapp_templates: {
+        Row: {
+          id: string
+          name: string
+          template_id: string
+          language_code: string
+          category: 'MARKETING' | 'UTILITY' | 'AUTHENTICATION'
+          template_body: string
+          template_params: Json | null
+          status: 'pending' | 'approved' | 'rejected'
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          template_id: string
+          language_code?: string
+          category: 'MARKETING' | 'UTILITY' | 'AUTHENTICATION'
+          template_body: string
+          template_params?: Json | null
+          status?: 'pending' | 'approved' | 'rejected'
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          template_id?: string
+          language_code?: string
+          category?: 'MARKETING' | 'UTILITY' | 'AUTHENTICATION'
+          template_body?: string
+          template_params?: Json | null
+          status?: 'pending' | 'approved' | 'rejected'
+          created_at?: string
+          updated_at?: string
         }
       }
       admin_audit_log: {

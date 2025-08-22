@@ -10,7 +10,14 @@
       "Bash(npm run build:*)",
       "Bash(npm test:*)",
       "Bash(npm audit:*)",
-      "Bash(npm run test:security:*)"
+      "Bash(npm run test:security:*)",
+      "Bash(cmd //c:*)",
+      "Bash(NODE_OPTIONS=\"--max-old-space-size=4096\" npx next dev --port 3000)",
+      "Bash(curl:*)",
+      "Bash(npx tsx:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx next lint:*)",
+      "Bash(taskkill:*)"
     ],
     "deny": [],
     "ask": []

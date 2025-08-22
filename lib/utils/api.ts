@@ -3,17 +3,29 @@ import { ZodSchema, ZodError } from 'zod';
 import { ApiResponse, ValidationError } from '../types/api';
 import type { ApiError } from '../types/api';
 
+// Create ApiError class for instance checking
+class ApiErrorClass extends Error implements ApiError {
+  constructor(public message: string, public status: number, public code?: string, public details?: ValidationError[]) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
+export { ApiErrorClass as ApiError };
+
 /**
  * Creates a standardized API response
  */
 export function createApiResponse<T>(
   data?: T,
   message?: string,
+  success: boolean = true,
   status: number = 200
 ): NextResponse<ApiResponse<T>> {
   const response: ApiResponse<T> = {
     data,
     message,
+    success,
   };
 
   return NextResponse.json(response, { status });
@@ -48,7 +60,7 @@ export async function validateRequestBody<T>(
     return { data: validatedData, error: null };
   } catch (error) {
     if (error instanceof ZodError) {
-      const validationErrors: ValidationError[] = error.errors.map(err => ({
+      const validationErrors: ValidationError[] = (error.errors || []).map(err => ({
         field: err.path.join('.'),
         message: err.message,
         code: err.code,
@@ -101,7 +113,7 @@ export function validateQueryParams<T>(
     return { data: validatedData, error: null };
   } catch (error) {
     if (error instanceof ZodError) {
-      const validationErrors: ValidationError[] = error.errors.map(err => ({
+      const validationErrors: ValidationError[] = (error.errors || []).map(err => ({
         field: err.path.join('.'),
         message: err.message,
         code: err.code,
@@ -188,7 +200,7 @@ export function withErrorHandling(
     } catch (error) {
       console.error('API Error:', error);
       
-      if (error instanceof ApiError) {
+      if (error instanceof ApiErrorClass) {
         return createApiError(error.message, error.status);
       }
       

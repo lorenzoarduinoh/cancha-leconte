@@ -33,6 +33,7 @@ export interface ApiResponse<T = any> {
   data?: T;
   error?: string;
   message?: string;
+  success?: boolean;
 }
 
 export interface PaginatedResponse<T> extends ApiResponse<T[]> {
@@ -60,6 +61,9 @@ export interface CreateGameRequest {
   min_players: number;
   max_players: number;
   field_cost_per_player: number;
+  game_duration_minutes?: number;
+  team_a_name?: string;
+  team_b_name?: string;
 }
 
 export interface UpdateGameRequest extends Partial<CreateGameRequest> {}
@@ -213,6 +217,21 @@ export interface RecordResultRequest {
 
 export interface ResultResponse extends ApiResponse<GameResult> {}
 
+// Team Names API Types
+export interface TeamNamesData {
+  team_a_name: string;
+  team_b_name: string;
+}
+
+export interface UpdateTeamNamesRequest {
+  team_a_name?: string;
+  team_b_name?: string;
+}
+
+export interface TeamNamesResponse extends ApiResponse<TeamNamesData> {
+  data: TeamNamesData;
+}
+
 // Payment API Types
 export interface PaymentTrackingData {
   total_pending: number;
@@ -272,6 +291,80 @@ export interface DashboardEvent extends RealtimeEvent {
 export interface RegistrationEvent extends RealtimeEvent {
   event: 'player_registered' | 'player_cancelled' | 'game_full' | 'spot_available';
 }
+
+// Friend Registration API Types (Public Access)
+export interface FriendRegistrationRequest {
+  player_name: string;
+  player_phone: string;
+  accept_terms?: boolean;
+}
+
+export interface FriendRegistrationResponse extends ApiResponse {
+  data?: GameRegistration;
+  game_full: boolean;
+  waiting_list_position?: number;
+  confirmation_details?: {
+    game_title: string;
+    game_date: string;
+    location: string;
+    cost: number;
+    status: 'confirmed' | 'waiting_list';
+    position?: number;
+  };
+}
+
+export interface PublicGameInfo {
+  id: string;
+  title: string;
+  description: string | null;
+  game_date: string;
+  min_players: number;
+  max_players: number;
+  field_cost_per_player: number;
+  game_duration_minutes: number;
+  team_a_name: string;
+  team_b_name: string;
+  status: GameStatus;
+  current_players: number;
+  spots_available: number;
+  waiting_list_count: number;
+  registration_deadline: string;
+  is_registration_open: boolean;
+  is_full: boolean;
+  location: string;
+}
+
+export interface PublicGameResponse extends ApiResponse<PublicGameInfo> {}
+
+export interface PlayerRegistrationStatus {
+  is_registered: boolean;
+  registration?: GameRegistration;
+  status: 'not_registered' | 'confirmed' | 'waiting_list' | 'cancelled';
+  can_cancel: boolean;
+  position?: number;
+  payment_required: boolean;
+  payment_deadline?: string;
+}
+
+// Real-time API Types
+export interface RealtimeInfo {
+  game_id: string;
+  realtime_enabled: boolean;
+  current_status: {
+    current_players: number;
+    spots_available: number;
+    waiting_list_count: number;
+    is_full: boolean;
+  };
+  connection_info: {
+    websocket_available: boolean;
+    polling_fallback: boolean;
+    update_frequency: string;
+  };
+  events: string[];
+}
+
+export interface RealtimeInfoResponse extends ApiResponse<RealtimeInfo> {}
 
 // WebSocket message types
 export interface WebSocketMessage {

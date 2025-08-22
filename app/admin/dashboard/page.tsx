@@ -113,8 +113,7 @@ export default function AdminDashboardPage() {
   };
 
   const handleCreateGame = () => {
-    // Navigate to game creation - for now just show alert
-    alert('Funcionalidad de crear partido próximamente disponible');
+    router.push('/admin/games');
   };
 
   const handleSendNotification = () => {
@@ -260,10 +259,20 @@ export default function AdminDashboardPage() {
                           <span className="text-neutral-600 ml-1">jugadores</span>
                         </div>
                         <div className="game-card-actions flex flex-col sm:flex-row gap-2">
-                          <Button size="sm" variant="secondary" className="flex-1 sm:flex-none">
-                            Editar
+                          <Button 
+                            size="sm" 
+                            variant="secondary" 
+                            className="flex-1 sm:flex-none"
+                            onClick={() => router.push(`/admin/games/${game.id}`)}
+                          >
+                            Gestionar
                           </Button>
-                          <Button size="sm" variant="ghost" className="flex-1 sm:flex-none">
+                          <Button 
+                            size="sm" 
+                            variant="ghost" 
+                            className="flex-1 sm:flex-none"
+                            onClick={() => router.push(`/admin/games/${game.id}`)}
+                          >
                             Ver detalles
                           </Button>
                         </div>
@@ -340,12 +349,12 @@ export default function AdminDashboardPage() {
                 </Button>
                 <Button 
                   variant="secondary" 
-                  onClick={() => alert('Próximamente')}
+                  onClick={() => router.push('/admin/games')}
                   className="h-20 flex flex-col items-center justify-center text-sm px-3"
                   aria-label="Gestionar jugadores registrados"
                 >
                   <span className="text-2xl mb-2" aria-hidden="true">👥</span>
-                  <span className="text-center">Gestionar Jugadores</span>
+                  <span className="text-center">Gestionar Partidos</span>
                 </Button>
                 <Button 
                   variant="secondary" 
@@ -358,7 +367,7 @@ export default function AdminDashboardPage() {
                 </Button>
                 <Button 
                   variant="secondary" 
-                  onClick={() => alert('Próximamente')}
+                  onClick={() => router.push('/admin/analytics')}
                   className="h-20 flex flex-col items-center justify-center text-sm px-3"
                   aria-label="Ver estadísticas y análisis de partidos"
                 >

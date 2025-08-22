@@ -4,7 +4,7 @@ import { forwardRef } from 'react';
 import { clsx } from 'clsx';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'destructive';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'destructive' | 'whatsapp' | 'warning' | 'success';
   size?: 'sm' | 'md' | 'lg' | 'icon';
   loading?: boolean;
 }
@@ -18,6 +18,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       secondary: 'bg-transparent border-2 focus:ring-2 focus:ring-offset-2',
       ghost: 'bg-transparent focus:ring-2 focus:ring-offset-2',
       destructive: 'text-white focus:ring-2 focus:ring-offset-2',
+      whatsapp: 'text-white focus:ring-2 focus:ring-offset-2',
+      warning: 'text-white focus:ring-2 focus:ring-offset-2',
+      success: 'text-white focus:ring-2 focus:ring-offset-2',
     };
 
     const sizeStyles = {
