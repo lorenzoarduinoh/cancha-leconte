@@ -10,15 +10,16 @@ import {
   ChartBarIcon, 
   UsersIcon, 
   ShieldIcon, 
-  CreditCardIcon,
   TrophyIcon,
   LockIcon,
   PlayCircleIcon,
   TrashIcon,
-  AlertTriangleIcon 
+  AlertTriangleIcon,
+  PercentIcon,
+  DollarSignIcon,
+  ClockIcon 
 } from '@/app/components/ui/Icons';
 import { TeamManagement } from '@/app/components/games/TeamManagement';
-import { PaymentTracker } from '@/app/components/games/PaymentTracker';
 import { PlayerRegistrations } from '@/app/components/games/PlayerRegistrations';
 import { GameShareLink } from '@/app/components/games/GameShareLink';
 import { GameResultForm } from '@/app/components/games/GameResultForm';
@@ -30,13 +31,25 @@ import {
   TeamAssignment 
 } from '@/lib/types/game';
 
+interface PaymentStats {
+  total: number;
+  paid: number;
+  pending: number;
+  failed: number;
+  refunded: number;
+  totalAmount: number;
+  paidAmount: number;
+  pendingAmount: number;
+  paymentRate: number;
+}
+
 interface GameDetailState {
   game: GameWithDetails | null;
   loading: boolean;
   error: string | null;
   showCancelModal: boolean;
   isDeleting: boolean;
-  activeTab: 'overview' | 'players' | 'teams' | 'payments' | 'resultado';
+  activeTab: 'overview' | 'players' | 'teams' | 'resultado';
   teamAssignment: TeamAssignment | null;
 }
 
@@ -107,7 +120,7 @@ export default function GameDetailPage() {
 
   // Handle URL tab parameter - allow all tabs
   useEffect(() => {
-    if (tabParam && ['overview', 'players', 'teams', 'payments', 'resultado'].includes(tabParam)) {
+    if (tabParam && ['overview', 'players', 'teams', 'resultado'].includes(tabParam)) {
       setState(prev => ({ ...prev, activeTab: tabParam as GameDetailState['activeTab'] }));
     }
   }, [tabParam]);
@@ -250,9 +263,54 @@ export default function GameDetailPage() {
     }
   };
 
+  // Calculate payment statistics
+  const calculatePaymentStats = (): PaymentStats => {
+    const regs = state.game?.registrations || [];
+    const stats = {
+      total: regs.length,
+      paid: 0,
+      pending: 0,
+      failed: 0,
+      refunded: 0,
+      totalAmount: 0,
+      paidAmount: 0,
+      pendingAmount: 0,
+      paymentRate: 0,
+    };
+
+    regs.forEach(reg => {
+      const amount = reg.payment_amount || 0;
+      stats.totalAmount += amount;
+
+      switch (reg.payment_status) {
+        case 'paid':
+          stats.paid++;
+          stats.paidAmount += amount;
+          break;
+        case 'pending':
+          stats.pending++;
+          stats.pendingAmount += amount;
+          break;
+        case 'failed':
+          stats.failed++;
+          break;
+        case 'refunded':
+          stats.refunded++;
+          break;
+      }
+    });
+
+    stats.paymentRate = stats.total > 0 ? Math.round((stats.paid / stats.total) * 100) : 0;
+
+    return stats;
+  };
+
   const isPastGame = new Date(state.game.game_date) < new Date();
   const canEdit = !isPastGame && state.game.status !== 'completed' && state.game.status !== 'cancelled';
   const canCancel = state.game.status !== 'completed' && state.game.status !== 'cancelled';
+  
+  // Calculate payment statistics for the Overview
+  const paymentStats = calculatePaymentStats();
   
   // Debug info
   console.log('Game date:', state.game.game_date);
@@ -371,12 +429,6 @@ export default function GameDetailPage() {
                 count: null 
               },
               { 
-                id: 'payments', 
-                label: 'Pagos', 
-                icon: CreditCardIcon,
-                count: null 
-              },
-              { 
                 id: 'resultado', 
                 label: 'Resultado', 
                 icon: TrophyIcon,
@@ -422,7 +474,7 @@ export default function GameDetailPage() {
         {/* Overview Tab */}
         {state.activeTab === 'overview' && (
           <div id="overview-panel" role="tabpanel" aria-labelledby="overview-tab">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
               {/* Game Stats */}
               <Card className="shadow-sm border-neutral-200">
                 <CardHeader className="pb-6">
@@ -455,14 +507,79 @@ export default function GameDetailPage() {
                 <CardHeader className="pb-6">
                   <CardTitle className="text-xl font-semibold">Estado de Pagos</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <PaymentTracker gameId={state.game.id} registrations={state.game.registrations} />
+                <CardContent className="space-y-6">
+                  {paymentStats.total > 0 ? (
+                    <>
+                      {/* Payment Rate */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                            <PercentIcon size={20} className="text-primary" />
+                          </div>
+                          <div>
+                            <span className="text-neutral-600 text-sm">Tasa de Pago</span>
+                            <p className="font-semibold text-lg">{paymentStats.paymentRate}%</p>
+                          </div>
+                        </div>
+                        
+                        {/* Progress Bar for Payment Rate - Now horizontal and much longer */}
+                        <div className="flex-1 max-w-48 ml-6">
+                          <div className="w-full bg-neutral-200 rounded-full h-2">
+                            <div 
+                              className="h-2 rounded-full bg-primary transition-all duration-300"
+                              style={{ width: `${paymentStats.paymentRate}%` }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Collected Amount */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-success/10 rounded-full flex items-center justify-center">
+                            <DollarSignIcon size={20} className="text-success" />
+                          </div>
+                          <div>
+                            <span className="text-neutral-600 text-sm">Recaudado</span>
+                            <p className="font-semibold text-lg text-success">
+                              {formatCurrency(paymentStats.paidAmount)}
+                            </p>
+                          </div>
+                        </div>
+                        <span className="text-sm text-neutral-600">
+                          {paymentStats.paid} de {paymentStats.total}
+                        </span>
+                      </div>
+                      
+                      {/* Pending Amount */}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-warning/10 rounded-full flex items-center justify-center">
+                            <ClockIcon size={20} className="text-warning" />
+                          </div>
+                          <div>
+                            <span className="text-neutral-600 text-sm">Pendiente</span>
+                            <p className="font-semibold text-lg text-warning">
+                              {formatCurrency(paymentStats.pendingAmount)}
+                            </p>
+                          </div>
+                        </div>
+                        <span className="text-sm text-neutral-600">
+                          {paymentStats.pending} jugadores
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-center py-6">
+                      <div className="text-4xl mb-3" aria-hidden="true">💳</div>
+                      <p className="text-neutral-600">No hay pagos registrados</p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
 
-
               {/* Friend Registration Link */}
-              <Card className="md:col-span-2 xl:col-span-2 shadow-sm border-neutral-200">
+              <Card className="md:col-span-2 xl:col-span-1 shadow-sm border-neutral-200">
                 <CardHeader className="pb-6">
                   <div className="flex justify-between items-center">
                     <CardTitle className="text-xl font-semibold">Invitar Amigos</CardTitle>
@@ -506,16 +623,6 @@ export default function GameDetailPage() {
           </div>
         )}
 
-        {/* Payments Tab */}
-        {state.activeTab === 'payments' && (
-          <div id="payments-panel" role="tabpanel" aria-labelledby="payments-tab">
-            <PaymentTracker 
-              gameId={state.game.id} 
-              registrations={state.game.registrations}
-              detailed
-            />
-          </div>
-        )}
 
         {/* Resultado Tab - Always accessible */}
         {state.activeTab === 'resultado' && (

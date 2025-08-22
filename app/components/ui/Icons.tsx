@@ -289,4 +289,32 @@ export const ArrowUpDownIcon = forwardRef<SVGSVGElement, IconProps>((props, ref)
 ));
 ArrowUpDownIcon.displayName = 'ArrowUpDownIcon';
 
+// Percentage icon for payment rate
+export const PercentIcon = forwardRef<SVGSVGElement, IconProps>((props, ref) => (
+  <Icon ref={ref} {...props}>
+    <line x1="19" x2="5" y1="5" y2="19" />
+    <circle cx="6.5" cy="6.5" r="2.5" />
+    <circle cx="17.5" cy="17.5" r="2.5" />
+  </Icon>
+));
+PercentIcon.displayName = 'PercentIcon';
+
+// Dollar/Money icon for collected amount
+export const DollarSignIcon = forwardRef<SVGSVGElement, IconProps>((props, ref) => (
+  <Icon ref={ref} {...props}>
+    <line x1="12" x2="12" y1="2" y2="22" />
+    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+  </Icon>
+));
+DollarSignIcon.displayName = 'DollarSignIcon';
+
+// Clock icon for pending amount
+export const ClockIcon = forwardRef<SVGSVGElement, IconProps>((props, ref) => (
+  <Icon ref={ref} {...props}>
+    <circle cx="12" cy="12" r="10" />
+    <polyline points="12,6 12,12 16,14" />
+  </Icon>
+));
+ClockIcon.displayName = 'ClockIcon';
+
 export { Icon };

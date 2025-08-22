@@ -285,7 +285,7 @@ export interface RealtimeEvent {
 }
 
 export interface DashboardEvent extends RealtimeEvent {
-  event: 'player_registered' | 'payment_completed' | 'game_status_changed' | 'game_created' | 'game_updated';
+  event: 'player_registered' | 'payment_completed' | 'game_status_changed' | 'game_created' | 'game_updated' | 'dashboard_refresh';
 }
 
 export interface RegistrationEvent extends RealtimeEvent {

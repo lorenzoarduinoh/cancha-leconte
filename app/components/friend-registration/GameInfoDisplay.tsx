@@ -240,50 +240,6 @@ export function GameInfoDisplay({
             )}
           </div>
 
-          {/* Payment Info Section */}
-          <div className="border-b border-neutral-200">
-            <button
-              onClick={() => toggleSection('payment')}
-              className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-neutral-50 transition-colors"
-              aria-expanded={expandedSections.has('payment')}
-            >
-              <div className="flex items-center gap-3">
-                <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                </svg>
-                <span className="font-medium text-neutral-900">Información de pago</span>
-              </div>
-              <svg 
-                className={`w-5 h-5 text-neutral-400 transition-transform ${expandedSections.has('payment') ? 'rotate-180' : ''}`}
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-            
-            {expandedSections.has('payment') && (
-              <div className="px-6 pb-4 space-y-4">
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                  <div className="flex items-start gap-3">
-                    <svg className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <div className="text-sm">
-                      <p className="text-green-800 font-semibold mb-2">
-                        📱 Pago después del partido
-                      </p>
-                      <p className="text-green-700">
-                        Te enviaremos un enlace de <strong>Mercado Pago</strong> por WhatsApp después del partido. 
-                        Tienes 24 horas para completar el pago.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
         </div>
 
         {/* Registration Actions */}
