@@ -4,14 +4,67 @@ import { useState, useCallback, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
-import { Input } from '../ui/Input';
-import { XIcon, PercentIcon, DollarSignIcon, ClockIcon } from '../ui/Icons';
+import { XIcon } from '../ui/Icons';
 import { 
   GameRegistration, 
   PAYMENT_STATUS_LABELS,
   PaymentStatus,
   GameStatus 
 } from '../../../lib/types/game';
+
+// Player Management Icon
+const PlayersIcon = ({ size = 18, className = '' }: { size?: number; className?: string }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <path d="M18 21a8 8 0 0 0-16 0"/>
+    <circle cx="10" cy="8" r="5"/>
+    <path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3"/>
+  </svg>
+);
+
+// Search Icon
+const SearchIcon = ({ size = 16, className = '' }: { size?: number; className?: string }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <path d="m21 21-4.34-4.34"/>
+    <circle cx="11" cy="11" r="8"/>
+  </svg>
+);
+
+// Filter Icon
+const FilterIcon = ({ size = 16, className = '' }: { size?: number; className?: string }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+  </svg>
+);
 
 export interface PlayerRegistrationsProps {
   gameId: string;
@@ -258,10 +311,15 @@ export function PlayerRegistrations({
 
   if (regs.length === 0) {
     return (
-      <Card className="text-center py-8">
-        <CardContent>
-          <h3 className="text-xl font-semibold mb-2">No hay jugadores registrados</h3>
-          <p className="text-neutral-600">
+      <Card className="text-center shadow-sm border-neutral-200 rounded-xl bg-white">
+        <CardContent className="p-12">
+          <div className="flex items-center justify-center mb-6">
+            <div className="w-16 h-16 bg-neutral-100 rounded-2xl flex items-center justify-center">
+              <PlayersIcon size={32} className="text-neutral-400" />
+            </div>
+          </div>
+          <h3 className="text-xl font-semibold mb-3 text-neutral-900">No hay jugadores registrados</h3>
+          <p className="text-neutral-600 max-w-md mx-auto">
             {gameStatus === 'draft' 
               ? 'Publica el partido para que los jugadores puedan registrarse.'
               : 'Los jugadores podrán registrarse una vez que el partido esté publicado.'
@@ -273,236 +331,217 @@ export function PlayerRegistrations({
   }
 
   return (
-    <div className="space-y-6">
-      {/* Payment Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-neutral-600">Tasa de Pago</p>
-                <p className="text-2xl font-bold text-primary">{paymentStats.paymentRate}%</p>
-              </div>
-              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                <PercentIcon size={24} className="text-primary" />
-              </div>
+    <div className="space-y-8" style={{ marginTop: '-12px' }}>
+      {/* Search and Filters - No Card Background */}
+      <div style={{ padding: '12px', display: 'flex', alignItems: 'center', minHeight: '72px' }}>
+        <div className="flex flex-row items-center justify-between" style={{ gap: '12px', minHeight: 'auto' }}>
+          {/* Search and Filters - Perfect Alignment */}
+          <div className="flex flex-row items-center flex-1" style={{ gap: '12px' }}>
+            {/* Search Icon */}
+            <SearchIcon size={20} className="text-neutral-500 shrink-0 self-center" />
+            
+            {/* Search Input - Native input for perfect alignment */}
+            <div className="relative min-w-[380px] flex-1 max-w-md">
+              <input
+                type="text"
+                placeholder="Buscar por nombre o teléfono..."
+                value={state.searchTerm}
+                onChange={(e) => setState(prev => ({ ...prev, searchTerm: e.target.value }))}
+                className="w-full h-12 px-4 pr-10 text-sm bg-white border border-neutral-300 rounded-xl focus:ring-2 focus:ring-green-500/20 focus:border-green-500 focus:outline-none placeholder:text-neutral-400 transition-colors duration-200"
+              />
+              {state.searchTerm && (
+                <button
+                  onClick={clearSearch}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-neutral-400 hover:text-neutral-600 transition-colors z-10"
+                  aria-label="Limpiar búsqueda"
+                >
+                  <XIcon size={16} />
+                </button>
+              )}
             </div>
-            <div className="mt-2">
-              <div className="w-full bg-neutral-200 rounded-full h-2">
-                <div 
-                  className="h-2 rounded-full bg-primary"
-                  style={{ width: `${paymentStats.paymentRate}%` }}
-                />
-              </div>
+            
+            {/* Filter Buttons - Exact height matching */}
+            <div className="flex gap-1 shrink-0">
+                <button
+                  onClick={() => setState(prev => ({ ...prev, paymentFilter: 'all' }))}
+                  className={`px-6 text-sm font-medium rounded-xl transition-all duration-200 flex items-center justify-center ${
+                    state.paymentFilter === 'all'
+                      ? 'bg-neutral-100 text-neutral-700 border border-neutral-200 shadow-sm' 
+                      : 'bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50 hover:border-neutral-300'
+                  }`}
+                  style={{ 
+                    height: '48px', 
+                    boxSizing: 'border-box',
+                    lineHeight: '1.5',
+                    fontSize: '14px'
+                  }}
+                >
+                  Todos
+                </button>
+                <button
+                  onClick={() => setState(prev => ({ ...prev, paymentFilter: 'paid' }))}
+                  className={`px-6 text-sm font-medium rounded-xl transition-all duration-200 flex items-center justify-center ${
+                    state.paymentFilter === 'paid'
+                      ? 'bg-green-100 text-green-700 border border-green-200 shadow-sm' 
+                      : 'bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50 hover:border-neutral-300'
+                  }`}
+                  style={{ 
+                    height: '48px', 
+                    boxSizing: 'border-box',
+                    lineHeight: '1.5',
+                    fontSize: '14px'
+                  }}
+                >
+                  Pagados
+                </button>
+                <button
+                  onClick={() => setState(prev => ({ ...prev, paymentFilter: 'pending' }))}
+                  className={`px-6 text-sm font-medium rounded-xl transition-all duration-200 flex items-center justify-center ${
+                    state.paymentFilter === 'pending'
+                      ? 'bg-amber-100 text-amber-700 border border-amber-200 shadow-sm' 
+                      : 'bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50 hover:border-neutral-300'
+                  }`}
+                  style={{ 
+                    height: '48px', 
+                    boxSizing: 'border-box',
+                    lineHeight: '1.5',
+                    fontSize: '14px'
+                  }}
+                >
+                  Pendientes
+                </button>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-neutral-600">Recaudado</p>
-                <p className="text-2xl font-bold text-success">
-                  {formatCurrency(paymentStats.paidAmount)}
-                </p>
-              </div>
-              <div className="w-12 h-12 bg-success/10 rounded-full flex items-center justify-center">
-                <DollarSignIcon size={24} className="text-success" />
-              </div>
-            </div>
-            <p className="text-sm text-neutral-600 mt-1">
-              {paymentStats.paid} de {paymentStats.total} jugadores
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-neutral-600">Pendiente</p>
-                <p className="text-2xl font-bold text-warning">
-                  {formatCurrency(paymentStats.pendingAmount)}
-                </p>
-              </div>
-              <div className="w-12 h-12 bg-warning/10 rounded-full flex items-center justify-center">
-                <ClockIcon size={24} className="text-warning" />
-              </div>
-            </div>
-            <p className="text-sm text-neutral-600 mt-1">
-              {paymentStats.pending} jugadores
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Search and Filters */}
-      <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-        <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-          {/* Search Input */}
-          <div className="relative flex items-center gap-3">
-            <svg 
-              className="w-4 h-4 text-neutral-400 flex-shrink-0"
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-            <Input
-              placeholder="Buscar por nombre o teléfono..."
-              value={state.searchTerm}
-              onChange={(e) => setState(prev => ({ ...prev, searchTerm: e.target.value }))}
-              className="text-sm min-w-[280px] placeholder:text-neutral-400"
-            />
-            {state.searchTerm && (
-              <button
-                onClick={clearSearch}
-                className="text-neutral-400 hover:text-neutral-600 transition-colors flex-shrink-0 p-1 hover:bg-neutral-100 rounded-full"
-                aria-label="Limpiar búsqueda"
-              >
-                <XIcon size={14} />
-              </button>
-            )}
           </div>
           
-          {/* Filter Buttons */}
-          <div className="flex gap-2">
-            <Button
-              variant={state.paymentFilter === 'all' ? 'primary' : 'outline'}
-              size="sm"
-              onClick={() => setState(prev => ({ ...prev, paymentFilter: 'all' }))}
-              className={`px-4 py-2 rounded-full font-medium ${
-                state.paymentFilter === 'all' 
-                  ? 'bg-primary text-white shadow-md' 
-                  : 'bg-white border-neutral-300 text-neutral-700 hover:bg-neutral-50'
-              }`}
-            >
-              Todos ({regs.length})
-            </Button>
-            <Button
-              variant={state.paymentFilter === 'paid' ? 'success' : 'outline'}
-              size="sm"
-              onClick={() => setState(prev => ({ ...prev, paymentFilter: 'paid' }))}
-              className={`px-4 py-2 rounded-full font-medium ${
-                state.paymentFilter === 'paid' 
-                  ? 'bg-success text-white shadow-md' 
-                  : 'bg-white border-neutral-300 text-neutral-700 hover:bg-neutral-50'
-              }`}
-            >
-              Pagados ({paymentStats.paid})
-            </Button>
-            <Button
-              variant={state.paymentFilter === 'pending' ? 'warning' : 'outline'}
-              size="sm"
-              onClick={() => setState(prev => ({ ...prev, paymentFilter: 'pending' }))}
-              className={`px-4 py-2 rounded-full font-medium ${
-                state.paymentFilter === 'pending' 
-                  ? 'bg-warning text-white shadow-md' 
-                  : 'bg-white border-neutral-300 text-neutral-700 hover:bg-neutral-50'
-              }`}
-            >
-              Pendientes ({paymentStats.pending})
-            </Button>
-          </div>
-        </div>
-        
-        {/* Status Summary */}
-        <div className="flex flex-wrap gap-2 text-sm">
-          {paymentStats.failed > 0 && (
-            <Badge variant="error" size="sm">
-              {paymentStats.failed} Fallido{paymentStats.failed > 1 ? 's' : ''}
-            </Badge>
-          )}
-          {paymentStats.refunded > 0 && (
-            <Badge variant="neutral" size="sm">
-              {paymentStats.refunded} Reembolsado{paymentStats.refunded > 1 ? 's' : ''}
-            </Badge>
+          {/* Status Summary */}
+          {(paymentStats.failed > 0 || paymentStats.refunded > 0) && (
+            <div className="flex flex-wrap gap-2">
+              {paymentStats.failed > 0 && (
+                <div className="px-3 py-1.5 bg-red-50 border border-red-200 rounded-lg text-sm font-medium text-red-700">
+                  {paymentStats.failed} Fallido{paymentStats.failed > 1 ? 's' : ''}
+                </div>
+              )}
+              {paymentStats.refunded > 0 && (
+                <div className="px-3 py-1.5 bg-neutral-100 border border-neutral-200 rounded-lg text-sm font-medium text-neutral-600">
+                  {paymentStats.refunded} Reembolsado{paymentStats.refunded > 1 ? 's' : ''}
+                </div>
+              )}
+            </div>
           )}
         </div>
       </div>
 
       {/* Players List */}
-      <Card>
-        <CardHeader>
-          <CardTitle>{getFilteredTitle()}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {filteredRegistrations.map((registration) => (
+      <Card className="shadow-sm border-neutral-200 rounded-xl bg-white" style={{ marginTop: '20px' }}>
+        <CardContent className="p-8">
+          {/* Header Section */}
+          <div className="flex items-center gap-3" style={{ marginBottom: '24px' }}>
+            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+              <PlayersIcon size={18} className="text-blue-600" />
+            </div>
+            <h3 className="text-lg font-semibold text-neutral-900">{getFilteredTitle()}</h3>
+          </div>
+
+          <div className="space-y-4">
+            {filteredRegistrations.map((registration, index) => (
               <div 
                 key={registration.id} 
-                className="flex items-center justify-between p-4 bg-neutral-50 rounded-lg hover:bg-neutral-100 transition-colors"
+                className="group relative bg-white border border-neutral-200 rounded-xl p-6 hover:border-green-200 hover:bg-green-50/30 transition-all duration-300 hover:shadow-sm"
+                style={{ 
+                  animationDelay: `${index * 50}ms`,
+                  animation: 'fadeInUp 0.5s ease-out forwards'
+                }}
               >
-                <div className="flex items-center gap-4 flex-1">
+                <div className="flex items-center gap-6" style={{ paddingLeft: '8px' }}>
                   {/* Avatar */}
-                  <div className="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-semibold">
+                  <div className={`w-12 h-12 text-white rounded-lg flex items-center justify-center font-medium text-base shadow-sm ${
+                    registration.payment_status === 'paid' 
+                      ? 'bg-gradient-to-br from-green-500 to-green-600'
+                      : 'bg-gradient-to-br from-amber-500 to-amber-600'
+                  }`}>
                     {getInitials(registration.player_name)}
                   </div>
                   
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-1">
-                      <h4 className="font-semibold text-lg text-neutral-900">
+                  {/* Player Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between mb-2">
+                      <h4 className="text-lg font-semibold text-neutral-900 truncate pr-4">
                         {registration.player_name}
                       </h4>
-                      {registration.team_assignment && (
-                        <Badge variant="info" size="sm">
-                          {registration.team_assignment === 'team_a' ? 'Equipo A' : 'Equipo B'}
-                        </Badge>
-                      )}
-                    </div>
-                    
-                    <p className="text-neutral-600 mb-2">
-                      {registration.player_phone}
-                    </p>
-                    
-                    <div className="flex items-center gap-4 text-sm text-neutral-600">
-                      <span>Registrado: {formatDate(registration.registered_at)}</span>
-                      {registration.paid_at && (
-                        <span className="text-success">
-                          • Pagado: {formatDate(registration.paid_at)}
-                        </span>
-                      )}
-                      {registration.payment_id && (
-                        <span className="font-mono text-xs">
-                          • ID: {registration.payment_id}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="text-right flex items-center gap-4">
-                  {/* Payment Status */}
-                  <div>
-                    <div className="flex items-center justify-end gap-2 mb-1">
-                      <span className={`text-sm font-medium ${
-                        registration.payment_status === 'paid' ? 'text-success' :
-                        registration.payment_status === 'pending' ? 'text-warning' :
-                        registration.payment_status === 'failed' ? 'text-error' :
-                        'text-neutral-600'
-                      }`}>
-                        {PAYMENT_STATUS_LABELS[registration.payment_status]}
-                      </span>
-                    </div>
-                    
-                    {registration.payment_amount && (
-                      <div className="text-lg font-semibold text-neutral-900">
-                        {formatCurrency(registration.payment_amount)}
+                      <div className="flex items-center gap-3 flex-shrink-0">
+                        {/* Payment Status - Only show for failed/refunded states */}
+                        {(registration.payment_status === 'failed' || registration.payment_status === 'refunded') && (
+                          <div className={`px-3 py-1.5 rounded-lg text-sm font-medium ${
+                            registration.payment_status === 'failed' 
+                              ? 'bg-red-100 text-red-700 border border-red-200' :
+                              'bg-neutral-100 text-neutral-600 border border-neutral-200'
+                          }`}>
+                            {PAYMENT_STATUS_LABELS[registration.payment_status]}
+                          </div>
+                        )}
+                        
                       </div>
-                    )}
+                    </div>
+                    
+                    <div className="flex items-center gap-6 text-sm text-neutral-600 mb-3">
+                      <div className="flex items-center gap-2">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                        </svg>
+                        <span>{registration.player_phone}</span>
+                      </div>
+                      
+                      {registration.payment_amount && (
+                        <div className="flex items-center gap-2 font-semibold text-neutral-900">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                            <rect width="20" height="14" x="2" y="5" rx="2"/>
+                            <line x1="2" x2="22" y1="10" y2="10"/>
+                          </svg>
+                          <span>{formatCurrency(registration.payment_amount)}</span>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Registration Details */}
+                    <div className="flex items-center gap-6 text-xs text-neutral-500">
+                      <div className="flex items-center gap-1">
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                          <circle cx="12" cy="12" r="10"/>
+                          <polyline points="12,6 12,12 16,14"/>
+                        </svg>
+                        <span>Registrado: {formatDate(registration.registered_at)}</span>
+                      </div>
+                      
+                      {registration.paid_at && (
+                        <div className="flex items-center gap-1 text-green-600">
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                            <path d="M20 6 9 17l-5-5"/>
+                          </svg>
+                          <span>Pagado: {formatDate(registration.paid_at)}</span>
+                        </div>
+                      )}
+                      
+                      {registration.payment_id && (
+                        <div className="flex items-center gap-1 font-mono">
+                          <span>ID: {registration.payment_id}</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   {/* Actions */}
-                  <div className="flex gap-2">
+                  <div className="flex items-center gap-3" style={{ paddingRight: '8px' }}>
                     {registration.payment_status !== 'paid' && (
                       <Button
                         variant="success"
                         size="sm"
                         onClick={() => handleMarkAsPaid(registration.id)}
                         disabled={state.paymentLoading}
+                        className="px-4 py-2 text-sm font-medium bg-green-600 hover:bg-green-700 text-white border-0 shadow-sm"
                       >
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                          <path d="M20 6 9 17l-5-5"/>
+                        </svg>
                         Marcar Pagado
                       </Button>
                     )}
@@ -513,8 +552,13 @@ export function PlayerRegistrations({
                         size="sm"
                         onClick={() => handleRemovePlayer(registration.id)}
                         disabled={state.loading}
+                        className="px-3 py-2 text-sm font-medium bg-red-600 hover:bg-red-700 text-white border-0 shadow-sm"
                       >
-                        Eliminar
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                          <path d="M3 6h18"/>
+                          <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                          <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                        </svg>
                       </Button>
                     )}
                   </div>
@@ -522,17 +566,25 @@ export function PlayerRegistrations({
               </div>
             ))}
 
+            {/* Empty State */}
             {filteredRegistrations.length === 0 && regs.length > 0 && (
-              <div className="text-center py-8">
-                <h3 className="text-lg font-semibold mb-2">{getEmptyStateMessage().title}</h3>
-                <p className="text-neutral-600 mb-4">
+              <div className="text-center py-12">
+                <div className="flex items-center justify-center mb-6">
+                  <div className="w-16 h-16 bg-neutral-100 rounded-2xl flex items-center justify-center">
+                    <SearchIcon size={32} className="text-neutral-400" />
+                  </div>
+                </div>
+                <h3 className="text-lg font-semibold mb-3 text-neutral-900">{getEmptyStateMessage().title}</h3>
+                <p className="text-neutral-600 mb-6 max-w-md mx-auto">
                   {getEmptyStateMessage().description}
                 </p>
                 {state.searchTerm && (
                   <Button
                     variant="ghost"
                     onClick={clearSearch}
+                    className="px-6 py-3 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 border-0 rounded-lg"
                   >
+                    <XIcon size={16} className="mr-2" />
                     Limpiar búsqueda
                   </Button>
                 )}
@@ -541,7 +593,6 @@ export function PlayerRegistrations({
           </div>
         </CardContent>
       </Card>
-
     </div>
   );
 }

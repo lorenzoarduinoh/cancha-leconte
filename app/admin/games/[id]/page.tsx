@@ -1,35 +1,77 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, Suspense, lazy } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/Card';
+import { Card, CardContent } from '@/app/components/ui/Card';
 import { Button } from '@/app/components/ui/Button';
 import { Badge } from '@/app/components/ui/Badge';
 import { 
   ArrowLeftIcon, 
-  ChartBarIcon, 
-  UsersIcon, 
   ShieldIcon, 
   TrophyIcon,
-  LockIcon,
-  PlayCircleIcon,
-  TrashIcon,
-  AlertTriangleIcon,
-  PercentIcon,
-  DollarSignIcon,
-  ClockIcon 
+  CheckCircleIcon,
+  AlertTriangleIcon
 } from '@/app/components/ui/Icons';
-import { TeamManagement } from '@/app/components/games/TeamManagement';
-import { PlayerRegistrations } from '@/app/components/games/PlayerRegistrations';
-import { GameShareLink } from '@/app/components/games/GameShareLink';
-import { GameResultForm } from '@/app/components/games/GameResultForm';
 import { ConfirmationModal } from '@/app/components/ui/ConfirmationModal';
 import { 
   GameWithDetails, 
   GAME_STATUS_LABELS,
-  GameRegistration,
   TeamAssignment 
 } from '@/lib/types/game';
+
+// Lazy load heavy components to reduce initial bundle size
+const TeamManagement = lazy(() => 
+  import('@/app/components/games/TeamManagement')
+    .then(mod => ({ default: mod.TeamManagement }))
+    .catch(err => {
+      console.error('Failed to load TeamManagement:', err);
+      return { default: () => <div>Error loading component</div> };
+    })
+);
+
+const PlayerRegistrations = lazy(() => 
+  import('@/app/components/games/PlayerRegistrations')
+    .then(mod => ({ default: mod.PlayerRegistrations }))
+    .catch(err => {
+      console.error('Failed to load PlayerRegistrations:', err);
+      return { default: () => <div>Error loading component</div> };
+    })
+);
+
+const GameShareLink = lazy(() => 
+  import('@/app/components/games/GameShareLink')
+    .then(mod => ({ default: mod.GameShareLink }))
+    .catch(err => {
+      console.error('Failed to load GameShareLink:', err);
+      return { default: () => <div>Error loading component</div> };
+    })
+);
+
+const GameResultForm = lazy(() => 
+  import('@/app/components/games/GameResultForm')
+    .then(mod => ({ default: mod.GameResultForm }))
+    .catch(err => {
+      console.error('Failed to load GameResultForm:', err);
+      return { default: () => <div>Error loading component</div> };
+    })
+);
+
+const PaymentStatusCard = lazy(() => 
+  import('@/app/components/games/PaymentStatusCard')
+    .then(mod => ({ default: mod.PaymentStatusCard }))
+    .catch(err => {
+      console.error('Failed to load PaymentStatusCard:', err);
+      return { default: () => <div>Error loading component</div> };
+    })
+);
+
+// Loading fallback component
+const ComponentLoader = ({ children }: { children: string }) => (
+  <div className="flex items-center justify-center py-8">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mr-3"></div>
+    <span className="text-neutral-600">{children}...</span>
+  </div>
+);
 
 interface PaymentStats {
   total: number;
@@ -306,7 +348,6 @@ export default function GameDetailPage() {
   };
 
   const isPastGame = new Date(state.game.game_date) < new Date();
-  const canEdit = !isPastGame && state.game.status !== 'completed' && state.game.status !== 'cancelled';
   const canCancel = state.game.status !== 'completed' && state.game.status !== 'cancelled';
   
   // Calculate payment statistics for the Overview
@@ -324,80 +365,87 @@ export default function GameDetailPage() {
     <div className="min-h-screen bg-neutral-50">
       {/* Header */}
       <header className="bg-white border-b border-neutral-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 py-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-            <div className="flex-1">
-              <div className="flex items-center gap-4 mb-4">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => router.push('/admin/games')}
-                  aria-label="Volver a la lista de partidos"
-                  className="gap-2 text-neutral-600 hover:text-neutral-900"
-                >
-                  <ArrowLeftIcon size={18} />
-                  Volver
-                </Button>
-                <Badge 
-                  variant={getStatusVariant(state.game.status)} 
-                  size="lg"
-                  className="px-4 py-2"
-                >
-                  {GAME_STATUS_LABELS[state.game.status]}
-                </Badge>
-              </div>
-              
-              <h1 className="text-2xl md:text-3xl font-bold text-neutral-900 mb-1">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-4">
+          <div className="flex items-center justify-between gap-4">
+            {/* Left: Back button + Status badge */}
+            <div className="flex items-center gap-4 flex-shrink-0">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => router.push('/admin/games')}
+                aria-label="Volver a la lista de partidos"
+                className="gap-2 text-neutral-600 hover:text-neutral-900"
+              >
+                <ArrowLeftIcon size={18} />
+                Volver
+              </Button>
+              <Badge 
+                variant={state.game.status === 'closed' ? 'success' : getStatusVariant(state.game.status)} 
+                size="sm"
+                className="px-3 py-1 bg-emerald-100 text-emerald-700 border-emerald-200"
+              >
+                {GAME_STATUS_LABELS[state.game.status]}
+              </Badge>
+            </div>
+
+            {/* Center: Game title + date */}
+            <div className="flex-1 text-center min-w-0">
+              <h1 className="text-xl font-semibold text-neutral-900 truncate">
                 {state.game.title}
               </h1>
-              
-              <p className="text-neutral-600">
+              <p className="text-sm text-neutral-500">
                 <time dateTime={state.game.game_date}>
                   {formatDate(state.game.game_date)}
                 </time>
               </p>
-              
-              {state.game.description && (
-                <p className="text-neutral-700 mt-2">{state.game.description}</p>
-              )}
             </div>
 
-            {/* Actions */}
-            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+            {/* Right: Action buttons */}
+            <div className="flex items-center gap-3 flex-shrink-0">
               {state.game.status === 'open' && (
                 <Button
                   onClick={() => handleStatusChange('closed')}
                   variant="warning"
-                  size="md"
-                  className="flex-1 sm:flex-none gap-2"
+                  size="sm"
+                  className="px-3 py-2 h-9"
+                  aria-label="Cerrar Registraciones"
+                  title="Cerrar Registraciones"
                 >
-                  <LockIcon size={18} />
-                  Cerrar Registraciones
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="10" cy="7" r="4"/>
+                    <path d="M10.3 15H7a4 4 0 0 0-4 4v2"/>
+                    <path d="M15 15.5V14a2 2 0 0 1 4 0v1.5"/>
+                    <rect width="8" height="5" x="13" y="16" rx=".899"/>
+                  </svg>
                 </Button>
               )}
 
               {state.game.status === 'closed' && (
                 <Button
                   onClick={() => handleStatusChange('completed')}
-                  variant="success"
-                  size="md"
-                  className="flex-1 sm:flex-none gap-2"
+                  variant="ghost"
+                  size="sm"
+                  className="gap-2 text-neutral-700 hover:text-neutral-900 hover:bg-neutral-50 border border-neutral-300 font-medium px-4 py-2 h-9"
                 >
-                  <PlayCircleIcon size={18} />
+                  <CheckCircleIcon size={16} />
                   Marcar como Completado
                 </Button>
               )}
-              
               
               {canCancel && (
                 <Button
                   onClick={handleCancelGame}
                   variant="destructive"
-                  size="md"
-                  className="flex-1 sm:flex-none gap-2"
+                  size="sm"
+                  className="font-medium px-3 py-2 h-9"
+                  aria-label="Cancelar Partido"
+                  title="Cancelar Partido"
                 >
-                  <TrashIcon size={18} />
-                  Cancelar Partido
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
+                    <path d="M3 6h18"/>
+                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                  </svg>
                 </Button>
               )}
             </div>
@@ -406,66 +454,91 @@ export default function GameDetailPage() {
       </header>
 
       {/* Navigation Tabs */}
-      <div className="bg-white border-b border-neutral-200">
+      <div className="bg-neutral-50 pb-8">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
-          <nav className="flex gap-8 overflow-x-auto py-1" role="tablist">
-            {[
-              { 
-                id: 'overview', 
-                label: 'Resumen', 
-                icon: ChartBarIcon,
-                count: null 
-              },
-              { 
-                id: 'players', 
-                label: 'Jugadores', 
-                icon: UsersIcon,
-                count: state.game.current_players 
-              },
-              { 
-                id: 'teams', 
-                label: 'Equipos', 
-                icon: ShieldIcon,
-                count: null 
-              },
-              { 
-                id: 'resultado', 
-                label: 'Resultado', 
-                icon: TrophyIcon,
-                count: null 
-              },
-            ].map((tab) => {
-              const IconComponent = tab.icon;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => handleTabChange(tab.id as any)}
-                  className={`group flex items-center gap-3 py-4 px-3 border-b-3 font-medium text-sm whitespace-nowrap transition-all duration-200 ${
-                    state.activeTab === tab.id
-                      ? 'border-primary text-primary bg-primary/5 -mb-px'
-                      : 'border-transparent text-neutral-600 hover:text-primary hover:border-primary/30 hover:bg-primary/5'
-                  }`}
-                  role="tab"
-                  aria-selected={state.activeTab === tab.id}
-                  aria-controls={`${tab.id}-panel`}
-                >
-                  <IconComponent size={18} />
-                  <span className="flex items-center gap-2">
-                    {tab.label}
-                    {tab.count !== null && (
-                      <span className={`px-2 py-0.5 text-xs rounded-full transition-colors ${
-                        state.activeTab === tab.id
-                          ? 'bg-primary text-white'
-                          : 'bg-neutral-200 text-neutral-600 group-hover:bg-primary group-hover:text-white'
-                      }`}>
-                        {tab.count}
-                      </span>
-                    )}
-                  </span>
-                </button>
-              );
-            })}
-          </nav>
+          {/* Clear visual separator from header */}
+          <div className="h-6"></div>
+          
+          <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm overflow-hidden px-3 py-2">
+            <nav className="flex gap-2" role="tablist">
+              {[
+                { 
+                  id: 'overview', 
+                  label: 'Resumen', 
+                  icon: ({ size, className }: { size: number; className?: string }) => (
+                    <svg className={`w-[${size}px] h-[${size}px] ${className}`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                      <path d="M3 3v16a2 2 0 0 0 2 2h16"/>
+                      <path d="M18 17V9"/>
+                      <path d="M13 17V5"/>
+                      <path d="M8 17v-3"/>
+                    </svg>
+                  ),
+                  count: null 
+                },
+                { 
+                  id: 'players', 
+                  label: 'Jugadores', 
+                  icon: ({ size, className }: { size: number; className?: string }) => (
+                    <svg className={`w-[${size}px] h-[${size}px] ${className}`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                      <path d="M18 21a8 8 0 0 0-16 0"/>
+                      <circle cx="10" cy="8" r="5"/>
+                      <path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3"/>
+                    </svg>
+                  ),
+                  count: state.game.current_players 
+                },
+                { 
+                  id: 'teams', 
+                  label: 'Equipos', 
+                  icon: ShieldIcon,
+                  count: null 
+                },
+                { 
+                  id: 'resultado', 
+                  label: 'Resultado', 
+                  icon: TrophyIcon,
+                  count: null 
+                },
+              ].map((tab) => {
+                const IconComponent = tab.icon;
+                const isActive = state.activeTab === tab.id;
+                
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => handleTabChange(tab.id as GameDetailState['activeTab'])}
+                    className={`
+                      flex-1 flex items-center justify-center gap-2 py-4 px-4
+                      font-medium text-base transition-all duration-200 rounded-xl
+                      ${isActive
+                        ? 'bg-green-100/70 text-green-700' 
+                        : 'text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900'
+                      }
+                    `}
+                    role="tab"
+                    aria-selected={isActive}
+                    aria-controls={`${tab.id}-panel`}
+                  >
+                    <IconComponent size={18} className="flex-shrink-0" />
+                    <span className="flex items-center gap-2 whitespace-nowrap">
+                      {tab.label}
+                      {tab.count !== null && (
+                        <span className={`
+                          text-sm font-semibold px-2 py-1 rounded-full min-w-6 text-center
+                          ${isActive 
+                            ? 'bg-green-200/60 text-green-700' 
+                            : 'bg-neutral-100 text-neutral-600'
+                          }
+                        `}>
+                          {tab.count}
+                        </span>
+                      )}
+                    </span>
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
         </div>
       </div>
 
@@ -475,121 +548,126 @@ export default function GameDetailPage() {
         {state.activeTab === 'overview' && (
           <div id="overview-panel" role="tabpanel" aria-labelledby="overview-tab">
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-              {/* Game Stats */}
-              <Card className="shadow-sm border-neutral-200">
-                <CardHeader className="pb-6">
-                  <CardTitle className="text-xl font-semibold">Estadísticas</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="flex justify-between items-center">
-                    <span className="text-neutral-600">Jugadores registrados:</span>
-                    <span className="font-semibold">{state.game?.current_players || 0}/{state.game?.max_players || 0}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-neutral-600">Mínimo requerido:</span>
-                    <span className="font-semibold">{state.game?.min_players || 0}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-neutral-600">Costo por jugador:</span>
-                    <span className="font-semibold">{formatCurrency(state.game?.field_cost_per_player || 0)}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-neutral-600">Ingresos esperados:</span>
-                    <span className="font-semibold text-success">
-                      {formatCurrency((state.game?.field_cost_per_player || 0) * (state.game?.current_players || 0))}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Payment Status */}
-              <Card className="shadow-sm border-neutral-200">
-                <CardHeader className="pb-6">
-                  <CardTitle className="text-xl font-semibold">Estado de Pagos</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {paymentStats.total > 0 ? (
-                    <>
-                      {/* Payment Rate */}
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                            <PercentIcon size={20} className="text-primary" />
-                          </div>
-                          <div>
-                            <span className="text-neutral-600 text-sm">Tasa de Pago</span>
-                            <p className="font-semibold text-lg">{paymentStats.paymentRate}%</p>
-                          </div>
-                        </div>
-                        
-                        {/* Progress Bar for Payment Rate - Now horizontal and much longer */}
-                        <div className="flex-1 max-w-48 ml-6">
-                          <div className="w-full bg-neutral-200 rounded-full h-2">
-                            <div 
-                              className="h-2 rounded-full bg-primary transition-all duration-300"
-                              style={{ width: `${paymentStats.paymentRate}%` }}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Collected Amount */}
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-success/10 rounded-full flex items-center justify-center">
-                            <DollarSignIcon size={20} className="text-success" />
-                          </div>
-                          <div>
-                            <span className="text-neutral-600 text-sm">Recaudado</span>
-                            <p className="font-semibold text-lg text-success">
-                              {formatCurrency(paymentStats.paidAmount)}
-                            </p>
-                          </div>
-                        </div>
-                        <span className="text-sm text-neutral-600">
-                          {paymentStats.paid} de {paymentStats.total}
-                        </span>
-                      </div>
-                      
-                      {/* Pending Amount */}
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-warning/10 rounded-full flex items-center justify-center">
-                            <ClockIcon size={20} className="text-warning" />
-                          </div>
-                          <div>
-                            <span className="text-neutral-600 text-sm">Pendiente</span>
-                            <p className="font-semibold text-lg text-warning">
-                              {formatCurrency(paymentStats.pendingAmount)}
-                            </p>
-                          </div>
-                        </div>
-                        <span className="text-sm text-neutral-600">
-                          {paymentStats.pending} jugadores
-                        </span>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="text-center py-6">
-                      <div className="text-4xl mb-3" aria-hidden="true">💳</div>
-                      <p className="text-neutral-600">No hay pagos registrados</p>
+              {/* Game Stats - Fixed Layout */}
+              <Card className="shadow-sm border-neutral-200 rounded-xl bg-white">
+                <CardContent className="p-6">
+                  {/* Header Section */}
+                  <div className="flex items-center gap-3 mb-12">
+                    <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                      <svg className="w-[18px] h-[18px] text-green-700" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                        <path d="M3 3v16a2 2 0 0 0 2 2h16"/>
+                        <path d="M18 17V9"/>
+                        <path d="M13 17V5"/>
+                        <path d="M8 17v-3"/>
+                      </svg>
                     </div>
-                  )}
+                    <h3 className="text-lg font-semibold text-neutral-900">Estadísticas del Partido</h3>
+                  </div>
+
+                  <div className="space-y-6">
+                    {/* Registered Players Block */}
+                    <div className="space-y-4">
+                      {/* Main row */}
+                      <div className="flex items-center justify-between">
+                        <span className="text-neutral-700 font-medium">Jugadores Registrados</span>
+                        <span className="text-2xl font-bold text-neutral-900">
+                          {state.game?.current_players || 0}<span className="text-sm text-neutral-400 font-normal">/{state.game?.max_players || 0}</span>
+                        </span>
+                      </div>
+                      
+                      {/* Progress bar */}
+                      <div className="w-full">
+                        <div className="w-full bg-neutral-200 rounded-full h-2">
+                          <div 
+                            className="bg-black h-2 rounded-full transition-all duration-300"
+                            style={{ 
+                              width: `${Math.min(
+                                ((state.game?.current_players || 0) / (state.game?.max_players || 1)) * 100, 
+                                100
+                              )}%` 
+                            }}
+                            role="progressbar"
+                            aria-valuenow={state.game?.current_players || 0}
+                            aria-valuemax={state.game?.max_players || 0}
+                            aria-label="Jugadores registrados"
+                          />
+                        </div>
+                      </div>
+                      
+                      {/* Auxiliary text */}
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-neutral-500">
+                          Mínimo: {state.game?.min_players || 0}
+                        </span>
+                        <span className="text-neutral-600">
+                          {Math.round(
+                            ((state.game?.current_players || 0) / (state.game?.max_players || 1)) * 100
+                          )}% ocupado
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Cost per Player Row */}
+                    <div className="bg-neutral-50 rounded-lg p-4 border border-neutral-200">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center border border-neutral-200">
+                            <svg className="w-[16px] h-[16px] text-neutral-600" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                              <circle cx="12" cy="8" r="5"/>
+                              <path d="M20 21a8 8 0 0 0-16 0"/>
+                            </svg>
+                          </div>
+                          <span className="text-neutral-700 font-medium">Costo por Jugador</span>
+                        </div>
+                        <span className="text-lg font-semibold text-neutral-900">
+                          {formatCurrency(state.game?.field_cost_per_player || 0)}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Expected Income Block */}
+                    <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center border border-green-200">
+                            <svg className="w-[16px] h-[16px] text-green-700" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                              <rect width="20" height="12" x="2" y="6" rx="2"/>
+                              <circle cx="12" cy="12" r="2"/>
+                              <path d="M6 12h.01M18 12h.01"/>
+                            </svg>
+                          </div>
+                          <span className="text-green-800 font-medium">Ingresos Esperados</span>
+                        </div>
+                        <span className="text-2xl font-bold text-green-800">
+                          {formatCurrency((state.game?.field_cost_per_player || 0) * (state.game?.current_players || 0))}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
 
-              {/* Friend Registration Link */}
-              <Card className="md:col-span-2 xl:col-span-1 shadow-sm border-neutral-200">
-                <CardHeader className="pb-6">
-                  <div className="flex justify-between items-center">
-                    <CardTitle className="text-xl font-semibold">Invitar Amigos</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <GameShareLink 
-                    shareToken={state.game.share_token} 
-                    gameTitle={state.game.title}
-                  />
+              {/* Payment Status - New Design */}
+              <Suspense fallback={<ComponentLoader>Cargando estado de pagos</ComponentLoader>}>
+                <PaymentStatusCard
+                  paidAmount={paymentStats.paidAmount}
+                  pendingAmount={paymentStats.pendingAmount}
+                  paidPlayersCount={paymentStats.paid}
+                  pendingPlayersCount={paymentStats.pending}
+                  totalPlayersCount={paymentStats.total}
+                  className="shadow-sm"
+                />
+              </Suspense>
+
+              {/* Invite Friends Card */}
+              <Card className="md:col-span-2 xl:col-span-1 bg-white rounded-3xl border border-neutral-200 shadow-lg min-h-[320px]">
+                <CardContent className="px-12 py-16 h-full flex flex-col" style={{ marginBottom: '0 !important' }}>
+                  <Suspense fallback={<ComponentLoader>Cargando enlace</ComponentLoader>}>
+                    <GameShareLink 
+                      shareToken={state.game.share_token} 
+                      gameTitle={state.game.title}
+                    />
+                  </Suspense>
                 </CardContent>
               </Card>
             </div>
@@ -599,27 +677,31 @@ export default function GameDetailPage() {
         {/* Players Tab */}
         {state.activeTab === 'players' && (
           <div id="players-panel" role="tabpanel" aria-labelledby="players-tab">
-            <PlayerRegistrations 
-              gameId={state.game.id} 
-              registrations={state.game.registrations}
-              gameStatus={state.game.status}
-              onRegistrationUpdate={fetchGameDetails}
-            />
+            <Suspense fallback={<ComponentLoader>Cargando jugadores</ComponentLoader>}>
+              <PlayerRegistrations 
+                gameId={state.game.id} 
+                registrations={state.game.registrations}
+                gameStatus={state.game.status}
+                onRegistrationUpdate={fetchGameDetails}
+              />
+            </Suspense>
           </div>
         )}
 
         {/* Teams Tab */}
         {state.activeTab === 'teams' && (
           <div id="teams-panel" role="tabpanel" aria-labelledby="teams-tab">
-            <TeamManagement 
-              gameId={state.game.id}
-              registrations={state.game.registrations}
-              gameStatus={state.game.status}
-              onTeamsUpdate={fetchGameDetails}
-              isReadOnly={state.game.status === 'completed'}
-              teamAName={state.game.team_a_name}
-              teamBName={state.game.team_b_name}
-            />
+            <Suspense fallback={<ComponentLoader>Cargando equipos</ComponentLoader>}>
+              <TeamManagement 
+                gameId={state.game.id}
+                registrations={state.game.registrations}
+                gameStatus={state.game.status}
+                onTeamsUpdate={fetchGameDetails}
+                isReadOnly={state.game.status === 'completed'}
+                teamAName={state.game.team_a_name}
+                teamBName={state.game.team_b_name}
+              />
+            </Suspense>
           </div>
         )}
 
@@ -628,33 +710,22 @@ export default function GameDetailPage() {
         {state.activeTab === 'resultado' && (
           <div id="resultado-panel" role="tabpanel" aria-labelledby="resultado-tab">
             {state.game.status === 'completed' ? (
-              <GameResultForm 
-                gameId={state.game.id}
-                existingResult={state.game.result}
-                onResultSaved={fetchGameDetails}
-                teamAName={state.game.team_a_name}
-                teamBName={state.game.team_b_name}
-              />
+              <Suspense fallback={<ComponentLoader>Cargando formulario de resultado</ComponentLoader>}>
+                <GameResultForm 
+                  gameId={state.game.id}
+                  existingResult={state.game.result}
+                  onResultSaved={fetchGameDetails}
+                  teamAName={state.game.team_a_name}
+                  teamBName={state.game.team_b_name}
+                />
+              </Suspense>
             ) : (
               <Card className="text-center py-8">
                 <CardContent>
-                  <div className="text-6xl mb-4" aria-hidden="true">🏆</div>
                   <h3 className="text-xl font-semibold mb-2">Resultado No Disponible</h3>
-                  <p className="text-neutral-600 mb-4">
+                  <p className="text-neutral-600">
                     Solo se puede registrar el resultado de partidos completados.
                   </p>
-                  <div className="bg-warning/10 border border-warning/20 rounded-lg p-4 text-sm text-warning-800 max-w-md mx-auto">
-                    <div className="flex items-center gap-2 font-medium mb-2">
-                      <AlertTriangleIcon size={18} className="text-warning" />
-                      Estado actual: <Badge variant={getStatusVariant(state.game.status)} size="sm">
-                        {GAME_STATUS_LABELS[state.game.status]}
-                      </Badge>
-                    </div>
-                    <p className="text-left">
-                      Para registrar el resultado, el partido debe estar marcado como completado. 
-                      Puedes cambiar el estado desde las acciones en el encabezado de la página.
-                    </p>
-                  </div>
                 </CardContent>
               </Card>
             )}
@@ -672,7 +743,7 @@ export default function GameDetailPage() {
         message={
           <div>
             <p className="mb-3">
-              ¿Estás seguro de que quieres cancelar el partido <strong>"{state.game?.title}"</strong>?
+              ¿Estás seguro de que quieres cancelar el partido <strong>&ldquo;{state.game?.title}&rdquo;</strong>?
             </p>
             <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-800">
               <div className="flex items-center gap-2 font-medium mb-2">

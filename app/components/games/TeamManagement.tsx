@@ -14,10 +14,15 @@ import {
 import { 
   LockIcon, 
   ShuffleIcon, 
+  DicesIcon,
   RefreshIcon, 
+  BrushCleaningIcon,
   SaveIcon, 
   UserGroupIcon, 
   ScaleIcon,
+  ShieldIcon,
+  ShieldOffIcon,
+  PlayersIcon,
   CheckIcon,
   AlertTriangleIcon,
   ArrowRightIcon,
@@ -274,13 +279,15 @@ export function TeamManagement({
 
   if (gameStatus !== 'closed' && gameStatus !== 'completed' && regs.length < 4) {
     return (
-      <Card className="text-center py-8">
-        <CardContent>
-          <div className="flex justify-center mb-4">
-            <UserGroupIcon size={48} className="text-neutral-400" />
+      <Card className="text-center shadow-sm border-neutral-200 rounded-xl bg-white">
+        <CardContent className="p-12">
+          <div className="flex items-center justify-center mb-6">
+            <div className="w-16 h-16 bg-neutral-100 rounded-2xl flex items-center justify-center">
+              <ShieldIcon size={32} className="text-neutral-400" />
+            </div>
           </div>
-          <h3 className="text-xl font-semibold mb-2">Gestión de Equipos No Disponible</h3>
-          <p className="text-neutral-600">
+          <h3 className="text-xl font-semibold mb-3 text-neutral-900">Gestión de Equipos No Disponible</h3>
+          <p className="text-neutral-600 max-w-md mx-auto">
             {gameStatus !== 'closed' && gameStatus !== 'completed'
               ? 'Cierra las registraciones para poder gestionar los equipos.'
               : `Se necesitan al menos 4 jugadores para formar equipos. Actualmente hay ${regs.length}.`
@@ -292,311 +299,402 @@ export function TeamManagement({
   }
 
   return (
-    <div className="space-y-6">
-      {/* Controls */}
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-              <div className="flex items-center gap-2">
-                <CardTitle>Gestión de Equipos</CardTitle>
-                {isReadOnly && (
-                  <div className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-neutral-600 bg-neutral-100 rounded-full border border-neutral-200">
-                    <LockIcon size={12} />
-                    Solo Lectura
-                  </div>
-                )}
-              </div>
-              <p className="text-sm text-neutral-600 mt-1">
-                {isReadOnly 
-                  ? "Visualiza cómo se formaron los equipos. No se permiten cambios en partidos completados."
-                  : "Arrastra jugadores entre equipos o usa los botones de acción"
-                }
-              </p>
-            </div>
+    <div className="space-y-8">
+      {/* Action Buttons and Team Balance Status */}
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        {/* Action Buttons */}
+        {!isReadOnly && (
+          <div className="flex flex-wrap gap-1">
+            <button
+              onClick={handleRandomAssignment}
+              disabled={state.loading || regs.length < 2}
+              className="px-6 text-sm font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2 bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50 hover:border-neutral-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{ 
+                height: '48px', 
+                boxSizing: 'border-box',
+                lineHeight: '1.5',
+                fontSize: '14px'
+              }}
+            >
+              <DicesIcon size={16} className="text-neutral-500" />
+              Asignar Aleatoriamente
+            </button>
             
-            {!isReadOnly && (
-              <div className="flex flex-wrap gap-2">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={handleRandomAssignment}
-                  loading={state.loading}
-                  disabled={regs.length < 2}
-                  className="gap-2"
-                >
-                  <ShuffleIcon size={16} />
-                  Asignar Aleatoriamente
-                </Button>
-                
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleClearAssignments}
-                  disabled={state.loading}
-                  className="gap-2"
-                >
-                  <RefreshIcon size={16} />
-                  Limpiar
-                </Button>
-                
-                <Button
-                  variant={state.saved ? "success" : "primary"}
-                  size="sm"
-                  onClick={handleSaveAssignment}
-                  loading={state.loading}
-                  disabled={!hasChanges || hasUnassignedPlayers}
-                  className="gap-2"
-                  title={hasUnassignedPlayers ? `No se puede guardar: ${state.assignment.unassigned.length} jugador${state.assignment.unassigned.length > 1 ? 'es' : ''} sin asignar` : undefined}
-                >
-                  {state.saved ? (
-                    <>
-                      <CheckIcon size={16} />
-                      Equipos Guardados
-                    </>
-                  ) : (
-                    <>
-                      <SaveIcon size={16} />
-                      Guardar Equipos
-                    </>
-                  )}
-                </Button>
-              </div>
-            )}
-          </div>
-        </CardHeader>
-      </Card>
-
-      {/* Team Balance Status */}
-      <div className="flex flex-col items-center gap-3">
-        <div className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${
-          isTeamBalanced 
-            ? 'bg-success/10 text-success border border-success/20' 
-            : 'bg-warning/10 text-warning border border-warning/20'
-        }`}>
-          {isTeamBalanced ? (
-            <CheckIcon size={16} className="text-success" />
-          ) : (
-            <AlertTriangleIcon size={16} className="text-warning" />
-          )} 
-          {isTeamBalanced 
-            ? (isReadOnly ? 'Equipos finales balanceados' : 'Equipos balanceados')
-            : `Diferencia de ${Math.abs(state.assignment.team_a.length - state.assignment.team_b.length)} jugador${Math.abs(state.assignment.team_a.length - state.assignment.team_b.length) > 1 ? 'es' : ''}`
-          }
-        </div>
-        
-        {/* Unassigned Players Warning */}
-        {hasUnassignedPlayers && !isReadOnly && (
-          <div className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-error/10 text-error border border-error/20">
-            <AlertTriangleIcon size={16} className="text-error" />
-            {state.assignment.unassigned.length} jugador{state.assignment.unassigned.length > 1 ? 'es' : ''} sin asignar - Asigna todos los jugadores para poder guardar
+            <button
+              onClick={handleClearAssignments}
+              disabled={state.loading}
+              className="px-6 text-sm font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2 bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50 hover:border-neutral-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{ 
+                height: '48px', 
+                boxSizing: 'border-box',
+                lineHeight: '1.5',
+                fontSize: '14px'
+              }}
+            >
+              <BrushCleaningIcon size={16} className="text-neutral-500" />
+              Limpiar
+            </button>
+            
+            <button
+              onClick={handleSaveAssignment}
+              disabled={state.loading || !hasChanges || hasUnassignedPlayers}
+              className={`px-6 text-sm font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+                state.saved 
+                  ? 'bg-green-100 text-green-700 border border-green-200 shadow-sm'
+                  : 'bg-green-600 hover:bg-green-700 text-white border border-green-600'
+              }`}
+              style={{ 
+                height: '48px', 
+                boxSizing: 'border-box',
+                lineHeight: '1.5',
+                fontSize: '14px'
+              }}
+              title={hasUnassignedPlayers ? `No se puede guardar: ${state.assignment.unassigned.length} jugador${state.assignment.unassigned.length > 1 ? 'es' : ''} sin asignar` : undefined}
+            >
+              {state.saved ? (
+                <>
+                  <CheckIcon size={16} />
+                  Equipos Guardados
+                </>
+              ) : (
+                <>
+                  <SaveIcon size={16} />
+                  Guardar Equipos
+                </>
+              )}
+            </button>
           </div>
         )}
+
+        {/* Status Alerts */}
+        <div>
+          {/* Unassigned Players Warning */}
+          {hasUnassignedPlayers && !isReadOnly ? (
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-red-50 text-red-700 border border-red-200">
+              <AlertTriangleIcon size={16} className="text-red-700" />
+              {state.assignment.unassigned.length} jugador{state.assignment.unassigned.length > 1 ? 'es' : ''} sin asignar
+            </div>
+          ) : (
+            /* Team Balance Status - Show when all players are assigned */
+            <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium ${
+              isTeamBalanced 
+                ? 'bg-green-50 text-green-700 border border-green-200' 
+                : 'bg-amber-50 text-amber-700 border border-amber-200'
+            }`}>
+              {isTeamBalanced ? (
+                <CheckIcon size={16} className="text-green-700" />
+              ) : (
+                <AlertTriangleIcon size={16} className="text-amber-700" />
+              )} 
+              {isTeamBalanced 
+                ? (isReadOnly ? 'Equipos finales balanceados' : 'Equipos balanceados')
+                : `Diferencia de ${Math.abs(state.assignment.team_a.length - state.assignment.team_b.length)} jugador${Math.abs(state.assignment.team_a.length - state.assignment.team_b.length) > 1 ? 'es' : ''}`
+              }
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Team Containers */}
-      <div className={`grid grid-cols-1 lg:grid-cols-3 gap-6 ${isReadOnly ? 'team-management--readonly' : ''}`}>
-        {/* Team A */}
-        <div
-          className={`team-container ${state.hoveredTeam === 'team_a' ? 'team-container--active' : ''} ${isReadOnly ? 'team-container--readonly' : ''}`}
-          onDragOver={isReadOnly ? undefined : (e) => handleDragOver(e, 'team_a')}
-          onDragLeave={isReadOnly ? undefined : handleDragLeave}
-          onDrop={isReadOnly ? undefined : (e) => handleDrop(e, 'team_a')}
-        >
-          <div className="team-header">
-            <div className="flex items-center gap-2">
-              <UserGroupIcon size={20} className="text-neutral-600" />
-              <EditableTeamName
-                teamKey="team_a_name"
-                currentValue={teamNames.team_a_name}
-                onUpdate={updateTeamName}
-                disabled={isReadOnly}
-                className="flex-1"
-                placeholder="Equipo A"
-              />
+      <div style={{ marginTop: '32px' }}>
+        {/* Team Containers - New Design */}
+      <Card className="shadow-sm border-neutral-200 rounded-xl bg-white">
+        <CardContent className="p-8">
+          {/* Teams Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Team A */}
+            <div
+              className={`bg-white border-2 rounded-xl p-6 min-h-[300px] transition-all duration-200 ${
+                state.hoveredTeam === 'team_a' 
+                  ? 'border-green-300 bg-green-50/30' 
+                  : 'border-neutral-200 hover:border-neutral-300'
+              } ${isReadOnly ? 'cursor-default' : 'cursor-pointer'}`}
+              onDragOver={isReadOnly ? undefined : (e) => handleDragOver(e, 'team_a')}
+              onDragLeave={isReadOnly ? undefined : handleDragLeave}
+              onDrop={isReadOnly ? undefined : (e) => handleDrop(e, 'team_a')}
+            >
+              {/* Team Header */}
+              <div className="flex items-center justify-between mb-6 pb-5 border-b border-neutral-200" style={{ minHeight: '60px' }}>
+                <div className="flex items-center gap-4 flex-1">
+                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center" style={{ marginLeft: '8px' }}>
+                    <ShieldIcon size={18} className="text-blue-600" />
+                  </div>
+                  <EditableTeamName
+                    teamKey="team_a_name"
+                    currentValue={teamNames.team_a_name}
+                    onUpdate={updateTeamName}
+                    disabled={isReadOnly}
+                    className="flex-1"
+                    placeholder="Equipo A"
+                  />
+                </div>
+                <div className="px-4 py-2 bg-blue-100 text-blue-700 border border-blue-200 rounded-lg text-sm font-medium" style={{ marginRight: '8px' }}>
+                  {state.assignment.team_a.length}
+                </div>
+              </div>
+              
+              {/* Team Players */}
+              <div className="space-y-3">
+                {state.assignment.team_a.map((player, index) => (
+                  <div
+                    key={player.id}
+                    className={`group relative bg-white border border-neutral-200 rounded-xl p-4 transition-all duration-300 ${
+                      !isReadOnly ? 'hover:border-green-200 hover:bg-green-50/30 cursor-grab active:cursor-grabbing' : 'cursor-default'
+                    }`}
+                    style={{ 
+                      animationDelay: `${index * 50}ms`,
+                      animation: 'fadeInUp 0.5s ease-out forwards',
+                      margin: '6px'
+                    }}
+                    draggable={!isReadOnly}
+                    onDragStart={isReadOnly ? undefined : () => handleDragStart(player)}
+                    onDragEnd={isReadOnly ? undefined : handleDragEnd}
+                  >
+                    <div className="flex items-center gap-4">
+                      {/* Player Avatar */}
+                      <div className="w-10 h-10 text-white rounded-lg flex items-center justify-center font-medium text-sm bg-gradient-to-br from-blue-500 to-blue-600">
+                        {getInitials(player.player_name)}
+                      </div>
+                      
+                      {/* Player Name */}
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-neutral-900 truncate">{player.player_name}</div>
+                      </div>
+                      
+                      {/* Actions */}
+                      {!isReadOnly && (
+                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => movePlayer(player, 'team_b')}
+                            aria-label="Mover a Equipo B"
+                            className="p-1 h-7 w-7 text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100"
+                          >
+                            <ArrowRightIcon size={12} />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => movePlayer(player, 'unassigned')}
+                            aria-label="Quitar del equipo"
+                            className="p-1 h-7 w-7 text-neutral-500 hover:text-red-600 hover:bg-red-50"
+                          >
+                            <XIcon size={12} />
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+                
+                {state.assignment.team_a.length === 0 && (
+                  <div className="flex flex-col items-center justify-center py-12 text-center" style={{ marginTop: '60px' }}>
+                    <div className="w-12 h-12 bg-neutral-100 rounded-2xl flex items-center justify-center mb-3">
+                      <PlayersIcon size={24} className="text-neutral-400" />
+                    </div>
+                    <p className="text-neutral-500 text-sm">
+                      {isReadOnly ? 'No hay jugadores en este equipo' : 'Arrastra jugadores aquí'}
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
-            <div className="team-count">{state.assignment.team_a.length}</div>
-          </div>
-          
-          <div className="space-y-3 min-h-[200px]">
-            {state.assignment.team_a.map((player) => (
-              <div
-                key={player.id}
-                className={`player-item ${isReadOnly ? 'player-item--readonly' : ''}`}
-                draggable={!isReadOnly}
-                onDragStart={isReadOnly ? undefined : () => handleDragStart(player)}
-                onDragEnd={isReadOnly ? undefined : handleDragEnd}
-              >
-                <div className="player-avatar">
-                  {getInitials(player.player_name)}
+
+            {/* Unassigned Players */}
+            <div
+              className={`bg-white border-2 rounded-xl p-6 min-h-[300px] transition-all duration-200 ${
+                state.hoveredTeam === 'unassigned' 
+                  ? 'border-amber-300 bg-amber-50/30' 
+                  : 'border-neutral-200 hover:border-neutral-300'
+              } ${isReadOnly ? 'cursor-default' : 'cursor-pointer'}`}
+              onDragOver={isReadOnly ? undefined : (e) => handleDragOver(e, 'unassigned')}
+              onDragLeave={isReadOnly ? undefined : handleDragLeave}
+              onDrop={isReadOnly ? undefined : (e) => handleDrop(e, 'unassigned')}
+            >
+              {/* Unassigned Header */}
+              <div className="flex items-center justify-between mb-6 pb-5 border-b border-neutral-200" style={{ minHeight: '60px' }}>
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center" style={{ marginLeft: '8px' }}>
+                    <ShieldOffIcon size={18} className="text-amber-600" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-neutral-900">Sin Asignar</h3>
                 </div>
-                <div className="player-name">{player.player_name}</div>
+                <div className="px-4 py-2 bg-amber-100 text-amber-700 border border-amber-200 rounded-lg text-sm font-medium" style={{ marginRight: '8px' }}>
+                  {state.assignment.unassigned.length}
+                </div>
+              </div>
+              
+              {/* Unassigned Players */}
+              <div className="space-y-3">
+                {state.assignment.unassigned.map((player, index) => (
+                  <div
+                    key={player.id}
+                    className={`group relative bg-white border border-neutral-200 rounded-xl p-4 transition-all duration-300 ${
+                      !isReadOnly ? 'hover:border-amber-200 hover:bg-amber-50/30 cursor-grab active:cursor-grabbing' : 'cursor-default'
+                    }`}
+                    style={{ 
+                      animationDelay: `${index * 50}ms`,
+                      animation: 'fadeInUp 0.5s ease-out forwards',
+                      margin: '6px'
+                    }}
+                    draggable={!isReadOnly}
+                    onDragStart={isReadOnly ? undefined : () => handleDragStart(player)}
+                    onDragEnd={isReadOnly ? undefined : handleDragEnd}
+                  >
+                    <div className="flex items-center gap-4">
+                      {/* Player Avatar */}
+                      <div className="w-10 h-10 text-white rounded-lg flex items-center justify-center font-medium text-sm bg-gradient-to-br from-amber-500 to-amber-600">
+                        {getInitials(player.player_name)}
+                      </div>
+                      
+                      {/* Player Name */}
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-neutral-900 truncate">{player.player_name}</div>
+                      </div>
+                      
+                      {/* Actions */}
+                      {!isReadOnly && (
+                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => movePlayer(player, 'team_a')}
+                            aria-label="Mover a Equipo A"
+                            className="p-1 h-7 w-7 text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100"
+                            title="Mover a Equipo A"
+                          >
+                            <ArrowLeftIcon size={12} />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => movePlayer(player, 'team_b')}
+                            aria-label="Mover a Equipo B"
+                            className="p-1 h-7 w-7 text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100"
+                            title="Mover a Equipo B"
+                          >
+                            <ArrowRightIcon size={12} />
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
                 
-                {!isReadOnly && (
-                  <div className="flex gap-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => movePlayer(player, 'team_b')}
-                      aria-label="Mover a Equipo B"
-                      className="p-1 h-6 w-6"
-                    >
-                      <ArrowRightIcon size={14} />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => movePlayer(player, 'unassigned')}
-                      aria-label="Quitar del equipo"
-                      className="p-1 h-6 w-6"
-                    >
-                      <XIcon size={14} />
-                    </Button>
+                {state.assignment.unassigned.length === 0 && (
+                  <div className="flex flex-col items-center justify-center py-12 text-center" style={{ marginTop: '60px' }}>
+                    <div className="w-12 h-12 bg-neutral-100 rounded-2xl flex items-center justify-center mb-3">
+                      <ArrowUpDownIcon size={24} className="text-neutral-400" />
+                    </div>
+                    <p className="text-neutral-500 text-sm">
+                      {isReadOnly ? 'Todos los jugadores fueron asignados a equipos' : 'Todos los jugadores están asignados'}
+                    </p>
                   </div>
                 )}
               </div>
-            ))}
-            
-            {state.assignment.team_a.length === 0 && (
-              <div className="text-center text-neutral-400 py-8">
-                <p>{isReadOnly ? 'No hay jugadores en este equipo' : 'Arrastra jugadores aquí'}</p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Unassigned Players */}
-        <div
-          className={`team-container ${state.hoveredTeam === 'unassigned' ? 'team-container--active' : ''} ${isReadOnly ? 'team-container--readonly' : ''}`}
-          onDragOver={isReadOnly ? undefined : (e) => handleDragOver(e, 'unassigned')}
-          onDragLeave={isReadOnly ? undefined : handleDragLeave}
-          onDrop={isReadOnly ? undefined : (e) => handleDrop(e, 'unassigned')}
-        >
-          <div className="team-header">
-            <h3 className="team-title flex items-center gap-2">
-              <ArrowUpDownIcon size={20} className="text-neutral-600" />
-              Sin Asignar
-            </h3>
-            <div className="team-count">{state.assignment.unassigned.length}</div>
-          </div>
-          
-          <div className="space-y-3 min-h-[200px]">
-            {state.assignment.unassigned.map((player) => (
-              <div
-                key={player.id}
-                className={`player-item ${isReadOnly ? 'player-item--readonly' : ''}`}
-                draggable={!isReadOnly}
-                onDragStart={isReadOnly ? undefined : () => handleDragStart(player)}
-                onDragEnd={isReadOnly ? undefined : handleDragEnd}
-              >
-                <div className="player-avatar">
-                  {getInitials(player.player_name)}
-                </div>
-                <div className="player-name">{player.player_name}</div>
-                
-                {!isReadOnly && (
-                  <div className="flex gap-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => movePlayer(player, 'team_a')}
-                      aria-label="Mover a Equipo A"
-                      className="p-1 h-6 w-6 text-neutral-600 hover:text-neutral-900"
-                      title="Mover a Equipo A"
-                    >
-                      <ArrowLeftIcon size={14} />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => movePlayer(player, 'team_b')}
-                      aria-label="Mover a Equipo B"
-                      className="p-1 h-6 w-6 text-neutral-600 hover:text-neutral-900"
-                      title="Mover a Equipo B"
-                    >
-                      <ArrowRightIcon size={14} />
-                    </Button>
-                  </div>
-                )}
-              </div>
-            ))}
-            
-            {state.assignment.unassigned.length === 0 && (
-              <div className="text-center text-neutral-400 py-8">
-                <p>{isReadOnly ? 'Todos los jugadores fueron asignados a equipos' : 'Todos los jugadores están asignados'}</p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Team B */}
-        <div
-          className={`team-container ${state.hoveredTeam === 'team_b' ? 'team-container--active' : ''} ${isReadOnly ? 'team-container--readonly' : ''}`}
-          onDragOver={isReadOnly ? undefined : (e) => handleDragOver(e, 'team_b')}
-          onDragLeave={isReadOnly ? undefined : handleDragLeave}
-          onDrop={isReadOnly ? undefined : (e) => handleDrop(e, 'team_b')}
-        >
-          <div className="team-header">
-            <div className="flex items-center gap-2">
-              <UserGroupIcon size={20} className="text-neutral-600" />
-              <EditableTeamName
-                teamKey="team_b_name"
-                currentValue={teamNames.team_b_name}
-                onUpdate={updateTeamName}
-                disabled={isReadOnly}
-                className="flex-1"
-                placeholder="Equipo B"
-              />
             </div>
-            <div className="team-count">{state.assignment.team_b.length}</div>
-          </div>
-          
-          <div className="space-y-3 min-h-[200px]">
-            {state.assignment.team_b.map((player) => (
-              <div
-                key={player.id}
-                className={`player-item ${isReadOnly ? 'player-item--readonly' : ''}`}
-                draggable={!isReadOnly}
-                onDragStart={isReadOnly ? undefined : () => handleDragStart(player)}
-                onDragEnd={isReadOnly ? undefined : handleDragEnd}
-              >
-                <div className="player-avatar">
-                  {getInitials(player.player_name)}
+
+            {/* Team B */}
+            <div
+              className={`bg-white border-2 rounded-xl p-6 min-h-[300px] transition-all duration-200 ${
+                state.hoveredTeam === 'team_b' 
+                  ? 'border-green-300 bg-green-50/30' 
+                  : 'border-neutral-200 hover:border-neutral-300'
+              } ${isReadOnly ? 'cursor-default' : 'cursor-pointer'}`}
+              onDragOver={isReadOnly ? undefined : (e) => handleDragOver(e, 'team_b')}
+              onDragLeave={isReadOnly ? undefined : handleDragLeave}
+              onDrop={isReadOnly ? undefined : (e) => handleDrop(e, 'team_b')}
+            >
+              {/* Team Header */}
+              <div className="flex items-center justify-between mb-6 pb-5 border-b border-neutral-200" style={{ minHeight: '60px' }}>
+                <div className="flex items-center gap-4 flex-1">
+                  <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center" style={{ marginLeft: '8px' }}>
+                    <ShieldIcon size={18} className="text-green-600" />
+                  </div>
+                  <EditableTeamName
+                    teamKey="team_b_name"
+                    currentValue={teamNames.team_b_name}
+                    onUpdate={updateTeamName}
+                    disabled={isReadOnly}
+                    className="flex-1"
+                    placeholder="Equipo B"
+                  />
                 </div>
-                <div className="player-name">{player.player_name}</div>
+                <div className="px-4 py-2 bg-green-100 text-green-700 border border-green-200 rounded-lg text-sm font-medium" style={{ marginRight: '8px' }}>
+                  {state.assignment.team_b.length}
+                </div>
+              </div>
+              
+              {/* Team Players */}
+              <div className="space-y-3">
+                {state.assignment.team_b.map((player, index) => (
+                  <div
+                    key={player.id}
+                    className={`group relative bg-white border border-neutral-200 rounded-xl p-4 transition-all duration-300 ${
+                      !isReadOnly ? 'hover:border-green-200 hover:bg-green-50/30 cursor-grab active:cursor-grabbing' : 'cursor-default'
+                    }`}
+                    style={{ 
+                      animationDelay: `${index * 50}ms`,
+                      animation: 'fadeInUp 0.5s ease-out forwards',
+                      margin: '6px'
+                    }}
+                    draggable={!isReadOnly}
+                    onDragStart={isReadOnly ? undefined : () => handleDragStart(player)}
+                    onDragEnd={isReadOnly ? undefined : handleDragEnd}
+                  >
+                    <div className="flex items-center gap-4">
+                      {/* Player Avatar */}
+                      <div className="w-10 h-10 text-white rounded-lg flex items-center justify-center font-medium text-sm bg-gradient-to-br from-green-500 to-green-600">
+                        {getInitials(player.player_name)}
+                      </div>
+                      
+                      {/* Player Name */}
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-neutral-900 truncate">{player.player_name}</div>
+                      </div>
+                      
+                      {/* Actions */}
+                      {!isReadOnly && (
+                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => movePlayer(player, 'team_a')}
+                            aria-label="Mover a Equipo A"
+                            className="p-1 h-7 w-7 text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100"
+                          >
+                            <ArrowLeftIcon size={12} />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => movePlayer(player, 'unassigned')}
+                            aria-label="Quitar del equipo"
+                            className="p-1 h-7 w-7 text-neutral-500 hover:text-red-600 hover:bg-red-50"
+                          >
+                            <XIcon size={12} />
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
                 
-                {!isReadOnly && (
-                  <div className="flex gap-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => movePlayer(player, 'team_a')}
-                      aria-label="Mover a Equipo A"
-                      className="p-1 h-6 w-6"
-                    >
-                      <ArrowLeftIcon size={14} />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => movePlayer(player, 'unassigned')}
-                      aria-label="Quitar del equipo"
-                      className="p-1 h-6 w-6"
-                    >
-                      <XIcon size={14} />
-                    </Button>
+                {state.assignment.team_b.length === 0 && (
+                  <div className="flex flex-col items-center justify-center py-12 text-center" style={{ marginTop: '60px' }}>
+                    <div className="w-12 h-12 bg-neutral-100 rounded-2xl flex items-center justify-center mb-3">
+                      <PlayersIcon size={24} className="text-neutral-400" />
+                    </div>
+                    <p className="text-neutral-500 text-sm">
+                      {isReadOnly ? 'No hay jugadores en este equipo' : 'Arrastra jugadores aquí'}
+                    </p>
                   </div>
                 )}
               </div>
-            ))}
-            
-            {state.assignment.team_b.length === 0 && (
-              <div className="text-center text-neutral-400 py-8">
-                <p>{isReadOnly ? 'No hay jugadores en este equipo' : 'Arrastra jugadores aquí'}</p>
-              </div>
-            )}
+            </div>
           </div>
-        </div>
+        </CardContent>
+      </Card>
       </div>
 
     </div>

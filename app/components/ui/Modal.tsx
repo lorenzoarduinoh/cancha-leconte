@@ -35,7 +35,7 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
 
     // Focus trap
     useEffect(() => {
-      if (!isOpen) return;
+      if (!isOpen || typeof document === 'undefined') return;
 
       const modal = modalRef.current;
       if (!modal) return;
@@ -72,7 +72,7 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
 
     // Escape key handler
     useEffect(() => {
-      if (!isOpen || !closeOnEscape) return;
+      if (!isOpen || !closeOnEscape || typeof document === 'undefined') return;
 
       const handleEscape = (e: KeyboardEvent) => {
         if (e.key === 'Escape') {
@@ -86,10 +86,12 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
 
     // Body scroll lock
     useEffect(() => {
-      if (isOpen) {
+      if (isOpen && typeof document !== 'undefined') {
         document.body.style.overflow = 'hidden';
         return () => {
-          document.body.style.overflow = 'unset';
+          if (typeof document !== 'undefined') {
+            document.body.style.overflow = 'unset';
+          }
         };
       }
     }, [isOpen]);

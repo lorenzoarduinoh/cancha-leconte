@@ -1518,7 +1518,7 @@ body {
 .game-card {
   border: 1px solid var(--color-neutral-200);
   border-radius: var(--radius-lg);
-  padding: var(--space-lg);
+  padding: var(--space-3xl);
   background: white;
   transition: all var(--duration-short) var(--ease-out);
   cursor: pointer;
@@ -1534,7 +1534,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: var(--space-md);
+  margin-bottom: var(--space-2xl);
 }
 
 .game-card-title {
@@ -1548,14 +1548,14 @@ body {
 .game-card-date {
   font-size: var(--font-size-sm);
   color: var(--color-neutral-600);
-  margin-bottom: var(--space-sm);
+  margin-bottom: var(--space-xl);
 }
 
 .game-card-players {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-md);
+  gap: var(--space-md);
+  margin-bottom: var(--space-2xl);
 }
 
 .game-card-players-count {
@@ -1582,13 +1582,13 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: var(--space-md);
+  padding-top: var(--space-xl);
   border-top: 1px solid var(--color-neutral-200);
 }
 
 .game-card-actions {
   display: flex;
-  gap: var(--space-sm);
+  gap: var(--space-md);
 }
 
 /* Team Assignment Styles */
@@ -1990,4 +1990,176 @@ body {
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+/* Game Detail Tabs - New Design System Component */
+.game-tabs {
+  background: white;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-neutral-200);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.game-tabs-nav {
+  display: flex;
+}
+
+.game-tab-button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-sm);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+  transition: all var(--duration-short) var(--ease-out);
+  border-right: 1px solid var(--color-neutral-200);
+  background: white;
+  color: var(--color-neutral-700);
+  cursor: pointer;
+}
+
+.game-tab-button:last-child {
+  border-right: none;
+}
+
+.game-tab-button:hover {
+  background: var(--color-neutral-50);
+  color: var(--color-neutral-900);
+}
+
+.game-tab-button--active {
+  background: var(--color-primary);
+  color: white;
+}
+
+.game-tab-button--active:hover {
+  background: var(--color-primary-dark);
+  color: white;
+}
+
+.game-tab-button:first-child {
+  border-top-left-radius: var(--radius-xl);
+  border-bottom-left-radius: var(--radius-xl);
+}
+
+.game-tab-button:last-child {
+  border-top-right-radius: var(--radius-xl);
+  border-bottom-right-radius: var(--radius-xl);
+}
+
+.game-tab-icon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+}
+
+.game-tab-text {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.game-tab-count {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Responsive adjustments for game tabs */
+@media (max-width: 767px) {
+  .game-tab-button {
+    padding: 12px 8px;
+    font-size: var(--font-size-xs);
+    gap: 4px;
+  }
+  
+  .game-tab-icon {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .game-tab-text {
+    flex-direction: column;
+    gap: 2px;
+  }
+  
+  .game-tab-count {
+    font-size: 10px;
+  }
+}
+
+/* Enhanced utilities for the new design */
+.rounded-xl {
+  border-radius: var(--radius-xl);
+}
+
+/* Player Registration Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bg-neutral-50 {
+  background-color: var(--color-neutral-50);
+}
+
+.text-neutral-700 {
+  color: var(--color-neutral-700);
+}
+
+.text-neutral-900 {
+  color: var(--color-neutral-900);
+}
+
+.border-neutral-200 {
+  border-color: var(--color-neutral-200);
+}
+
+.hover\:bg-neutral-50:hover {
+  background-color: var(--color-neutral-50);
+}
+
+.hover\:text-neutral-900:hover {
+  color: var(--color-neutral-900);
+}
+
+.gap-1\.5 {
+  gap: 6px;
+}
+
+.gap-2 {
+  gap: var(--space-sm);
+}
+
+.flex-shrink-0 {
+  flex-shrink: 0;
+}
+
+.rounded-tl-xl {
+  border-top-left-radius: var(--radius-xl);
+}
+
+.rounded-bl-xl {
+  border-bottom-left-radius: var(--radius-xl);
+}
+
+.rounded-tr-xl {
+  border-top-right-radius: var(--radius-xl);
+}
+
+.rounded-br-xl {
+  border-bottom-right-radius: var(--radius-xl);
+}
+
+.last\:border-r-0:last-child {
+  border-right-width: 0;
 }

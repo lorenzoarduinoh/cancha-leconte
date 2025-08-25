@@ -187,6 +187,8 @@ export function EditableTeamName({
 
   // Handle click outside
   useEffect(() => {
+    if (typeof document === 'undefined') return;
+
     const handleClickOutside = (event: MouseEvent) => {
       if (
         state.mode === 'edit' &&

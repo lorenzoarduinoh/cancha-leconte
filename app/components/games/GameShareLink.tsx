@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Button } from '../ui/Button';
-import { CopyIcon, CheckIcon, WhatsAppIcon } from '../ui/Icons';
+import { CopyIcon, CheckIcon, WhatsAppIcon, UsersIcon } from '../ui/Icons';
 
 interface GameShareLinkProps {
   shareToken: string;
@@ -10,16 +10,22 @@ interface GameShareLinkProps {
 }
 
 /**
- * GameShareLink Component
+ * GameShareLink Component - Clean, minimal design for friend invitations
  * 
- * Displays the friend registration link and provides easy sharing options.
- * Allows copying the link and opening WhatsApp with a pre-filled message.
+ * Features a horizontal layout with the link container and copy button side by side.
+ * Provides easy sharing via WhatsApp with a pre-filled message.
+ * Clean and professional styling with optimized spacing.
  */
 export function GameShareLink({ shareToken, gameTitle }: GameShareLinkProps) {
   const [copied, setCopied] = useState(false);
+  const [friendUrl, setFriendUrl] = useState('');
   
-  // Generate the friend registration URL
-  const friendUrl = `${window.location.origin}/juego/${shareToken}`;
+  // Generate the friend registration URL safely on client side
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setFriendUrl(`${window.location.origin}/juego/${shareToken}`);
+    }
+  }, [shareToken]);
   
   // WhatsApp message template
   const whatsappMessage = `¡Hola!
@@ -33,6 +39,8 @@ ${friendUrl}
 
   // Copy link to clipboard
   const handleCopyLink = async () => {
+    if (!friendUrl) return;
+    
     try {
       await navigator.clipboard.writeText(friendUrl);
       setCopied(true);
@@ -53,66 +61,80 @@ ${friendUrl}
 
   // Open WhatsApp with pre-filled message
   const handleShareWhatsApp = () => {
+    if (!friendUrl) return;
+    
     const encodedMessage = encodeURIComponent(whatsappMessage);
     const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
     window.open(whatsappUrl, '_blank');
   };
 
-
   return (
-    <div className="space-y-4">
-      
-      {/* Friend Registration URL */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-neutral-700">
-          Link de registro para amigos:
-        </label>
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={friendUrl}
-            readOnly
-            className="flex-1 px-3 py-2 text-sm bg-white border border-neutral-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary select-all"
-          />
-          <Button
-            onClick={handleCopyLink}
-            variant={copied ? "success" : "secondary"}
-            size="sm"
-            className="flex-shrink-0 gap-2"
-          >
-            {copied ? (
-              <>
-                <CheckIcon size={16} />
-                Copiado
-              </>
-            ) : (
-              <>
-                <CopyIcon size={16} />
-                Copiar
-              </>
-            )}
-          </Button>
+    <div className="pt-6 pb-16 h-full flex flex-col">
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-12">
+        <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+          <svg className="w-[18px] h-[18px] text-green-700" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+            <path d="M18 21a8 8 0 0 0-16 0"/>
+            <circle cx="10" cy="8" r="5"/>
+            <path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3"/>
+          </svg>
         </div>
-        <p className="text-xs text-neutral-600">
-          Comparte este link para que tus amigos se registren directamente
-        </p>
+        <h3 className="text-lg font-semibold text-neutral-900">Invitar Amigos</h3>
       </div>
 
-      {/* WhatsApp Sharing */}
-      <div className="space-y-2">
+      {/* Spacer */}
+      <div className="flex-1"></div>
+
+      {/* Explanatory Text */}
+      <div className="mb-4">
+        <p className="text-base text-gray-600 font-medium leading-relaxed">Link de registro para amigos:</p>
+      </div>
+
+      {/* Link and Copy Button - Horizontal Layout */}
+      <div className="flex items-stretch gap-4">
+        <div className="flex-1 border border-gray-200 rounded-xl bg-gray-50 flex items-center">
+          <div className="px-6 py-3 flex-1">
+            <div className="text-sm font-mono text-gray-700 truncate">
+              {friendUrl || 'Cargando...'}
+            </div>
+          </div>
+        </div>
+        <Button
+          onClick={handleCopyLink}
+          variant={copied ? "success" : "secondary"}
+          size="sm"
+          disabled={!friendUrl}
+          className="flex-shrink-0 font-medium px-4 py-3 min-h-[48px] rounded-xl"
+        >
+          {copied ? (
+            <CheckIcon size={16} />
+          ) : (
+            <CopyIcon size={16} />
+          )}
+        </Button>
+      </div>
+
+      {/* Fixed Space */}
+      <div style={{ height: '32px' }}></div>
+
+      {/* WhatsApp Button */}
+      <div className="mb-8">
         <Button
           onClick={handleShareWhatsApp}
-          variant="whatsapp"
-          size="sm"
-          className="w-full gap-2"
+          disabled={!friendUrl}
+          className="w-full gap-3 !bg-green-700 hover:!bg-green-800 disabled:!bg-gray-400 disabled:cursor-not-allowed text-white font-medium py-5 px-8 rounded-xl transition-colors duration-200 shadow-sm text-base"
         >
-          <WhatsAppIcon size={18} />
+          <WhatsAppIcon size={22} />
           Compartir por WhatsApp
         </Button>
-        <p className="text-xs text-neutral-600 text-center">
-          Comparte el link por WhatsApp con mensaje incluido
-        </p>
       </div>
+
+      {/* Success Feedback for Screen Readers */}
+      {copied && (
+        <div className="sr-only" role="status" aria-live="polite">
+          Link copiado al portapapeles
+        </div>
+      )}
     </div>
   );
 }

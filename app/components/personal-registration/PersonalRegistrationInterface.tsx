@@ -241,7 +241,11 @@ export function PersonalRegistrationInterface({ token }: PersonalRegistrationInt
                 
                 <div className="space-y-3 pt-4">
                   <Button
-                    onClick={() => window.close()}
+                    onClick={() => {
+                      if (typeof window !== 'undefined') {
+                        window.close();
+                      }
+                    }}
                     variant="primary"
                     className="w-full"
                   >
@@ -450,7 +454,9 @@ export function PersonalRegistrationInterface({ token }: PersonalRegistrationInt
                     const gameMessage = isValidGameDate 
                       ? `¡Nos vemos en el partido "${registration.game.title}" el ${format(gameDate, "d/M 'a las' HH:mm", { locale: es })}!`
                       : `¡Nos vemos en el partido "${registration.game.title}"!`;
-                    window.location.href = `whatsapp://send?text=${encodeURIComponent(gameMessage)}`;
+                    if (typeof window !== 'undefined') {
+                      window.location.href = `whatsapp://send?text=${encodeURIComponent(gameMessage)}`;
+                    }
                   }}
                   variant="secondary"
                   className="w-full"

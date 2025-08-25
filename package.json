@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "set UV_THREADPOOL_SIZE=1 && set NODE_OPTIONS=--max_old_space_size=4096 && set NEXT_DISABLE_JEST=1 && next dev --port 3000",
+    "dev:safe": "set UV_THREADPOOL_SIZE=1 && set FORCE_SINGLE_THREAD=1 && set NODE_OPTIONS=--max_old_space_size=4096 && set NEXT_DISABLE_JEST=1 && next dev --port 3000",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

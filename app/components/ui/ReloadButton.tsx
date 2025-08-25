@@ -3,9 +3,15 @@
 import React from 'react';
 
 export function ReloadButton() {
+  const handleReload = () => {
+    if (typeof window !== 'undefined') {
+      window.location.reload();
+    }
+  };
+
   return (
     <button 
-      onClick={() => window.location.reload()} 
+      onClick={handleReload}
       className="btn btn--primary"
     >
       Intentar nuevamente

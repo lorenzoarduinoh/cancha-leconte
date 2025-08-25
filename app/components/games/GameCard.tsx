@@ -212,7 +212,7 @@ export function GameCard({
         </span>
         
         {/* Duration info */}
-        <div className="mt-2 flex items-center gap-4 text-sm text-neutral-600">
+        <div className="mt-4 flex items-center gap-6 text-sm text-neutral-600">
           <span className="inline-flex items-center gap-1">
             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -255,7 +255,7 @@ export function GameCard({
       </div>
 
       {/* Cost and Payment Info */}
-      <div className="flex justify-between items-center text-sm mb-4">
+      <div className="flex justify-between items-center text-sm mb-8">
         <div>
           <span className="text-neutral-600">Costo: </span>
           <span className="font-medium text-neutral-900">
@@ -356,7 +356,7 @@ export function GameCard({
 
       {/* Additional Info for Completed Games */}
       {game.status === 'completed' && game.result && (
-        <div className="mt-4 p-3 bg-neutral-50 rounded-lg">
+        <div className="mt-8 p-6 bg-neutral-50 rounded-lg">
           <div className="flex justify-between items-center text-sm">
             <span className="text-neutral-600">Resultado:</span>
             <span className="font-medium">
@@ -364,14 +364,14 @@ export function GameCard({
             </span>
           </div>
           {game.result.winning_team && game.result.winning_team !== 'draw' && (
-            <div className="text-center mt-2">
+            <div className="text-center mt-4">
               <span className="text-success font-medium">
                 🏆 Ganó {game.result.winning_team === 'team_a' ? displayNames.team_a_name : displayNames.team_b_name}
               </span>
             </div>
           )}
           {game.result.winning_team === 'draw' && (
-            <div className="text-center mt-2">
+            <div className="text-center mt-4">
               <span className="text-neutral-600 font-medium">
                 🤝 Empate
               </span>
@@ -382,7 +382,7 @@ export function GameCard({
 
       {/* Warning for Low Registration */}
       {game.status === 'open' && game.current_players < game.min_players && (
-        <div className="mt-4 p-3 bg-warning/10 border border-warning/20 rounded-lg">
+        <div className="mt-8 p-6 bg-warning/10 border border-warning/20 rounded-lg">
           <div className="flex items-center gap-2">
             <span className="text-warning" aria-hidden="true">⚠</span>
             <span className="text-warning text-sm">
@@ -394,7 +394,7 @@ export function GameCard({
 
       {/* Full Game Warning */}
       {game.status === 'open' && game.current_players >= game.max_players && (
-        <div className="mt-4 p-3 bg-success/10 border border-success/20 rounded-lg">
+        <div className="mt-8 p-6 bg-success/10 border border-success/20 rounded-lg">
           <div className="flex items-center gap-2">
             <span className="text-success" aria-hidden="true">✅</span>
             <span className="text-success text-sm font-medium">

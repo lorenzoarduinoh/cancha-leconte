@@ -7,19 +7,13 @@ import { Input } from '../ui/Input';
 import { Textarea } from '../ui/Textarea';
 import { Badge } from '../ui/Badge';
 import { useTeamDisplayNames } from '../../hooks/useTeamNames';
+import { GameResult } from '../../../lib/types/game';
 import { 
   PlayCircleIcon, 
   TrophyIcon, 
   CheckIcon,
   EditIcon 
 } from '../ui/Icons';
-
-interface GameResult {
-  team_a_score: number;
-  team_b_score: number;
-  winning_team: 'team_a' | 'team_b' | 'draw' | null;
-  notes?: string;
-}
 
 export interface GameResultFormProps {
   gameId: string;
@@ -29,8 +23,15 @@ export interface GameResultFormProps {
   teamBName?: string;
 }
 
+interface ResultFormData {
+  team_a_score: number;
+  team_b_score: number;
+  winning_team: 'team_a' | 'team_b' | 'draw' | null;
+  notes: string;
+}
+
 interface ResultState {
-  gameResult: GameResult;
+  gameResult: ResultFormData;
   loading: boolean;
   error: string | null;
   success: boolean;

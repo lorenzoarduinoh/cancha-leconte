@@ -64,11 +64,30 @@ UsersIcon.displayName = 'UsersIcon';
 // Shield (Teams)
 export const ShieldIcon = forwardRef<SVGSVGElement, IconProps>((props, ref) => (
   <Icon ref={ref} {...props}>
-    <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
-    <path d="m9 12 2 2 4-4" />
+    <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
   </Icon>
 ));
 ShieldIcon.displayName = 'ShieldIcon';
+
+// Shield Off (Unassigned players)
+export const ShieldOffIcon = forwardRef<SVGSVGElement, IconProps>((props, ref) => (
+  <Icon ref={ref} {...props}>
+    <path d="m2 2 20 20" />
+    <path d="M5 5a1 1 0 0 0-1 1v7c0 5 3.5 7.5 7.67 8.94a1 1 0 0 0 .67.01c2.35-.82 4.48-1.97 5.9-3.71" />
+    <path d="M9.309 3.652A12.252 12.252 0 0 0 11.24 2.28a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1v7a9.784 9.784 0 0 1-.08 1.264" />
+  </Icon>
+));
+ShieldOffIcon.displayName = 'ShieldOffIcon';
+
+// Players (Player management)
+export const PlayersIcon = forwardRef<SVGSVGElement, IconProps>((props, ref) => (
+  <Icon ref={ref} {...props}>
+    <path d="M18 21a8 8 0 0 0-16 0" />
+    <circle cx="10" cy="8" r="5" />
+    <path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3" />
+  </Icon>
+));
+PlayersIcon.displayName = 'PlayersIcon';
 
 // Credit Card (Payments)
 export const CreditCardIcon = forwardRef<SVGSVGElement, IconProps>((props, ref) => (
@@ -95,6 +114,15 @@ export const CheckIcon = forwardRef<SVGSVGElement, IconProps>((props, ref) => (
   </Icon>
 ));
 CheckIcon.displayName = 'CheckIcon';
+
+// Check Circle (Complete action)
+export const CheckCircleIcon = forwardRef<SVGSVGElement, IconProps>((props, ref) => (
+  <Icon ref={ref} {...props}>
+    <circle cx="12" cy="12" r="10" />
+    <path d="m9 12 2 2 4-4" />
+  </Icon>
+));
+CheckCircleIcon.displayName = 'CheckCircleIcon';
 
 // Phone (WhatsApp)
 export const PhoneIcon = forwardRef<SVGSVGElement, IconProps>((props, ref) => (
@@ -225,6 +253,19 @@ export const ShuffleIcon = forwardRef<SVGSVGElement, IconProps>((props, ref) => 
 ));
 ShuffleIcon.displayName = 'ShuffleIcon';
 
+// Dices (Random assignment)
+export const DicesIcon = forwardRef<SVGSVGElement, IconProps>((props, ref) => (
+  <Icon ref={ref} {...props}>
+    <rect width="12" height="12" x="2" y="10" rx="2" ry="2" />
+    <path d="m17.92 14 3.5-3.5a2.24 2.24 0 0 0 0-3l-5-4.92a2.24 2.24 0 0 0-3 0L10 6" />
+    <path d="M6 18h.01" />
+    <path d="M10 14h.01" />
+    <path d="M15 6h.01" />
+    <path d="M18 9h.01" />
+  </Icon>
+));
+DicesIcon.displayName = 'DicesIcon';
+
 // Clear/Reset (Clear assignments)
 export const RefreshIcon = forwardRef<SVGSVGElement, IconProps>((props, ref) => (
   <Icon ref={ref} {...props}>
@@ -235,6 +276,17 @@ export const RefreshIcon = forwardRef<SVGSVGElement, IconProps>((props, ref) => 
   </Icon>
 ));
 RefreshIcon.displayName = 'RefreshIcon';
+
+// Brush Cleaning (Clear/Clean teams)
+export const BrushCleaningIcon = forwardRef<SVGSVGElement, IconProps>((props, ref) => (
+  <Icon ref={ref} {...props}>
+    <path d="m16 22-1-4" />
+    <path d="M19 13.99a1 1 0 0 0 1-1V12a2 2 0 0 0-2-2h-3a1 1 0 0 1-1-1V4a2 2 0 0 0-4 0v5a1 1 0 0 1-1 1H6a2 2 0 0 0-2 2v.99a1 1 0 0 0 1 1" />
+    <path d="M5 14h14l1.973 6.767A1 1 0 0 1 20 22H4a1 1 0 0 1-.973-1.233z" />
+    <path d="m8 22 1-4" />
+  </Icon>
+));
+BrushCleaningIcon.displayName = 'BrushCleaningIcon';
 
 // Save (Save teams)
 export const SaveIcon = forwardRef<SVGSVGElement, IconProps>((props, ref) => (
