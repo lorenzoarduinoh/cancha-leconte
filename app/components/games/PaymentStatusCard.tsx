@@ -89,16 +89,17 @@ export const PaymentStatusCard: React.FC<PaymentStatusCardProps> = ({
   const progressDegrees = percentagePaid * 3.6;
   
   return (
-    <Card className={`bg-white rounded-3xl border border-neutral-200 shadow-lg ${className}`}>
-      <CardContent className="p-8" style={{ marginBottom: 0 }}>
+    <Card className={`shadow-sm border-neutral-200 rounded-xl bg-white ${className}`} style={{ minHeight: '400px' }}>
+      <CardContent className="p-6">
         {/* Header */}
-        <div className="flex items-center gap-3 mb-16">
+        <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center border border-blue-100">
             <MoneyIcon size={18} className="text-blue-600" />
           </div>
           <h3 className="text-lg font-semibold text-gray-900">Estado de Pagos</h3>
         </div>
 
+        <div style={{ marginTop: '20px' }}>
         {/* Central Progress Ring */}
         <div className="flex justify-center">
           <div className="relative">
@@ -196,6 +197,7 @@ export const PaymentStatusCard: React.FC<PaymentStatusCardProps> = ({
           Estado de pagos: {percentagePaid}% completado. 
           Recaudado: {formatCurrency(paidAmount)} de {paidPlayersCount} jugadores. 
           Pendiente: {formatCurrency(pendingAmount)} de {pendingPlayersCount} jugadores.
+        </div>
         </div>
       </CardContent>
     </Card>

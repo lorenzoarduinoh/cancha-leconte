@@ -10,10 +10,139 @@ import { useTeamDisplayNames } from '../../hooks/useTeamNames';
 import { GameResult } from '../../../lib/types/game';
 import { 
   PlayCircleIcon, 
-  TrophyIcon, 
   CheckIcon,
   EditIcon 
 } from '../ui/Icons';
+
+// Animation styles
+const animationStyles = `
+  .fadeInUp {
+    animation: fadeInUp 0.6s ease-out both;
+    animation-delay: var(--delay, 0ms);
+  }
+  
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translate3d(0, 40px, 0);
+    }
+    100% {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+  
+  .scaleInBounce {
+    animation: scaleInBounce 0.4s ease-out both;
+    animation-delay: var(--delay, 0ms);
+  }
+  
+  @keyframes scaleInBounce {
+    0% {
+      opacity: 0;
+      transform: scale3d(0.3, 0.3, 1);
+    }
+    50% {
+      transform: scale3d(1.05, 1.05, 1);
+    }
+    70% {
+      transform: scale3d(0.9, 0.9, 1);
+    }
+    100% {
+      opacity: 1;
+      transform: scale3d(1, 1, 1);
+    }
+  }
+  
+  .slideDownBounce {
+    animation: slideDownBounce 0.5s ease-out both;
+    animation-delay: var(--delay, 0ms);
+  }
+  
+  @keyframes slideDownBounce {
+    0% {
+      opacity: 0;
+      transform: translate3d(0, -60px, 0);
+    }
+    60% {
+      opacity: 1;
+      transform: translate3d(0, 10px, 0);
+    }
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+  
+  .pulseOnLoad {
+    animation: pulseOnLoad 0.5s ease-out both;
+    animation-delay: var(--delay, 0ms);
+  }
+  
+  @keyframes pulseOnLoad {
+    0% {
+      opacity: 0;
+      transform: scale3d(0.95, 0.95, 1) rotate(0deg);
+    }
+    50% {
+      transform: scale3d(1.05, 1.05, 1) rotate(180deg);
+    }
+    100% {
+      opacity: 1;
+      transform: scale3d(1, 1, 1) rotate(360deg);
+    }
+  }
+  
+  .buttonHover {
+    transition: all 0.2s ease-in-out;
+    transform: translate3d(0, 0, 0);
+  }
+  
+  .buttonHover:hover {
+    transform: translate3d(0, -2px, 0);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+  
+  .inputFocus {
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .inputFocus:focus {
+    transform: scale3d(1.02, 1.02, 1);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  
+  .messageSlideIn {
+    animation: messageSlideIn 0.4s ease-out both;
+  }
+  
+  @keyframes messageSlideIn {
+    0% {
+      opacity: 0;
+      transform: translate3d(0, -20px, 0) scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    .fadeInUp,
+    .scaleInBounce,
+    .slideDownBounce,
+    .pulseOnLoad,
+    .messageSlideIn {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+    
+    .buttonHover:hover,
+    .inputFocus:focus {
+      transform: none;
+    }
+  }
+`;
 
 export interface GameResultFormProps {
   gameId: string;
@@ -246,193 +375,218 @@ export function GameResultForm({ gameId, existingResult, onResultSaved, teamANam
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-neutral-900 mb-1">
-            {state.hasExistingResult 
-              ? (state.isReadOnly ? 'Resultado del Partido' : 'Actualizar Resultado')
-              : 'Registrar Resultado'
-            }
-          </h2>
-          <p className="text-neutral-600">
-            {state.hasExistingResult 
-              ? (state.isReadOnly 
-                ? 'Resultado final registrado'
-                : 'Modifica el marcador y notas del partido'
-              )
-              : 'Ingresa el marcador final del partido'
-            }
-          </p>
-        </div>
-        
-        {/* Submit Button - Moved to header */}
-        {!state.isReadOnly && (
-          <Button
-            onClick={handleSubmitResult}
-            variant="primary"
-            size="lg"
-            loading={state.loading}
-            disabled={!isValidResult || state.success}
-            className="gap-2 px-6"
-          >
-            <PlayCircleIcon size={18} />
-            {state.loading 
-              ? `${state.hasExistingResult ? 'Actualizando' : 'Guardando'}...`
-              : `${state.hasExistingResult ? 'Actualizar' : 'Registrar'} Resultado`
-            }
-          </Button>
-        )}
-        
-        {/* Edit Button for read-only mode */}
-        {state.hasExistingResult && state.isReadOnly && (
-          <Button
-            variant="secondary"
-            size="lg"
-            onClick={handleEnableEdit}
-            className="gap-2 px-6"
-          >
-            <EditIcon size={18} />
-            Editar Resultado
-          </Button>
-        )}
-      </div>
+    <>
+      <style dangerouslySetInnerHTML={{ __html: animationStyles }} />
+      <div className="space-y-8" style={{ marginTop: '4px' }}>
 
 
-      {/* Success Message */}
-      {state.success && (
-        <Card className="border-success bg-success/5">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-3 text-success">
-              <CheckIcon size={24} />
-              <div>
-                <h3 className="font-semibold">
-                  ¡Resultado {state.hasExistingResult ? 'actualizado' : 'registrado'} exitosamente!
-                </h3>
-                <p className="text-sm">El marcador ha sido guardado y los jugadores serán notificados.</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Error Message */}
-      {state.error && (
-        <Card className="border-error bg-error/5">
-          <CardContent className="p-6">
-            <div className="text-error">
-              <h3 className="font-semibold mb-1">Error al registrar resultado</h3>
-              <p className="text-sm">{state.error}</p>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Score Card */}
-      <Card className="shadow-sm border-neutral-200">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-xl font-semibold flex items-center gap-2">
-              <TrophyIcon size={24} className="text-primary" />
-              Marcador Final
-            </CardTitle>
-            {hasResult && (
-              <Badge 
-                variant={state.gameResult.winning_team === 'draw' ? 'warning' : 'success'}
-                size="lg"
-                className="gap-1"
+      {/* Main Result Card - Consistent with other sections */}
+      <Card className="shadow-sm border-neutral-200 rounded-xl bg-white fadeInUp" style={{ '--delay': '0ms' } as React.CSSProperties}>
+        <CardContent className="p-8">
+          {/* Action Buttons */}
+          <div className="flex justify-end gap-3 mb-8">
+            {!state.isReadOnly && (
+              <Button
+                onClick={handleSubmitResult}
+                variant="success"
+                size="sm"
+                loading={state.loading}
+                disabled={!isValidResult || state.success}
+                className="gap-2 px-6 text-sm font-medium bg-green-600 hover:bg-green-700 text-white border-0 shadow-sm rounded-xl buttonHover fadeInUp"
+                style={{ 
+                  height: '48px', 
+                  boxSizing: 'border-box',
+                  lineHeight: '1.5',
+                  fontSize: '14px',
+                  '--delay': '200ms'
+                } as React.CSSProperties}
               >
-                <TrophyIcon size={14} />
-                {state.gameResult.winning_team === 'draw' ? (
-                  'Empate'
-                ) : state.gameResult.winning_team === 'team_a' ? (
-                  `Ganó ${displayNames.team_a_name}`
-                ) : state.gameResult.winning_team === 'team_b' ? (
-                  `Ganó ${displayNames.team_b_name}`
-                ) : (
-                  'Sin resultado'
-                )}
-              </Badge>
+                <PlayCircleIcon size={16} />
+                {state.loading 
+                  ? `${state.hasExistingResult ? 'Actualizando' : 'Guardando'}...`
+                  : `${state.hasExistingResult ? 'Actualizar' : 'Registrar'} Resultado`
+                }
+              </Button>
+            )}
+            
+            {/* Edit Button for read-only mode */}
+            {state.hasExistingResult && state.isReadOnly && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleEnableEdit}
+                className="gap-2 px-6 text-sm font-medium text-neutral-700 hover:text-neutral-900 hover:bg-neutral-50 border border-neutral-300 rounded-xl buttonHover fadeInUp"
+                style={{ 
+                  height: '48px', 
+                  boxSizing: 'border-box',
+                  lineHeight: '1.5',
+                  fontSize: '14px',
+                  '--delay': '200ms'
+                } as React.CSSProperties}
+              >
+                <EditIcon size={16} />
+                Editar Resultado
+              </Button>
             )}
           </div>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Score Display */}
-          <div className="flex items-center justify-center gap-8">
-            {/* Team A */}
-            <div className="text-center flex-1 max-w-[160px]">
-              <div className="mb-4">
-                <h3 className="font-semibold text-lg text-neutral-900 mb-2">{displayNames.team_a_name}</h3>
-                <div className="text-sm text-neutral-600">Equipo A</div>
+
+          {/* Success/Error Messages */}
+          {state.success && (
+            <div className="mb-6 bg-green-100 border border-green-200 rounded-lg p-4 messageSlideIn">
+              <div className="flex items-center gap-3 text-green-700">
+                <CheckIcon size={20} />
+                <div>
+                  <h4 className="font-semibold text-sm">
+                    ¡Resultado {state.hasExistingResult ? 'actualizado' : 'registrado'} exitosamente!
+                  </h4>
+                  <p className="text-sm">El marcador ha sido guardado y los jugadores serán notificados.</p>
+                </div>
               </div>
-              <Input
-                type="number"
-                min="0"
-                max="50"
-                value={state.gameResult.team_a_score}
-                onChange={(e) => handleScoreChange('team_a', e.target.value)}
-                className="text-center text-3xl font-bold h-20 text-primary"
-                placeholder="0"
-                disabled={state.isReadOnly}
-              />
+            </div>
+          )}
+
+          {state.error && (
+            <div className="mb-6 bg-red-100 border border-red-200 rounded-lg p-4 messageSlideIn">
+              <div className="text-red-700">
+                <h4 className="font-semibold text-sm mb-1">Error al registrar resultado</h4>
+                <p className="text-sm">{state.error}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Winner Badge */}
+          {hasResult && (
+            <div className="flex justify-center mb-8">
+              <div className={`px-6 py-3 rounded-xl text-lg font-semibold border slideDownBounce ${
+                state.gameResult.winning_team === 'draw' 
+                  ? 'bg-amber-50 text-amber-700 border-amber-200'
+                  : 'bg-green-50 text-green-700 border-green-200'
+              }`} style={{ '--delay': '300ms' } as React.CSSProperties}>
+                <div className="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M10 14.66v1.626a2 2 0 0 1-.976 1.696A5 5 0 0 0 7 21.978"/>
+                    <path d="M14 14.66v1.626a2 2 0 0 0 .976 1.696A5 5 0 0 1 17 21.978"/>
+                    <path d="M18 9h1.5a1 1 0 0 0 0-5H18"/>
+                    <path d="M4 22h16"/>
+                    <path d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z"/>
+                    <path d="M6 9H4.5a1 1 0 0 1 0-5H6"/>
+                  </svg>
+                  {state.gameResult.winning_team === 'draw' ? (
+                    'Empate'
+                  ) : state.gameResult.winning_team === 'team_a' ? (
+                    `Ganó ${displayNames.team_a_name}`
+                  ) : state.gameResult.winning_team === 'team_b' ? (
+                    `Ganó ${displayNames.team_b_name}`
+                  ) : (
+                    'Sin resultado'
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+            {/* Score Layout - Clean and Readable */}
+            <div className="grid grid-cols-3 gap-8 items-center mb-8">
+              {/* Team A */}
+              <div className="text-center">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-xl mx-auto mb-4 scaleInBounce" style={{ '--delay': '400ms' } as React.CSSProperties}>
+                  A
+                </div>
+                <h4 className="text-lg font-semibold text-neutral-900 mb-3 leading-tight fadeInUp" style={{ marginBottom: '20px', '--delay': '500ms' } as React.CSSProperties}>
+                  {displayNames.team_a_name}
+                </h4>
+                <Input
+                  type="number"
+                  min="0"
+                  max="50"
+                  value={state.gameResult.team_a_score}
+                  onChange={(e) => handleScoreChange('team_a', e.target.value)}
+                  className="text-center text-2xl font-bold h-16 border-2 focus:border-blue-500 inputFocus fadeInUp"
+                  placeholder="0"
+                  disabled={state.isReadOnly}
+                  style={{ '--delay': '600ms' } as React.CSSProperties}
+                />
+              </div>
+
+              {/* VS Separator */}
+              <div className="text-center">
+                <div className="w-16 h-16 border border-neutral-200 rounded-full flex items-center justify-center bg-white mx-auto shadow-md pulseOnLoad" style={{ '--delay': '450ms' } as React.CSSProperties}>
+                  <span className="text-lg font-extrabold text-neutral-500">VS</span>
+                </div>
+              </div>
+
+              {/* Team B */}
+              <div className="text-center">
+                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center text-white font-bold text-xl mx-auto mb-4 scaleInBounce" style={{ '--delay': '500ms' } as React.CSSProperties}>
+                  B
+                </div>
+                <h4 className="text-lg font-semibold text-neutral-900 mb-3 leading-tight fadeInUp" style={{ marginBottom: '20px', '--delay': '600ms' } as React.CSSProperties}>
+                  {displayNames.team_b_name}
+                </h4>
+                <Input
+                  type="number"
+                  min="0"
+                  max="50"
+                  value={state.gameResult.team_b_score}
+                  onChange={(e) => handleScoreChange('team_b', e.target.value)}
+                  className="text-center text-2xl font-bold h-16 border-2 focus:border-green-500 inputFocus fadeInUp"
+                  placeholder="0"
+                  disabled={state.isReadOnly}
+                  style={{ '--delay': '700ms' } as React.CSSProperties}
+                />
+              </div>
             </div>
 
-            {/* VS Separator */}
-            <div className="text-center px-4">
-              <div className="text-2xl font-bold text-neutral-400">VS</div>
-            </div>
-
-            {/* Team B */}
-            <div className="text-center flex-1 max-w-[160px]">
-              <div className="mb-4">
-                <h3 className="font-semibold text-lg text-neutral-900 mb-2">{displayNames.team_b_name}</h3>
-                <div className="text-sm text-neutral-600">Equipo B</div>
-              </div>
-              <Input
-                type="number"
-                min="0"
-                max="50"
-                value={state.gameResult.team_b_score}
-                onChange={(e) => handleScoreChange('team_b', e.target.value)}
-                className="text-center text-3xl font-bold h-20 text-primary"
-                placeholder="0"
-                disabled={state.isReadOnly}
-              />
-            </div>
-          </div>
         </CardContent>
       </Card>
 
-      {/* Notes */}
-      <Card className="shadow-sm border-neutral-200">
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold">Notas del Partido</CardTitle>
-          <p className="text-sm text-neutral-600">
-            Información adicional sobre el desarrollo del partido (opcional)
-          </p>
-        </CardHeader>
-        <CardContent>
+      {/* Notes Section - Separate Module */}
+      <div style={{ marginTop: '32px' }}>
+      <Card className="shadow-sm border-neutral-200 rounded-xl bg-white fadeInUp" style={{ '--delay': '100ms' } as React.CSSProperties}>
+        <CardContent className="p-8">
+          {/* Header Section - Consistent with other sections */}
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+              <svg className="w-5 h-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M15 12h-5"/>
+                <path d="M15 8h-5"/>
+                <path d="M19 17V5a2 2 0 0 0-2-2H4"/>
+                <path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/>
+              </svg>
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-neutral-900">Notas del Partido</h3>
+              <p className="text-sm text-neutral-600 mt-1">
+                Información adicional sobre el desarrollo del partido (opcional)
+              </p>
+            </div>
+          </div>
+
           <Textarea
             value={state.gameResult.notes || ''}
             onChange={(e) => handleNotesChange(e.target.value)}
             placeholder="Ej: Buen partido, clima perfecto, destacó el jugador X..."
-            rows={4}
+            rows={3}
             maxLength={500}
             disabled={state.isReadOnly}
-            className={state.isReadOnly ? 'bg-neutral-50' : ''}
+            className={`${state.isReadOnly ? 'bg-neutral-50' : ''} border-neutral-200 focus:border-green-500 inputFocus fadeInUp`}
+            style={{ marginTop: '16px', '--delay': '200ms' } as React.CSSProperties}
           />
-          <div className="flex justify-between items-center mt-2">
+          <div className="flex justify-between items-center mt-3">
             <div className="text-xs text-neutral-500">
               {(state.gameResult.notes || '').length}/500 caracteres
             </div>
             {state.gameResult.notes && state.isReadOnly && (
-              <Badge variant="neutral" size="sm">Solo lectura</Badge>
+              <div className="px-2 py-1 bg-neutral-100 text-neutral-600 border border-neutral-200 rounded text-xs font-medium">
+                Solo lectura
+              </div>
             )}
           </div>
         </CardContent>
       </Card>
+      </div>
 
-    </div>
+      </div>
+    </>
   );
 }

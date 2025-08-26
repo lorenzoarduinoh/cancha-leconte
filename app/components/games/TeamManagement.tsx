@@ -367,7 +367,7 @@ export function TeamManagement({
         )}
 
         {/* Status Alerts */}
-        <div>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
           {/* Unassigned Players Warning */}
           {hasUnassignedPlayers && !isReadOnly ? (
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-red-50 text-red-700 border border-red-200">
@@ -376,7 +376,7 @@ export function TeamManagement({
             </div>
           ) : (
             /* Team Balance Status - Show when all players are assigned */
-            <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium ${
+            <div className={`flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-medium ${
               isTeamBalanced 
                 ? 'bg-green-50 text-green-700 border border-green-200' 
                 : 'bg-amber-50 text-amber-700 border border-amber-200'
@@ -387,7 +387,7 @@ export function TeamManagement({
                 <AlertTriangleIcon size={16} className="text-amber-700" />
               )} 
               {isTeamBalanced 
-                ? (isReadOnly ? 'Equipos finales balanceados' : 'Equipos balanceados')
+                ? (isReadOnly ? 'Equipos finales, solo lectura' : 'Equipos balanceados')
                 : `Diferencia de ${Math.abs(state.assignment.team_a.length - state.assignment.team_b.length)} jugador${Math.abs(state.assignment.team_a.length - state.assignment.team_b.length) > 1 ? 'es' : ''}`
               }
             </div>

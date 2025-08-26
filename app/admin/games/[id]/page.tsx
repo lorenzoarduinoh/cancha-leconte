@@ -8,7 +8,6 @@ import { Badge } from '@/app/components/ui/Badge';
 import { 
   ArrowLeftIcon, 
   ShieldIcon, 
-  TrophyIcon,
   CheckCircleIcon,
   AlertTriangleIcon
 } from '@/app/components/ui/Icons';
@@ -496,7 +495,16 @@ export default function GameDetailPage() {
                 { 
                   id: 'resultado', 
                   label: 'Resultado', 
-                  icon: TrophyIcon,
+                  icon: ({ size, className }: { size?: number; className?: string }) => (
+                    <svg xmlns="http://www.w3.org/2000/svg" width={size || 24} height={size || 24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                      <path d="M10 14.66v1.626a2 2 0 0 1-.976 1.696A5 5 0 0 0 7 21.978"/>
+                      <path d="M14 14.66v1.626a2 2 0 0 0 .976 1.696A5 5 0 0 1 17 21.978"/>
+                      <path d="M18 9h1.5a1 1 0 0 0 0-5H18"/>
+                      <path d="M4 22h16"/>
+                      <path d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z"/>
+                      <path d="M6 9H4.5a1 1 0 0 1 0-5H6"/>
+                    </svg>
+                  ),
                   count: null 
                 },
               ].map((tab) => {
@@ -549,10 +557,10 @@ export default function GameDetailPage() {
           <div id="overview-panel" role="tabpanel" aria-labelledby="overview-tab">
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
               {/* Game Stats - Fixed Layout */}
-              <Card className="shadow-sm border-neutral-200 rounded-xl bg-white">
+              <Card className="shadow-sm border-neutral-200 rounded-xl bg-white" style={{ minHeight: '400px' }}>
                 <CardContent className="p-6">
                   {/* Header Section */}
-                  <div className="flex items-center gap-3 mb-12">
+                  <div className="flex items-center gap-3 mb-6">
                     <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                       <svg className="w-[18px] h-[18px] text-green-700" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
                         <path d="M3 3v16a2 2 0 0 0 2 2h16"/>
@@ -564,7 +572,7 @@ export default function GameDetailPage() {
                     <h3 className="text-lg font-semibold text-neutral-900">Estadísticas del Partido</h3>
                   </div>
 
-                  <div className="space-y-6">
+                  <div className="space-y-6" style={{ marginTop: '20px' }}>
                     {/* Registered Players Block */}
                     <div className="space-y-4">
                       {/* Main row */}
@@ -649,14 +657,16 @@ export default function GameDetailPage() {
 
               {/* Payment Status - New Design */}
               <Suspense fallback={<ComponentLoader>Cargando estado de pagos</ComponentLoader>}>
-                <PaymentStatusCard
-                  paidAmount={paymentStats.paidAmount}
-                  pendingAmount={paymentStats.pendingAmount}
-                  paidPlayersCount={paymentStats.paid}
-                  pendingPlayersCount={paymentStats.pending}
-                  totalPlayersCount={paymentStats.total}
-                  className="shadow-sm"
-                />
+                <div style={{ marginTop: '20px' }}>
+                  <PaymentStatusCard
+                    paidAmount={paymentStats.paidAmount}
+                    pendingAmount={paymentStats.pendingAmount}
+                    paidPlayersCount={paymentStats.paid}
+                    pendingPlayersCount={paymentStats.pending}
+                    totalPlayersCount={paymentStats.total}
+                    className="shadow-sm"
+                  />
+                </div>
               </Suspense>
 
               {/* Invite Friends Card */}
