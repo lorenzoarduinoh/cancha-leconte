@@ -1781,9 +1781,10 @@ body {
 
 /* Loading States */
 .skeleton {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background: linear-gradient(90deg, #f8f9fa 25%, #e9ecef 50%, #f8f9fa 75%);
   background-size: 200% 100%;
-  animation: skeleton-loading 1.5s infinite;
+  animation: skeleton-loading 1.8s infinite ease-in-out;
+  border-radius: var(--radius-lg);
 }
 
 @keyframes skeleton-loading {
@@ -1793,6 +1794,56 @@ body {
   100% {
     background-position: -200% 0;
   }
+}
+
+/* Enhanced loading animations */
+.loading-container {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease-out forwards;
+  animation-delay: var(--delay, 0ms);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Loading skeleton variations */
+.skeleton-text {
+  background: linear-gradient(90deg, #f8f9fa 25%, #e9ecef 50%, #f8f9fa 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.8s infinite ease-in-out;
+  border-radius: var(--radius-sm);
+  height: 1em;
+}
+
+.skeleton-avatar {
+  background: linear-gradient(90deg, #f8f9fa 25%, #e9ecef 50%, #f8f9fa 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.8s infinite ease-in-out;
+  border-radius: var(--radius-full);
+}
+
+.skeleton-button {
+  background: linear-gradient(90deg, #f8f9fa 25%, #e9ecef 50%, #f8f9fa 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.8s infinite ease-in-out;
+  border-radius: var(--radius-lg);
+  height: 2.5rem;
+}
+
+.skeleton-card {
+  background: linear-gradient(90deg, #f8f9fa 25%, #e9ecef 50%, #f8f9fa 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.8s infinite ease-in-out;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-neutral-200);
 }
 
 /* Error States */

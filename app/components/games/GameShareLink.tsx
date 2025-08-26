@@ -19,13 +19,26 @@ interface GameShareLinkProps {
 export function GameShareLink({ shareToken, gameTitle }: GameShareLinkProps) {
   const [copied, setCopied] = useState(false);
   const [friendUrl, setFriendUrl] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
   
   // Generate the friend registration URL safely on client side
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
       setFriendUrl(`${window.location.origin}/juego/${shareToken}`);
+      // Simulate brief loading time for better UX
+      setTimeout(() => setIsLoading(false), 800);
     }
   }, [shareToken]);
+
+  // Show loading state while generating URL
+  if (isLoading || !friendUrl) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mr-3"></div>
+        <span className="text-neutral-600">Generando enlace...</span>
+      </div>
+    );
+  }
   
   // WhatsApp message template
   const whatsappMessage = `¡Hola!

@@ -1,16 +1,127 @@
 'use client';
 
-import { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { XIcon } from '../ui/Icons';
+import { InlineLoading } from '../ui/Loading';
 import { 
   GameRegistration, 
   PAYMENT_STATUS_LABELS,
   PaymentStatus,
   GameStatus 
 } from '../../../lib/types/game';
+
+// Animation styles for PlayerRegistrations
+const PLAYER_ANIMATIONS = `
+  .playersFadeInUp {
+    animation: playersFadeInUp 0.6s ease-out both;
+    animation-delay: var(--delay, 0ms);
+  }
+  
+  @keyframes playersFadeInUp {
+    0% {
+      opacity: 0;
+      transform: translate3d(0, 40px, 0);
+    }
+    100% {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+  
+  .playersSlideInLeft {
+    animation: playersSlideInLeft 0.5s ease-out both;
+    animation-delay: var(--delay, 0ms);
+  }
+  
+  @keyframes playersSlideInLeft {
+    0% {
+      opacity: 0;
+      transform: translate3d(-20px, 0, 0);
+    }
+    100% {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+  
+  .playersScaleIn {
+    animation: playersScaleIn 0.4s ease-out both;
+    animation-delay: var(--delay, 0ms);
+  }
+  
+  @keyframes playersScaleIn {
+    0% {
+      opacity: 0;
+      transform: scale3d(0.8, 0.8, 1);
+    }
+    100% {
+      opacity: 1;
+      transform: scale3d(1, 1, 1);
+    }
+  }
+  
+  .playerCardAnimate {
+    animation: playerCardAnimate 0.5s ease-out both;
+    animation-delay: var(--delay, 0ms);
+  }
+  
+  @keyframes playerCardAnimate {
+    0% {
+      opacity: 0;
+      transform: translate3d(0, 24px, 0) scale3d(0.95, 0.95, 1);
+    }
+    100% {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+    }
+  }
+  
+  .playersButtonHover {
+    transition: all 0.2s ease-out;
+  }
+  
+  .playersButtonHover:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .playersSearchFade {
+    animation: playersSearchFade 0.4s ease-out both;
+    animation-delay: var(--delay, 0ms);
+  }
+  
+  @keyframes playersSearchFade {
+    0% {
+      opacity: 0;
+      transform: translate3d(0, -10px, 0);
+    }
+    100% {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+  
+  /* Accessibility - respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .playersFadeInUp,
+    .playersSlideInLeft,
+    .playersScaleIn,
+    .playerCardAnimate,
+    .playersSearchFade {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+    
+    .playersButtonHover:hover {
+      transform: none;
+      box-shadow: none;
+    }
+  }
+`;
 
 // Player Management Icon
 const PlayersIcon = ({ size = 18, className = '' }: { size?: number; className?: string }) => (
@@ -104,6 +215,17 @@ export function PlayerRegistrations({
     paymentFilter: 'all',
   });
 
+  // Inject animation styles
+  React.useEffect(() => {
+    const styleId = 'player-animations';
+    if (!document.getElementById(styleId)) {
+      const style = document.createElement('style');
+      style.id = styleId;
+      style.textContent = PLAYER_ANIMATIONS;
+      document.head.appendChild(style);
+    }
+  }, []);
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('es-AR', {
       day: 'numeric',
@@ -183,6 +305,16 @@ export function PlayerRegistrations({
   }, [registrations]);
 
   // Filter registrations based on search term and payment filter
+  // Show loading state when registrations are being loaded
+  if (state.loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mr-3"></div>
+        <span className="text-neutral-600">Cargando jugadores...</span>
+      </div>
+    );
+  }
+
   const regs = registrations || [];
   const filteredRegistrations = regs.filter(reg => {
     const matchesSearch = reg.player_name.toLowerCase().includes(state.searchTerm.toLowerCase()) ||
@@ -311,15 +443,15 @@ export function PlayerRegistrations({
 
   if (regs.length === 0) {
     return (
-      <Card className="text-center shadow-sm border-neutral-200 rounded-xl bg-white">
+      <Card className="text-center shadow-sm border-neutral-200 rounded-xl bg-white playersFadeInUp" style={{ '--delay': '0ms' } as React.CSSProperties}>
         <CardContent className="p-12">
-          <div className="flex items-center justify-center mb-6">
+          <div className="flex items-center justify-center mb-6 playersScaleIn" style={{ '--delay': '200ms' } as React.CSSProperties}>
             <div className="w-16 h-16 bg-neutral-100 rounded-2xl flex items-center justify-center">
               <PlayersIcon size={32} className="text-neutral-400" />
             </div>
           </div>
-          <h3 className="text-xl font-semibold mb-3 text-neutral-900">No hay jugadores registrados</h3>
-          <p className="text-neutral-600 max-w-md mx-auto">
+          <h3 className="text-xl font-semibold mb-3 text-neutral-900 playersSlideInLeft" style={{ '--delay': '300ms' } as React.CSSProperties}>No hay jugadores registrados</h3>
+          <p className="text-neutral-600 max-w-md mx-auto playersSlideInLeft" style={{ '--delay': '400ms' } as React.CSSProperties}>
             {gameStatus === 'draft' 
               ? 'Publica el partido para que los jugadores puedan registrarse.'
               : 'Los jugadores podrán registrarse una vez que el partido esté publicado.'
@@ -333,15 +465,15 @@ export function PlayerRegistrations({
   return (
     <div className="space-y-8" style={{ marginTop: '-12px' }}>
       {/* Search and Filters - No Card Background */}
-      <div style={{ padding: '12px', display: 'flex', alignItems: 'center', minHeight: '72px' }}>
+      <div className="playersSearchFade" style={{ padding: '12px', display: 'flex', alignItems: 'center', minHeight: '72px', '--delay': '0ms' } as React.CSSProperties}>
         <div className="flex flex-row items-center justify-between" style={{ gap: '12px', minHeight: 'auto' }}>
           {/* Search and Filters - Perfect Alignment */}
           <div className="flex flex-row items-center flex-1" style={{ gap: '12px' }}>
             {/* Search Icon */}
-            <SearchIcon size={20} className="text-neutral-500 shrink-0 self-center" />
+            <SearchIcon size={20} className="text-neutral-500 shrink-0 self-center playersScaleIn" style={{ '--delay': '100ms' } as React.CSSProperties} />
             
             {/* Search Input - Native input for perfect alignment */}
-            <div className="relative min-w-[380px] flex-1 max-w-md">
+            <div className="relative min-w-[380px] flex-1 max-w-md playersSlideInLeft" style={{ '--delay': '150ms' } as React.CSSProperties}>
               <input
                 type="text"
                 placeholder="Buscar por nombre o teléfono..."
@@ -352,7 +484,7 @@ export function PlayerRegistrations({
               {state.searchTerm && (
                 <button
                   onClick={clearSearch}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-neutral-400 hover:text-neutral-600 transition-colors z-10"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-neutral-400 hover:text-neutral-600 transition-colors z-10 playersButtonHover"
                   aria-label="Limpiar búsqueda"
                 >
                   <XIcon size={16} />
@@ -361,10 +493,10 @@ export function PlayerRegistrations({
             </div>
             
             {/* Filter Buttons - Exact height matching */}
-            <div className="flex gap-1 shrink-0">
+            <div className="flex gap-1 shrink-0 playersSlideInLeft" style={{ '--delay': '200ms' } as React.CSSProperties}>
                 <button
                   onClick={() => setState(prev => ({ ...prev, paymentFilter: 'all' }))}
-                  className={`px-6 text-sm font-medium rounded-xl transition-all duration-200 flex items-center justify-center ${
+                  className={`px-6 text-sm font-medium rounded-xl transition-all duration-200 flex items-center justify-center playersButtonHover ${
                     state.paymentFilter === 'all'
                       ? 'bg-neutral-100 text-neutral-700 border border-neutral-200 shadow-sm' 
                       : 'bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50 hover:border-neutral-300'
@@ -380,7 +512,7 @@ export function PlayerRegistrations({
                 </button>
                 <button
                   onClick={() => setState(prev => ({ ...prev, paymentFilter: 'paid' }))}
-                  className={`px-6 text-sm font-medium rounded-xl transition-all duration-200 flex items-center justify-center ${
+                  className={`px-6 text-sm font-medium rounded-xl transition-all duration-200 flex items-center justify-center playersButtonHover ${
                     state.paymentFilter === 'paid'
                       ? 'bg-green-100 text-green-700 border border-green-200 shadow-sm' 
                       : 'bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50 hover:border-neutral-300'
@@ -396,7 +528,7 @@ export function PlayerRegistrations({
                 </button>
                 <button
                   onClick={() => setState(prev => ({ ...prev, paymentFilter: 'pending' }))}
-                  className={`px-6 text-sm font-medium rounded-xl transition-all duration-200 flex items-center justify-center ${
+                  className={`px-6 text-sm font-medium rounded-xl transition-all duration-200 flex items-center justify-center playersButtonHover ${
                     state.paymentFilter === 'pending'
                       ? 'bg-amber-100 text-amber-700 border border-amber-200 shadow-sm' 
                       : 'bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50 hover:border-neutral-300'
@@ -415,7 +547,7 @@ export function PlayerRegistrations({
           
           {/* Status Summary */}
           {(paymentStats.failed > 0 || paymentStats.refunded > 0) && (
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 playersSlideInLeft" style={{ '--delay': '300ms' } as React.CSSProperties}>
               {paymentStats.failed > 0 && (
                 <div className="px-3 py-1.5 bg-red-50 border border-red-200 rounded-lg text-sm font-medium text-red-700">
                   {paymentStats.failed} Fallido{paymentStats.failed > 1 ? 's' : ''}
@@ -432,11 +564,11 @@ export function PlayerRegistrations({
       </div>
 
       {/* Players List */}
-      <Card className="shadow-sm border-neutral-200 rounded-xl bg-white" style={{ marginTop: '20px' }}>
+      <Card className="shadow-sm border-neutral-200 rounded-xl bg-white playersFadeInUp" style={{ marginTop: '20px', '--delay': '100ms' } as React.CSSProperties}>
         <CardContent className="p-8">
           {/* Header Section */}
-          <div className="flex items-center gap-3" style={{ marginBottom: '24px' }}>
-            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+          <div className="flex items-center gap-3 playersSlideInLeft" style={{ marginBottom: '24px', '--delay': '200ms' } as React.CSSProperties}>
+            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center playersScaleIn" style={{ '--delay': '300ms' } as React.CSSProperties}>
               <PlayersIcon size={18} className="text-blue-600" />
             </div>
             <h3 className="text-lg font-semibold text-neutral-900">{getFilteredTitle()}</h3>
@@ -446,11 +578,10 @@ export function PlayerRegistrations({
             {filteredRegistrations.map((registration, index) => (
               <div 
                 key={registration.id} 
-                className="group relative bg-white border border-neutral-200 rounded-xl p-6 hover:border-green-200 hover:bg-green-50/30 transition-all duration-300 hover:shadow-sm"
+                className="group relative bg-white border border-neutral-200 rounded-xl p-6 hover:border-green-200 hover:bg-green-50/30 transition-all duration-300 hover:shadow-sm playerCardAnimate"
                 style={{ 
-                  animationDelay: `${index * 50}ms`,
-                  animation: 'fadeInUp 0.5s ease-out forwards'
-                }}
+                  '--delay': `${400 + index * 80}ms`
+                } as React.CSSProperties}
               >
                 <div className="flex items-center gap-6" style={{ paddingLeft: '8px' }}>
                   {/* Avatar */}
@@ -537,12 +668,18 @@ export function PlayerRegistrations({
                         size="sm"
                         onClick={() => handleMarkAsPaid(registration.id)}
                         disabled={state.paymentLoading}
-                        className="px-4 py-2 text-sm font-medium bg-green-600 hover:bg-green-700 text-white border-0 shadow-sm"
+                        className="px-4 py-2 text-sm font-medium bg-green-600 hover:bg-green-700 text-white border-0 shadow-sm playersButtonHover"
                       >
-                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                          <path d="M20 6 9 17l-5-5"/>
-                        </svg>
-                        Marcar Pagado
+                        {state.paymentLoading ? (
+                          <InlineLoading message="Actualizando..." size="sm" />
+                        ) : (
+                          <>
+                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                              <path d="M20 6 9 17l-5-5"/>
+                            </svg>
+                            Marcar Pagado
+                          </>
+                        )}
                       </Button>
                     )}
 
@@ -552,7 +689,7 @@ export function PlayerRegistrations({
                         size="sm"
                         onClick={() => handleRemovePlayer(registration.id)}
                         disabled={state.loading}
-                        className="px-3 py-2 text-sm font-medium bg-red-600 hover:bg-red-700 text-white border-0 shadow-sm"
+                        className="px-3 py-2 text-sm font-medium bg-red-600 hover:bg-red-700 text-white border-0 shadow-sm playersButtonHover"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
                           <path d="M3 6h18"/>
@@ -568,21 +705,22 @@ export function PlayerRegistrations({
 
             {/* Empty State */}
             {filteredRegistrations.length === 0 && regs.length > 0 && (
-              <div className="text-center py-12">
-                <div className="flex items-center justify-center mb-6">
+              <div className="text-center py-12 playersFadeInUp" style={{ '--delay': '400ms' } as React.CSSProperties}>
+                <div className="flex items-center justify-center mb-6 playersScaleIn" style={{ '--delay': '500ms' } as React.CSSProperties}>
                   <div className="w-16 h-16 bg-neutral-100 rounded-2xl flex items-center justify-center">
                     <SearchIcon size={32} className="text-neutral-400" />
                   </div>
                 </div>
-                <h3 className="text-lg font-semibold mb-3 text-neutral-900">{getEmptyStateMessage().title}</h3>
-                <p className="text-neutral-600 mb-6 max-w-md mx-auto">
+                <h3 className="text-lg font-semibold mb-3 text-neutral-900 playersSlideInLeft" style={{ '--delay': '600ms' } as React.CSSProperties}>{getEmptyStateMessage().title}</h3>
+                <p className="text-neutral-600 mb-6 max-w-md mx-auto playersSlideInLeft" style={{ '--delay': '700ms' } as React.CSSProperties}>
                   {getEmptyStateMessage().description}
                 </p>
                 {state.searchTerm && (
                   <Button
                     variant="ghost"
                     onClick={clearSearch}
-                    className="px-6 py-3 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 border-0 rounded-lg"
+                    className="px-6 py-3 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 border-0 rounded-lg playersButtonHover playersScaleIn"
+                    style={{ '--delay': '800ms' } as React.CSSProperties}
                   >
                     <XIcon size={16} className="mr-2" />
                     Limpiar búsqueda

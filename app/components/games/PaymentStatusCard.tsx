@@ -61,6 +61,7 @@ interface PaymentStatusCardProps {
   pendingPlayersCount: number;
   totalPlayersCount: number;
   className?: string;
+  style?: React.CSSProperties;
 }
 
 export const PaymentStatusCard: React.FC<PaymentStatusCardProps> = ({
@@ -70,6 +71,7 @@ export const PaymentStatusCard: React.FC<PaymentStatusCardProps> = ({
   pendingPlayersCount,
   totalPlayersCount,
   className = '',
+  style,
 }) => {
   // Calculate percentage paid
   const totalAmount = paidAmount + pendingAmount;
@@ -89,8 +91,11 @@ export const PaymentStatusCard: React.FC<PaymentStatusCardProps> = ({
   const progressDegrees = percentagePaid * 3.6;
   
   return (
-    <Card className={`shadow-sm border-neutral-200 rounded-xl bg-white ${className}`} style={{ minHeight: '400px' }}>
-      <CardContent className="p-6">
+    <Card 
+      className={`shadow-sm border-neutral-200 rounded-xl bg-white ${className}`} 
+      style={{ height: '400px', ...style }}
+    >
+      <CardContent className="p-6 h-full flex flex-col">
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center border border-blue-100">
@@ -99,9 +104,9 @@ export const PaymentStatusCard: React.FC<PaymentStatusCardProps> = ({
           <h3 className="text-lg font-semibold text-gray-900">Estado de Pagos</h3>
         </div>
 
-        <div style={{ marginTop: '20px' }}>
+        <div className="flex-1 flex flex-col" style={{ paddingTop: '8px' }}>
         {/* Central Progress Ring */}
-        <div className="flex justify-center">
+        <div className="flex justify-center flex-1 items-center" style={{ marginTop: '-16px' }}>
           <div className="relative">
             {/* Background circle */}
             <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center">
@@ -130,12 +135,16 @@ export const PaymentStatusCard: React.FC<PaymentStatusCardProps> = ({
                   strokeWidth="7"
                   strokeLinecap="round"
                   strokeDasharray={`${226.19 * (percentagePaid / 100)} 226.19`}
-                  className="transition-all duration-500 ease-out"
+                  className="circularProgressAnimate"
+                  style={{
+                    '--target-dash': `${226.19 * (percentagePaid / 100)} 226.19`,
+                    '--delay': '600ms'
+                  } as React.CSSProperties}
                 />
               </svg>
               
               {/* Center content */}
-              <div className="relative z-10 flex flex-col items-center justify-center">
+              <div className="relative z-10 flex flex-col items-center justify-center scaleInBounce" style={{ '--delay': '800ms' } as React.CSSProperties}>
                 <span className="text-2xl font-bold text-gray-900 leading-none">{percentagePaid}%</span>
                 <span className="text-xs text-gray-500 font-medium mt-0.5">Pagado</span>
               </div>
@@ -143,13 +152,10 @@ export const PaymentStatusCard: React.FC<PaymentStatusCardProps> = ({
           </div>
         </div>
 
-        {/* Physical Spacer */}
-        <div style={{ height: '24px' }}></div>
-
-        {/* Status Cards */}
-        <div className="space-y-4">
+        {/* Status Cards - positioned at bottom */}
+        <div className="space-y-4 mt-auto" style={{ marginTop: '8px' }}>
           {/* Recaudado (Collected) */}
-          <div className="bg-green-50 border border-green-200 rounded-xl px-6 py-3 flex items-center justify-between h-16">
+          <div className="bg-green-50 border border-green-200 rounded-xl px-6 py-3 flex items-center justify-between" style={{ height: '68px', marginTop: '-8px', '--delay': '1000ms' } as React.CSSProperties}>
             <div className="flex items-center gap-4">
               <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center border border-green-200 flex-shrink-0">
                 <svg className="w-[16px] h-[16px] text-green-700" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
@@ -169,7 +175,7 @@ export const PaymentStatusCard: React.FC<PaymentStatusCardProps> = ({
           </div>
 
           {/* Pendiente (Pending) */}
-          <div className="bg-amber-50 border border-amber-200 rounded-xl px-6 py-3 flex items-center justify-between h-16">
+          <div className="bg-amber-50 border border-amber-200 rounded-xl px-6 py-3 flex items-center justify-between" style={{ height: '68px', '--delay': '1200ms' } as React.CSSProperties}>
             <div className="flex items-center gap-4">
               <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center border border-amber-200 flex-shrink-0">
                 <svg className="w-[16px] h-[16px] text-amber-700" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">

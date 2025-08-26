@@ -277,17 +277,27 @@ export function TeamManagement({
   });
   const hasUnassignedPlayers = state.assignment.unassigned.length > 0;
 
+  // Show loading state when loading teams
+  if (state.loading && regs.length >= 4) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mr-3"></div>
+        <span className="text-neutral-600">Cargando equipos...</span>
+      </div>
+    );
+  }
+
   if (gameStatus !== 'closed' && gameStatus !== 'completed' && regs.length < 4) {
     return (
-      <Card className="text-center shadow-sm border-neutral-200 rounded-xl bg-white">
+      <Card className="text-center shadow-sm border-neutral-200 rounded-xl bg-white teamsFadeInUp" style={{ '--delay': '0ms' } as React.CSSProperties}>
         <CardContent className="p-12">
-          <div className="flex items-center justify-center mb-6">
+          <div className="flex items-center justify-center mb-6 teamsScaleIn" style={{ '--delay': '200ms' } as React.CSSProperties}>
             <div className="w-16 h-16 bg-neutral-100 rounded-2xl flex items-center justify-center">
               <ShieldIcon size={32} className="text-neutral-400" />
             </div>
           </div>
-          <h3 className="text-xl font-semibold mb-3 text-neutral-900">Gestión de Equipos No Disponible</h3>
-          <p className="text-neutral-600 max-w-md mx-auto">
+          <h3 className="text-xl font-semibold mb-3 text-neutral-900 teamsFadeInUp" style={{ '--delay': '400ms' } as React.CSSProperties}>Gestión de Equipos No Disponible</h3>
+          <p className="text-neutral-600 max-w-md mx-auto teamsFadeInUp" style={{ '--delay': '600ms' } as React.CSSProperties}>
             {gameStatus !== 'closed' && gameStatus !== 'completed'
               ? 'Cierra las registraciones para poder gestionar los equipos.'
               : `Se necesitan al menos 4 jugadores para formar equipos. Actualmente hay ${regs.length}.`
@@ -299,16 +309,16 @@ export function TeamManagement({
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 teamsFadeInUp" style={{ '--delay': '0ms' } as React.CSSProperties}>
       {/* Action Buttons and Team Balance Status */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className={`flex flex-wrap items-center gap-4 teamsFadeInUp ${isReadOnly ? 'justify-center' : 'justify-between'}`} style={{ '--delay': '100ms' } as React.CSSProperties}>
         {/* Action Buttons */}
         {!isReadOnly && (
           <div className="flex flex-wrap gap-1">
             <button
               onClick={handleRandomAssignment}
               disabled={state.loading || regs.length < 2}
-              className="px-6 text-sm font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2 bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50 hover:border-neutral-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 text-sm font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2 bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50 hover:border-neutral-300 disabled:opacity-50 disabled:cursor-not-allowed teamsButtonHover"
               style={{ 
                 height: '48px', 
                 boxSizing: 'border-box',
@@ -323,7 +333,7 @@ export function TeamManagement({
             <button
               onClick={handleClearAssignments}
               disabled={state.loading}
-              className="px-6 text-sm font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2 bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50 hover:border-neutral-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 text-sm font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2 bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50 hover:border-neutral-300 disabled:opacity-50 disabled:cursor-not-allowed teamsButtonHover"
               style={{ 
                 height: '48px', 
                 boxSizing: 'border-box',
@@ -338,7 +348,7 @@ export function TeamManagement({
             <button
               onClick={handleSaveAssignment}
               disabled={state.loading || !hasChanges || hasUnassignedPlayers}
-              className={`px-6 text-sm font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+              className={`px-6 text-sm font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed teamsButtonHover ${
                 state.saved 
                   ? 'bg-green-100 text-green-700 border border-green-200 shadow-sm'
                   : 'bg-green-600 hover:bg-green-700 text-white border border-green-600'
@@ -370,17 +380,17 @@ export function TeamManagement({
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           {/* Unassigned Players Warning */}
           {hasUnassignedPlayers && !isReadOnly ? (
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-red-50 text-red-700 border border-red-200">
+            <div className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium bg-red-50 text-red-700 border border-red-200 teamsBadgeFloat" style={{ '--delay': '200ms' } as React.CSSProperties}>
               <AlertTriangleIcon size={16} className="text-red-700" />
               {state.assignment.unassigned.length} jugador{state.assignment.unassigned.length > 1 ? 'es' : ''} sin asignar
             </div>
           ) : (
             /* Team Balance Status - Show when all players are assigned */
-            <div className={`flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-medium ${
+            <div className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-medium teamsBadgeFloat ${
               isTeamBalanced 
                 ? 'bg-green-50 text-green-700 border border-green-200' 
                 : 'bg-amber-50 text-amber-700 border border-amber-200'
-            }`}>
+            }`} style={{ '--delay': '200ms' } as React.CSSProperties}>
               {isTeamBalanced ? (
                 <CheckIcon size={16} className="text-green-700" />
               ) : (
@@ -395,19 +405,18 @@ export function TeamManagement({
         </div>
       </div>
 
-      <div style={{ marginTop: '32px' }}>
+      <div className="teamsScaleIn" style={{ marginTop: '32px', '--delay': '300ms' } as React.CSSProperties}>
         {/* Team Containers - New Design */}
-      <Card className="shadow-sm border-neutral-200 rounded-xl bg-white">
+      <Card className="shadow-sm border-neutral-200 rounded-xl bg-white teamsCardHover">
         <CardContent className="p-8">
           {/* Teams Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Team A */}
             <div
-              className={`bg-white border-2 rounded-xl p-6 min-h-[300px] transition-all duration-200 ${
-                state.hoveredTeam === 'team_a' 
-                  ? 'border-green-300 bg-green-50/30' 
-                  : 'border-neutral-200 hover:border-neutral-300'
+              className={`bg-white border border-neutral-200 rounded-xl p-6 min-h-[300px] teamsTeamContainer teamsSlideInLeft ${
+                state.hoveredTeam === 'team_a' ? 'drag-hover' : ''
               } ${isReadOnly ? 'cursor-default' : 'cursor-pointer'}`}
+              style={{ '--delay': '400ms' } as React.CSSProperties}
               onDragOver={isReadOnly ? undefined : (e) => handleDragOver(e, 'team_a')}
               onDragLeave={isReadOnly ? undefined : handleDragLeave}
               onDrop={isReadOnly ? undefined : (e) => handleDrop(e, 'team_a')}
@@ -437,14 +446,13 @@ export function TeamManagement({
                 {state.assignment.team_a.map((player, index) => (
                   <div
                     key={player.id}
-                    className={`group relative bg-white border border-neutral-200 rounded-xl p-4 transition-all duration-300 ${
+                    className={`group relative bg-white border border-neutral-200 rounded-xl p-4 teamsPlayerCard teamsPlayerStagger ${
                       !isReadOnly ? 'hover:border-green-200 hover:bg-green-50/30 cursor-grab active:cursor-grabbing' : 'cursor-default'
-                    }`}
+                    } ${state.draggedPlayer?.id === player.id ? 'dragging' : ''}`}
                     style={{ 
-                      animationDelay: `${index * 50}ms`,
-                      animation: 'fadeInUp 0.5s ease-out forwards',
+                      '--delay': `${500 + index * 100}ms`,
                       margin: '6px'
-                    }}
+                    } as React.CSSProperties}
                     draggable={!isReadOnly}
                     onDragStart={isReadOnly ? undefined : () => handleDragStart(player)}
                     onDragEnd={isReadOnly ? undefined : handleDragEnd}
@@ -502,11 +510,10 @@ export function TeamManagement({
 
             {/* Unassigned Players */}
             <div
-              className={`bg-white border-2 rounded-xl p-6 min-h-[300px] transition-all duration-200 ${
-                state.hoveredTeam === 'unassigned' 
-                  ? 'border-amber-300 bg-amber-50/30' 
-                  : 'border-neutral-200 hover:border-neutral-300'
+              className={`bg-white border border-neutral-200 rounded-xl p-6 min-h-[300px] teamsTeamContainer teamsFadeInUp ${
+                state.hoveredTeam === 'unassigned' ? 'drag-hover' : ''
               } ${isReadOnly ? 'cursor-default' : 'cursor-pointer'}`}
+              style={{ '--delay': '500ms' } as React.CSSProperties}
               onDragOver={isReadOnly ? undefined : (e) => handleDragOver(e, 'unassigned')}
               onDragLeave={isReadOnly ? undefined : handleDragLeave}
               onDrop={isReadOnly ? undefined : (e) => handleDrop(e, 'unassigned')}
@@ -529,14 +536,13 @@ export function TeamManagement({
                 {state.assignment.unassigned.map((player, index) => (
                   <div
                     key={player.id}
-                    className={`group relative bg-white border border-neutral-200 rounded-xl p-4 transition-all duration-300 ${
+                    className={`group relative bg-white border border-neutral-200 rounded-xl p-4 teamsPlayerCard teamsPlayerStagger ${
                       !isReadOnly ? 'hover:border-amber-200 hover:bg-amber-50/30 cursor-grab active:cursor-grabbing' : 'cursor-default'
-                    }`}
+                    } ${state.draggedPlayer?.id === player.id ? 'dragging' : ''}`}
                     style={{ 
-                      animationDelay: `${index * 50}ms`,
-                      animation: 'fadeInUp 0.5s ease-out forwards',
+                      '--delay': `${600 + index * 100}ms`,
                       margin: '6px'
-                    }}
+                    } as React.CSSProperties}
                     draggable={!isReadOnly}
                     onDragStart={isReadOnly ? undefined : () => handleDragStart(player)}
                     onDragEnd={isReadOnly ? undefined : handleDragEnd}
@@ -596,11 +602,10 @@ export function TeamManagement({
 
             {/* Team B */}
             <div
-              className={`bg-white border-2 rounded-xl p-6 min-h-[300px] transition-all duration-200 ${
-                state.hoveredTeam === 'team_b' 
-                  ? 'border-green-300 bg-green-50/30' 
-                  : 'border-neutral-200 hover:border-neutral-300'
+              className={`bg-white border border-neutral-200 rounded-xl p-6 min-h-[300px] teamsTeamContainer teamsSlideInRight ${
+                state.hoveredTeam === 'team_b' ? 'drag-hover' : ''
               } ${isReadOnly ? 'cursor-default' : 'cursor-pointer'}`}
+              style={{ '--delay': '600ms' } as React.CSSProperties}
               onDragOver={isReadOnly ? undefined : (e) => handleDragOver(e, 'team_b')}
               onDragLeave={isReadOnly ? undefined : handleDragLeave}
               onDrop={isReadOnly ? undefined : (e) => handleDrop(e, 'team_b')}
@@ -630,14 +635,13 @@ export function TeamManagement({
                 {state.assignment.team_b.map((player, index) => (
                   <div
                     key={player.id}
-                    className={`group relative bg-white border border-neutral-200 rounded-xl p-4 transition-all duration-300 ${
+                    className={`group relative bg-white border border-neutral-200 rounded-xl p-4 teamsPlayerCard teamsPlayerStagger ${
                       !isReadOnly ? 'hover:border-green-200 hover:bg-green-50/30 cursor-grab active:cursor-grabbing' : 'cursor-default'
-                    }`}
+                    } ${state.draggedPlayer?.id === player.id ? 'dragging' : ''}`}
                     style={{ 
-                      animationDelay: `${index * 50}ms`,
-                      animation: 'fadeInUp 0.5s ease-out forwards',
+                      '--delay': `${700 + index * 100}ms`,
                       margin: '6px'
-                    }}
+                    } as React.CSSProperties}
                     draggable={!isReadOnly}
                     onDragStart={isReadOnly ? undefined : () => handleDragStart(player)}
                     onDragEnd={isReadOnly ? undefined : handleDragEnd}

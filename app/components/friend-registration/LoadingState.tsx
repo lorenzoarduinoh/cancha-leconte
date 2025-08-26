@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { LoadingSpinner } from '../ui/Loading';
 
 interface LoadingStateProps {
   message?: string;
@@ -18,31 +19,8 @@ export function LoadingState({ message = 'Cargando información del partido...' 
       <div className="max-w-sm w-full">
         <div className="bg-white rounded-lg border border-neutral-200 p-8 text-center">
           {/* Loading Spinner */}
-          <div 
-            className="w-12 h-12 mx-auto mb-6"
-            role="status"
-            aria-label="Cargando"
-          >
-            <svg 
-              className="animate-spin w-full h-full text-primary" 
-              fill="none" 
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <circle 
-                className="opacity-25" 
-                cx="12" 
-                cy="12" 
-                r="10" 
-                stroke="currentColor" 
-                strokeWidth="4"
-              />
-              <path 
-                className="opacity-75" 
-                fill="currentColor" 
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              />
-            </svg>
+          <div className="w-12 h-12 mx-auto mb-6">
+            <LoadingSpinner size="lg" color="text-primary" />
           </div>
 
           {/* Loading Message */}
@@ -102,32 +80,7 @@ export function InlineLoadingState({
 
   return (
     <div className="flex items-center justify-center gap-3 p-4">
-      <div 
-        className={sizeClasses[size]}
-        role="status"
-        aria-label="Cargando"
-      >
-        <svg 
-          className="animate-spin w-full h-full text-primary" 
-          fill="none" 
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-        >
-          <circle 
-            className="opacity-25" 
-            cx="12" 
-            cy="12" 
-            r="10" 
-            stroke="currentColor" 
-            strokeWidth="4"
-          />
-          <path 
-            className="opacity-75" 
-            fill="currentColor" 
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-          />
-        </svg>
-      </div>
+      <LoadingSpinner size={size} color="text-primary" />
       
       <span className={`${textSizeClasses[size]} text-neutral-700 font-medium`}>
         {message}

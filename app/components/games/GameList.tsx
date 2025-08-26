@@ -317,10 +317,9 @@ export function GameList({
 
       {/* Loading State */}
       {loading && (
-        <div className="space-y-4" role="status" aria-label="Cargando partidos">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="game-card skeleton h-48 rounded-lg" />
-          ))}
+        <div className="flex items-center justify-center py-12" role="status" aria-label="Cargando partidos">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mr-3"></div>
+          <span className="text-neutral-600">Cargando partidos...</span>
         </div>
       )}
 

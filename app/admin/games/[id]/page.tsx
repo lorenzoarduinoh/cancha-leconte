@@ -18,6 +18,294 @@ import {
   TeamAssignment 
 } from '@/lib/types/game';
 
+// Animation styles for the overview section
+const overviewAnimationStyles = `
+  .overviewFadeInUp {
+    animation: overviewFadeInUp 0.6s ease-out both;
+    animation-delay: var(--delay, 0ms);
+  }
+  
+  @keyframes overviewFadeInUp {
+    0% {
+      opacity: 0;
+      transform: translate3d(0, 40px, 0);
+    }
+    100% {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+  
+  .progressBarAnimate {
+    animation: progressBarAnimate 1.2s ease-out both;
+    animation-delay: var(--delay, 0ms);
+  }
+  
+  @keyframes progressBarAnimate {
+    0% {
+      width: 0%;
+    }
+    100% {
+      width: var(--target-width, 0%);
+    }
+  }
+  
+  .circularProgressAnimate {
+    animation: circularProgressAnimate 1.5s ease-out both;
+    animation-delay: var(--delay, 0ms);
+  }
+  
+  @keyframes circularProgressAnimate {
+    0% {
+      stroke-dasharray: 0 226.19;
+    }
+    100% {
+      stroke-dasharray: var(--target-dash, 0 226.19);
+    }
+  }
+  
+  .scaleInBounce {
+    animation: scaleInBounce 0.5s ease-out both;
+    animation-delay: var(--delay, 0ms);
+  }
+  
+  @keyframes scaleInBounce {
+    0% {
+      opacity: 0;
+      transform: scale3d(0.3, 0.3, 1);
+    }
+    50% {
+      transform: scale3d(1.05, 1.05, 1);
+    }
+    70% {
+      transform: scale3d(0.95, 0.95, 1);
+    }
+    100% {
+      opacity: 1;
+      transform: scale3d(1, 1, 1);
+    }
+  }
+  
+  .slideInRight {
+    animation: slideInRight 0.5s ease-out both;
+    animation-delay: var(--delay, 0ms);
+  }
+  
+  @keyframes slideInRight {
+    0% {
+      opacity: 0;
+      transform: translate3d(30px, 0, 0);
+    }
+    100% {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+  
+  .overviewCardHover {
+    transition: all 0.3s ease-in-out;
+    will-change: transform, box-shadow;
+  }
+  
+  .overviewCardHover:hover {
+    transform: translate3d(0, -4px, 0);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    .overviewFadeInUp,
+    .progressBarAnimate,
+    .circularProgressAnimate,
+    .scaleInBounce,
+    .slideInRight {
+      animation: none;
+      opacity: 1;
+      transform: none;
+      width: var(--target-width, auto);
+      stroke-dasharray: var(--target-dash, none);
+    }
+    
+    .overviewCardHover:hover {
+      transform: none;
+      box-shadow: none;
+    }
+  }
+`;
+
+// Animation styles for the teams section
+const teamsAnimationStyles = `
+  .teamsFadeInUp {
+    animation: teamsFadeInUp 0.6s ease-out both;
+    animation-delay: var(--delay, 0ms);
+  }
+  
+  @keyframes teamsFadeInUp {
+    0% {
+      opacity: 0;
+      transform: translate3d(0, 40px, 0);
+    }
+    100% {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+  
+  .teamsSlideInLeft {
+    animation: teamsSlideInLeft 0.6s ease-out both;
+    animation-delay: var(--delay, 0ms);
+  }
+  
+  @keyframes teamsSlideInLeft {
+    0% {
+      opacity: 0;
+      transform: translate3d(-40px, 0, 0);
+    }
+    100% {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+  
+  .teamsSlideInRight {
+    animation: teamsSlideInRight 0.6s ease-out both;
+    animation-delay: var(--delay, 0ms);
+  }
+  
+  @keyframes teamsSlideInRight {
+    0% {
+      opacity: 0;
+      transform: translate3d(40px, 0, 0);
+    }
+    100% {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+  
+  .teamsScaleIn {
+    animation: teamsScaleIn 0.4s ease-out both;
+    animation-delay: var(--delay, 0ms);
+  }
+  
+  @keyframes teamsScaleIn {
+    0% {
+      opacity: 0;
+      transform: scale3d(0.9, 0.9, 1);
+    }
+    100% {
+      opacity: 1;
+      transform: scale3d(1, 1, 1);
+    }
+  }
+  
+  .teamsPlayerStagger {
+    animation: teamsPlayerStagger 0.5s ease-out both;
+    animation-delay: var(--delay, 0ms);
+  }
+  
+  @keyframes teamsPlayerStagger {
+    0% {
+      opacity: 0;
+      transform: translate3d(0, 20px, 0) scale3d(0.95, 0.95, 1);
+    }
+    100% {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+    }
+  }
+  
+  .teamsButtonHover {
+    transition: all 0.3s ease-in-out;
+    will-change: transform, box-shadow;
+  }
+  
+  .teamsButtonHover:hover {
+    transform: translate3d(0, -2px, 0);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  }
+  
+  .teamsCardHover {
+    transition: all 0.3s ease-in-out;
+    will-change: transform, box-shadow;
+  }
+  
+  .teamsCardHover:hover {
+    transform: translate3d(0, -4px, 0);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+  
+  .teamsBadgeFloat {
+    animation: teamsBadgeFloat 0.5s ease-out both;
+    animation-delay: var(--delay, 0ms);
+  }
+  
+  @keyframes teamsBadgeFloat {
+    0% {
+      opacity: 0;
+      transform: translate3d(0, -10px, 0) scale3d(0.9, 0.9, 1);
+    }
+    100% {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+    }
+  }
+  
+  .teamsTeamContainer {
+    transition: all 0.3s ease-in-out;
+    will-change: border-color, background-color;
+  }
+  
+  .teamsTeamContainer.drag-hover {
+    border-color: rgb(34, 197, 94);
+    background-color: rgb(240, 253, 244);
+    transform: scale3d(1.02, 1.02, 1);
+  }
+  
+  .teamsPlayerCard {
+    transition: all 0.2s ease-in-out;
+    will-change: transform, box-shadow, border-color;
+  }
+  
+  .teamsPlayerCard:hover {
+    transform: translate3d(0, -2px, 0);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .teamsPlayerCard.dragging {
+    transform: rotate(5deg) scale3d(1.05, 1.05, 1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    .teamsFadeInUp,
+    .teamsSlideInLeft,
+    .teamsSlideInRight,
+    .teamsScaleIn,
+    .teamsPlayerStagger,
+    .teamsBadgeFloat {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+    
+    .teamsButtonHover:hover,
+    .teamsCardHover:hover,
+    .teamsPlayerCard:hover {
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .teamsTeamContainer.drag-hover {
+      transform: none;
+    }
+    
+    .teamsPlayerCard.dragging {
+      transform: none;
+    }
+  }
+`;
+
 // Lazy load heavy components to reduce initial bundle size
 const TeamManagement = lazy(() => 
   import('@/app/components/games/TeamManagement')
@@ -64,13 +352,6 @@ const PaymentStatusCard = lazy(() =>
     })
 );
 
-// Loading fallback component
-const ComponentLoader = ({ children }: { children: string }) => (
-  <div className="flex items-center justify-center py-8">
-    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mr-3"></div>
-    <span className="text-neutral-600">{children}...</span>
-  </div>
-);
 
 interface PaymentStats {
   total: number;
@@ -554,11 +835,13 @@ export default function GameDetailPage() {
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-8">
         {/* Overview Tab */}
         {state.activeTab === 'overview' && (
-          <div id="overview-panel" role="tabpanel" aria-labelledby="overview-tab">
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-              {/* Game Stats - Fixed Layout */}
-              <Card className="shadow-sm border-neutral-200 rounded-xl bg-white" style={{ minHeight: '400px' }}>
-                <CardContent className="p-6">
+          <>
+            <style dangerouslySetInnerHTML={{ __html: overviewAnimationStyles }} />
+            <div id="overview-panel" role="tabpanel" aria-labelledby="overview-tab">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                {/* Game Stats - Fixed Layout */}
+                <Card className="shadow-sm border-neutral-200 rounded-xl bg-white overviewFadeInUp overviewCardHover" style={{ height: '400px', '--delay': '0ms' } as React.CSSProperties}>
+                <CardContent className="p-6 h-full flex flex-col">
                   {/* Header Section */}
                   <div className="flex items-center gap-3 mb-6">
                     <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
@@ -572,7 +855,7 @@ export default function GameDetailPage() {
                     <h3 className="text-lg font-semibold text-neutral-900">Estadísticas del Partido</h3>
                   </div>
 
-                  <div className="space-y-6" style={{ marginTop: '20px' }}>
+                  <div className="space-y-6 flex-1" style={{ marginTop: '20px' }}>
                     {/* Registered Players Block */}
                     <div className="space-y-4">
                       {/* Main row */}
@@ -587,13 +870,14 @@ export default function GameDetailPage() {
                       <div className="w-full">
                         <div className="w-full bg-neutral-200 rounded-full h-2">
                           <div 
-                            className="bg-black h-2 rounded-full transition-all duration-300"
+                            className="bg-black h-2 rounded-full progressBarAnimate"
                             style={{ 
-                              width: `${Math.min(
+                              '--target-width': `${Math.min(
                                 ((state.game?.current_players || 0) / (state.game?.max_players || 1)) * 100, 
                                 100
-                              )}%` 
-                            }}
+                              )}%`,
+                              '--delay': '800ms'
+                            } as React.CSSProperties}
                             role="progressbar"
                             aria-valuenow={state.game?.current_players || 0}
                             aria-valuemax={state.game?.max_players || 0}
@@ -616,7 +900,7 @@ export default function GameDetailPage() {
                     </div>
 
                     {/* Cost per Player Row */}
-                    <div className="bg-neutral-50 rounded-lg p-4 border border-neutral-200">
+                    <div className="bg-neutral-50 rounded-lg p-4 border border-neutral-200 overviewFadeInUp" style={{ '--delay': '600ms' } as React.CSSProperties}>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center border border-neutral-200">
@@ -634,7 +918,7 @@ export default function GameDetailPage() {
                     </div>
 
                     {/* Expected Income Block */}
-                    <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+                    <div className="bg-green-50 rounded-lg p-4 border border-green-200 overviewFadeInUp" style={{ '--delay': '700ms' } as React.CSSProperties}>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center border border-green-200">
@@ -655,24 +939,33 @@ export default function GameDetailPage() {
                 </CardContent>
               </Card>
 
-              {/* Payment Status - New Design */}
-              <Suspense fallback={<ComponentLoader>Cargando estado de pagos</ComponentLoader>}>
-                <div style={{ marginTop: '20px' }}>
+                {/* Payment Status - New Design */}
+                <Suspense fallback={
+                  <div className="flex items-center justify-center py-12">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mr-3"></div>
+                    <span className="text-neutral-600">Cargando estado de pagos...</span>
+                  </div>
+                }>
                   <PaymentStatusCard
                     paidAmount={paymentStats.paidAmount}
                     pendingAmount={paymentStats.pendingAmount}
                     paidPlayersCount={paymentStats.paid}
                     pendingPlayersCount={paymentStats.pending}
                     totalPlayersCount={paymentStats.total}
-                    className="shadow-sm"
+                    className="shadow-sm overviewFadeInUp overviewCardHover"
+                    style={{ '--delay': '200ms' } as React.CSSProperties}
                   />
-                </div>
-              </Suspense>
+                </Suspense>
 
-              {/* Invite Friends Card */}
-              <Card className="md:col-span-2 xl:col-span-1 bg-white rounded-3xl border border-neutral-200 shadow-lg min-h-[320px]">
+                {/* Invite Friends Card */}
+                <Card className="md:col-span-2 xl:col-span-1 bg-white rounded-3xl border border-neutral-200 shadow-lg min-h-[320px] overviewFadeInUp overviewCardHover" style={{ '--delay': '400ms' } as React.CSSProperties}>
                 <CardContent className="px-12 py-16 h-full flex flex-col" style={{ marginBottom: '0 !important' }}>
-                  <Suspense fallback={<ComponentLoader>Cargando enlace</ComponentLoader>}>
+                  <Suspense fallback={
+                    <div className="flex items-center justify-center py-8">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mr-3"></div>
+                      <span className="text-neutral-600">Cargando enlace...</span>
+                    </div>
+                  }>
                     <GameShareLink 
                       shareToken={state.game.share_token} 
                       gameTitle={state.game.title}
@@ -680,14 +973,20 @@ export default function GameDetailPage() {
                   </Suspense>
                 </CardContent>
               </Card>
+              </div>
             </div>
-          </div>
+          </>
         )}
 
         {/* Players Tab */}
         {state.activeTab === 'players' && (
           <div id="players-panel" role="tabpanel" aria-labelledby="players-tab">
-            <Suspense fallback={<ComponentLoader>Cargando jugadores</ComponentLoader>}>
+            <Suspense fallback={
+              <div className="flex items-center justify-center py-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mr-3"></div>
+                <span className="text-neutral-600">Cargando jugadores...</span>
+              </div>
+            }>
               <PlayerRegistrations 
                 gameId={state.game.id} 
                 registrations={state.game.registrations}
@@ -700,19 +999,27 @@ export default function GameDetailPage() {
 
         {/* Teams Tab */}
         {state.activeTab === 'teams' && (
-          <div id="teams-panel" role="tabpanel" aria-labelledby="teams-tab">
-            <Suspense fallback={<ComponentLoader>Cargando equipos</ComponentLoader>}>
-              <TeamManagement 
-                gameId={state.game.id}
-                registrations={state.game.registrations}
-                gameStatus={state.game.status}
-                onTeamsUpdate={fetchGameDetails}
-                isReadOnly={state.game.status === 'completed'}
-                teamAName={state.game.team_a_name}
-                teamBName={state.game.team_b_name}
-              />
-            </Suspense>
-          </div>
+          <>
+            <style dangerouslySetInnerHTML={{ __html: teamsAnimationStyles }} />
+            <div id="teams-panel" role="tabpanel" aria-labelledby="teams-tab">
+              <Suspense fallback={
+                <div className="flex items-center justify-center py-12">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mr-3"></div>
+                  <span className="text-neutral-600">Cargando equipos...</span>
+                </div>
+              }>
+                <TeamManagement 
+                  gameId={state.game.id}
+                  registrations={state.game.registrations}
+                  gameStatus={state.game.status}
+                  onTeamsUpdate={fetchGameDetails}
+                  isReadOnly={state.game.status === 'completed'}
+                  teamAName={state.game.team_a_name}
+                  teamBName={state.game.team_b_name}
+                />
+              </Suspense>
+            </div>
+          </>
         )}
 
 
@@ -720,7 +1027,12 @@ export default function GameDetailPage() {
         {state.activeTab === 'resultado' && (
           <div id="resultado-panel" role="tabpanel" aria-labelledby="resultado-tab">
             {state.game.status === 'completed' ? (
-              <Suspense fallback={<ComponentLoader>Cargando formulario de resultado</ComponentLoader>}>
+              <Suspense fallback={
+                <div className="flex items-center justify-center py-12">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mr-3"></div>
+                  <span className="text-neutral-600">Cargando resultados...</span>
+                </div>
+              }>
                 <GameResultForm 
                   gameId={state.game.id}
                   existingResult={state.game.result}

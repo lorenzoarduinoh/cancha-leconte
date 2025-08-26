@@ -6,6 +6,7 @@ import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { Input } from '../ui/Input';
 import { Select } from '../ui/Select';
+import { LoadingSpinner } from '../ui/Loading';
 import { 
   GameRegistration, 
   PAYMENT_STATUS_LABELS,
@@ -182,6 +183,16 @@ export function PaymentTracker({
     { value: 'refunded', label: 'Reembolsados' },
   ];
 
+  // Show loading state when loading payment data
+  if (loading && detailed) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mr-3"></div>
+        <span className="text-neutral-600">Cargando estado de pagos...</span>
+      </div>
+    );
+  }
+
   if (!detailed) {
     // Simple payment overview
     return (
@@ -336,8 +347,9 @@ export function PaymentTracker({
                 size="sm"
                 onClick={() => handleBulkPaymentUpdate('paid')}
                 disabled={loading}
-                className="flex-1 md:flex-none"
+                className="flex-1 md:flex-none flex items-center gap-2"
               >
+                {loading ? <LoadingSpinner size="sm" color="text-white" /> : null}
                 Marcar Pagados
               </Button>
               <Button
@@ -345,8 +357,9 @@ export function PaymentTracker({
                 size="sm"
                 onClick={() => handleBulkPaymentUpdate('pending')}
                 disabled={loading}
-                className="flex-1 md:flex-none"
+                className="flex-1 md:flex-none flex items-center gap-2"
               >
+                {loading ? <LoadingSpinner size="sm" color="text-white" /> : null}
                 Marcar Pendientes
               </Button>
             </div>
