@@ -2337,6 +2337,63 @@ body {
   }
 }
 
+/* Game Detail Overview Content - Mobile Spacing */
+@media (max-width: 767px) {
+  .game-detail-overview-content {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  
+  /* Increase stats card height slightly on mobile */
+  .game-stats-card {
+    height: 420px !important; /* Increased from 400px to 420px */
+  }
+  
+  /* Fix GameShareLink input text overflow on mobile */
+  .game-invite-card input[type="text"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    padding-right: 8px !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Ensure the input container respects boundaries */
+  .game-invite-card .flex {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+  
+  /* Make sure the input wrapper doesn't overflow */
+  .game-invite-card [class*="flex"] > input {
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+  
+  /* Base styles for both buttons */
+  .game-invite-card button {
+    min-width: auto !important;
+    width: auto !important;
+    flex-shrink: 0 !important;
+  }
+  
+  /* Copy button specific (first button) */
+  .game-invite-card button:first-child {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  
+  /* WhatsApp button specific (last button) */
+  .game-invite-card button:last-child {
+    padding-left: 32px !important;
+    padding-right: 32px !important;
+  }
+}
+
 /* Tablet adjustments */
 @media (min-width: 768px) and (max-width: 1023px) {
   .game-detail-tab-button {

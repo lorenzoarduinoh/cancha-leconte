@@ -875,7 +875,7 @@ export default function GameDetailPage() {
       </div>
 
       {/* Tab Content */}
-      <div className="max-w-7xl mx-auto px-4 md:px-6 py-8">
+      <div className="max-w-7xl mx-auto game-detail-overview-content px-4 md:px-6 py-8">
         {/* Overview Tab */}
         {state.activeTab === 'overview' && (
           <>
@@ -883,7 +883,7 @@ export default function GameDetailPage() {
             <div id="overview-panel" role="tabpanel" aria-labelledby="overview-tab">
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
                 {/* Game Stats - Fixed Layout */}
-                <Card className="shadow-sm border-neutral-200 rounded-xl bg-white overviewFadeInUp overviewCardHover" style={{ height: '400px', '--delay': '0ms' } as React.CSSProperties}>
+                <Card className="game-stats-card shadow-sm border-neutral-200 rounded-xl bg-white overviewFadeInUp overviewCardHover" style={{ height: '400px', '--delay': '0ms' } as React.CSSProperties}>
                 <CardContent className="p-6 h-full flex flex-col">
                   {/* Header Section */}
                   <div className="flex items-center gap-3 mb-6">
@@ -998,8 +998,8 @@ export default function GameDetailPage() {
                 </Suspense>
 
                 {/* Invite Friends Card */}
-                <Card className="md:col-span-2 xl:col-span-1 bg-white rounded-3xl border border-neutral-200 shadow-lg min-h-[320px] overviewFadeInUp overviewCardHover" style={{ '--delay': '400ms' } as React.CSSProperties}>
-                <CardContent className="px-12 py-16 h-full flex flex-col" style={{ marginBottom: '0 !important' }}>
+                <Card className="game-invite-card md:col-span-2 xl:col-span-1 bg-white rounded-3xl border border-neutral-200 shadow-lg min-h-[320px] overviewFadeInUp overviewCardHover" style={{ '--delay': '400ms' } as React.CSSProperties}>
+                <CardContent className="game-invite-content px-12 py-16 h-full flex flex-col" style={{ marginBottom: '0 !important' }}>
                   <Suspense fallback={
                     <LoadingSpinner size="sm" message="Cargando enlace..." />
                   }>
