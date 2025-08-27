@@ -461,36 +461,83 @@ export function PlayerRegistrations({
 
   return (
     <div className="space-y-8" style={{ marginTop: '-12px' }}>
+      <style id="player-registrations-styles">{`
+        .player-search-and-filters-container {
+            display: flex;
+            gap: 12px;
+        }
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+        @media (max-width: 767px) {
+          .player-search-and-filters-container {
+            flex-direction: column;
+            gap: 16px;
+            align-items: stretch;
+          }
+          .search-container {
+            width: 100%;
+          }
+          .player-search-bar {
+            min-width: 0;
+            flex: 1;
+          }
+          .player-filters {
+            justify-content: center;
+            width: 100%;
+            gap: 8px;
+          }
+          .player-filters button {
+            flex: 1;
+            padding-left: 8px;
+            padding-right: 8px;
+            font-size: 12px;
+          }
+        }
+      `}</style>
       {/* Search and Filters - No Card Background */}
       <div className="playersSearchFade" style={{ padding: '12px', display: 'flex', alignItems: 'center', minHeight: '72px', '--delay': '0ms' } as React.CSSProperties}>
-        <div className="flex flex-row items-center justify-between" style={{ gap: '12px', minHeight: 'auto' }}>
+        <div className="flex flex-col md:flex-row items-center justify-between w-full" style={{ gap: '12px', minHeight: 'auto' }}>
           {/* Search and Filters - Perfect Alignment */}
-          <div className="flex flex-row items-center flex-1" style={{ gap: '12px' }}>
-            {/* Search Icon */}
-            <SearchIcon size={20} className="text-neutral-500 shrink-0 self-center playersScaleIn" style={{ '--delay': '100ms' } as React.CSSProperties} />
-            
-            {/* Search Input - Native input for perfect alignment */}
-            <div className="relative min-w-[380px] flex-1 max-w-md playersSlideInLeft" style={{ '--delay': '150ms' } as React.CSSProperties}>
-              <input
-                type="text"
-                placeholder="Buscar por nombre o teléfono..."
-                value={state.searchTerm}
-                onChange={(e) => setState(prev => ({ ...prev, searchTerm: e.target.value }))}
-                className="w-full h-12 px-4 pr-10 text-sm bg-white border border-neutral-300 rounded-xl focus:ring-2 focus:ring-green-500/20 focus:border-green-500 focus:outline-none placeholder:text-neutral-400 transition-colors duration-200"
-              />
-              {state.searchTerm && (
-                <button
-                  onClick={clearSearch}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-neutral-400 hover:text-neutral-600 transition-colors z-10 playersButtonHover"
-                  aria-label="Limpiar búsqueda"
-                >
-                  <XIcon size={16} />
-                </button>
-              )}
+          <div className="player-search-and-filters-container w-full flex-1">
+            <div className="search-container">
+                <style>{`
+                    .custom-pl {
+                        padding-left: 1.5rem;
+                    }
+                    .custom-pr {
+                        padding-right: 1.25rem;
+                    }
+                `}</style>
+                <div className="player-search-bar relative flex-1 playersSlideInLeft" style={{ '--delay': '150ms' } as React.CSSProperties}>
+                <input
+                    type="text"
+                    placeholder="Buscar por nombre o teléfono..."
+                    value={state.searchTerm}
+                    onChange={(e) => setState(prev => ({ ...prev, searchTerm: e.target.value }))}
+                    className="w-full h-12 pr-10 text-sm bg-white border border-neutral-300 rounded-xl focus:ring-2 focus:ring-green-500/20 focus:border-green-500 focus:outline-none placeholder:text-neutral-400 transition-colors duration-200 custom-pl"
+                />
+                {state.searchTerm ? (
+                    <button
+                    onClick={clearSearch}
+                    className="absolute inset-y-0 right-0 flex items-center text-neutral-400 hover:text-neutral-600 transition-colors z-10 playersButtonHover custom-pr"
+                    aria-label="Limpiar búsqueda"
+                    >
+                    <XIcon size={16} />
+                    </button>
+                ) : (
+                    <div className="absolute inset-y-0 right-0 flex items-center pointer-events-none custom-pr">
+                        <SearchIcon size={20} className="text-neutral-400" />
+                    </div>
+                )}
+                </div>
             </div>
             
             {/* Filter Buttons - Exact height matching */}
-            <div className="flex gap-1 shrink-0 playersSlideInLeft" style={{ '--delay': '200ms' } as React.CSSProperties}>
+            <div className="player-filters flex gap-1 shrink-0 playersSlideInLeft" style={{ '--delay': '200ms' } as React.CSSProperties}>
                 <button
                   onClick={() => setState(prev => ({ ...prev, paymentFilter: 'all' }))}
                   className={`px-6 text-sm font-medium rounded-xl transition-all duration-200 flex items-center justify-center playersButtonHover ${
@@ -544,7 +591,7 @@ export function PlayerRegistrations({
           
           {/* Status Summary */}
           {(paymentStats.failed > 0 || paymentStats.refunded > 0) && (
-            <div className="flex flex-wrap gap-2 playersSlideInLeft" style={{ '--delay': '300ms' } as React.CSSProperties}>
+            <div className="hidden md:flex flex-wrap gap-2 playersSlideInLeft" style={{ '--delay': '300ms' } as React.CSSProperties}>
               {paymentStats.failed > 0 && (
                 <div className="px-3 py-1.5 bg-red-50 border border-red-200 rounded-lg text-sm font-medium text-red-700">
                   {paymentStats.failed} Fallido{paymentStats.failed > 1 ? 's' : ''}
