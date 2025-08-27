@@ -450,8 +450,8 @@ export function PlayerRegistrations({
               <PlayersIcon size={32} className="text-neutral-400" />
             </div>
           </div>
-          <h3 className="text-xl font-semibold mb-3 text-neutral-900 playersSlideInLeft" style={{ '--delay': '300ms' } as React.CSSProperties}>No hay jugadores registrados</h3>
-          <p className="text-neutral-600 max-w-md mx-auto playersSlideInLeft" style={{ '--delay': '400ms' } as React.CSSProperties}>
+          <h3 className="text-xl font-semibold mb-3 text-neutral-900 playersFadeInUp" style={{ '--delay': '400ms' } as React.CSSProperties}>No hay jugadores registrados</h3>
+          <p className="text-neutral-600 max-w-md mx-auto playersFadeInUp" style={{ '--delay': '600ms' } as React.CSSProperties}>
             {gameStatus === 'draft' 
               ? 'Publica el partido para que los jugadores puedan registrarse.'
               : 'Los jugadores podrán registrarse una vez que el partido esté publicado.'

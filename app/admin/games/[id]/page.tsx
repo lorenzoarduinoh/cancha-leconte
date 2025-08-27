@@ -1025,7 +1025,9 @@ export default function GameDetailPage() {
 
         {/* Resultado Tab - Always accessible */}
         {state.activeTab === 'resultado' && (
-          <div id="resultado-panel" role="tabpanel" aria-labelledby="resultado-tab">
+          <>
+            <style dangerouslySetInnerHTML={{ __html: teamsAnimationStyles }} />
+            <div id="resultado-panel" role="tabpanel" aria-labelledby="resultado-tab">
             {state.game.status === 'completed' ? (
               <Suspense fallback={
                 <div className="flex items-center justify-center py-12">
@@ -1042,16 +1044,29 @@ export default function GameDetailPage() {
                 />
               </Suspense>
             ) : (
-              <Card className="text-center py-8">
-                <CardContent>
-                  <h3 className="text-xl font-semibold mb-2">Resultado No Disponible</h3>
-                  <p className="text-neutral-600">
+              <Card className="text-center shadow-sm border-neutral-200 rounded-xl bg-white teamsFadeInUp" style={{ '--delay': '0ms' } as React.CSSProperties}>
+                <CardContent className="p-12">
+                  <div className="flex items-center justify-center mb-6 teamsScaleIn" style={{ '--delay': '200ms' } as React.CSSProperties}>
+                    <div className="w-16 h-16 bg-neutral-100 rounded-2xl flex items-center justify-center">
+                      <svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' className='text-neutral-400'>
+                        <path d='M10 14.66v1.626a2 2 0 0 1-.976 1.696A5 5 0 0 0 7 21.978'/>
+                        <path d='M14 14.66v1.626a2 2 0 0 0 .976 1.696A5 5 0 0 1 17 21.978'/>
+                        <path d='M18 9h1.5a1 1 0 0 0 0-5H18'/>
+                        <path d='M4 22h16'/>
+                        <path d='M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z'/>
+                        <path d='M6 9H4.5a1 1 0 0 1 0-5H6'/>
+                      </svg>
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-semibold mb-3 text-neutral-900 teamsFadeInUp" style={{ '--delay': '400ms' } as React.CSSProperties}>Resultado No Disponible</h3>
+                  <p className="text-neutral-600 max-w-md mx-auto teamsFadeInUp" style={{ '--delay': '600ms' } as React.CSSProperties}>
                     Solo se puede registrar el resultado de partidos completados.
                   </p>
                 </CardContent>
               </Card>
             )}
-          </div>
+            </div>
+          </>
         )}
 
       </div>
