@@ -2119,26 +2119,229 @@ body {
   font-weight: var(--font-weight-medium);
 }
 
-/* Responsive adjustments for game tabs */
+/* Game Detail Tabs - Responsive Navigation */
+.game-detail-tabs-nav {
+  display: flex;
+  gap: 8px;
+}
+
+.game-detail-tab-button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 16px;
+  font-weight: 500;
+  font-size: 16px;
+  transition: all 200ms ease;
+  border-radius: 12px;
+  white-space: nowrap;
+  min-height: 44px;
+}
+
+/* Mobile-specific responsive tabs - Optimized to fit all tabs without scroll */
 @media (max-width: 767px) {
-  .game-tab-button {
-    padding: 12px 8px;
-    font-size: var(--font-size-xs);
-    gap: 4px;
+  .game-detail-tabs-container {
+    padding-left: 12px;
+    padding-right: 12px;
   }
   
-  .game-tab-icon {
+  .game-detail-tabs-nav {
+    display: flex;
+    gap: 2px;
+    overflow: visible;
+  }
+  
+  .game-detail-tab-button {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 4px;
+    font-size: 11px;
+    gap: 4px;
+    border-radius: 8px;
+    min-height: 44px;
+    text-align: center;
+  }
+  
+  .game-detail-tab-icon {
     width: 14px;
     height: 14px;
+    flex-shrink: 0;
   }
   
-  .game-tab-text {
+  .game-detail-tab-text {
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.2;
+    display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 2px;
   }
   
-  .game-tab-count {
+  .game-detail-tab-count {
     font-size: 10px;
+    font-weight: 600;
+    padding: 1px 4px;
+    border-radius: 6px;
+    min-width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+}
+
+/* Extra small mobile phones optimization */
+@media (max-width: 350px) {
+  .game-detail-tabs-container {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  
+  .game-detail-tab-button {
+    padding: 10px 2px;
+    font-size: 10px;
+  }
+  
+  .game-detail-tab-icon {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .game-detail-tab-text {
+    font-size: 10px;
+  }
+  
+  .game-detail-tab-count {
+    font-size: 9px;
+    padding: 1px 3px;
+    min-width: 14px;
+    height: 14px;
+  }
+}
+
+/* Game Detail Header - Mobile Responsive Layout */
+@media (max-width: 767px) {
+  .game-detail-header-desktop {
+    flex-direction: column;
+    gap: 8px; /* Reduced from 12px to make header more compact */
+    align-items: stretch;
+  }
+  
+  /* Transform layout: make sections stack vertically */
+  .game-detail-header-desktop > div:nth-child(2) {
+    /* Center section (title + date) goes to second position */
+    order: 2;
+    text-align: center;
+    flex: none;
+  }
+  
+  .game-detail-header-desktop > div:nth-child(1) {
+    /* Left section becomes row with back button and badge */
+    order: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-right: 20px; /* Add right padding to move badge slightly left */
+  }
+  
+  
+  /* Back button mobile optimization */
+  .game-detail-header-back-btn {
+    gap: 4px;
+    padding: 8px 12px;
+    font-size: 14px;
+    min-height: 40px;
+  }
+  
+  .game-detail-header-back-text {
+    display: none; /* Hide "Volver" text on small screens */
+  }
+  
+  /* Action buttons mobile optimization - make wider to reduce header height */
+  .game-detail-header-action-btn {
+    flex: 1; /* Make buttons expand to full width available */
+    padding: 10px 20px; /* Increased horizontal padding from 16px to 20px */
+    font-size: 12px;
+    min-height: 40px; /* Reduced from 44px to 40px */
+    gap: 6px;
+    max-width: 140px; /* Increased from 120px to 140px for wider buttons */
+  }
+  
+  .game-detail-header-action-btn-text {
+    display: none; /* Hide button text, show only icons */
+  }
+  
+  /* Make action buttons container use full width and arrange buttons side by side */
+  .game-detail-header-desktop > div:nth-child(3) {
+    order: 3;
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    justify-content: center;
+  }
+  
+  /* Title mobile optimization */
+  .game-detail-header-title {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.3;
+    margin: 0 0 4px 0;
+    /* Remove truncate in mobile - use full width */
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+  }
+  
+  .game-detail-header-date {
+    font-size: 13px;
+    color: var(--color-neutral-600);
+    margin: 0 0 6px 0; /* Add bottom margin to separate from buttons */
+  }
+  
+  .game-detail-header-status-badge {
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 20px;
+  }
+}
+
+/* Extra small mobile phones */
+@media (max-width: 350px) {
+  .game-detail-header-desktop {
+    gap: 10px;
+  }
+  
+  .game-detail-header-back-btn {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+  
+  .game-detail-header-action-btn {
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+  
+  .game-detail-header-title {
+    font-size: 16px;
+  }
+  
+  .game-detail-header-date {
+    font-size: 12px;
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .game-detail-tab-button {
+    padding: 18px 14px;
+    font-size: 15px;
   }
 }
 

@@ -685,7 +685,8 @@ export default function GameDetailPage() {
       {/* Header - Fixed with transparency */}
       <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-4">
-          <div className="flex items-center justify-between gap-4">
+          {/* DESKTOP: Original structure preserved */}
+          <div className="game-detail-header-desktop flex items-center justify-between gap-4">
             {/* Left: Back button + Status badge */}
             <div className="flex items-center gap-4 flex-shrink-0">
               <Button
@@ -693,15 +694,15 @@ export default function GameDetailPage() {
                 size="sm"
                 onClick={() => router.push('/admin/games')}
                 aria-label="Volver a la lista de partidos"
-                className="gap-2 text-neutral-600 hover:text-neutral-900"
+                className="game-detail-header-back-btn gap-2 text-neutral-600 hover:text-neutral-900"
               >
                 <ArrowLeftIcon size={18} />
-                Volver
+                <span className="game-detail-header-back-text">Volver</span>
               </Button>
               <Badge 
                 variant={state.game.status === 'closed' ? 'success' : getStatusVariant(state.game.status)} 
                 size="sm"
-                className="px-3 py-1 bg-emerald-100 text-emerald-700 border-emerald-200"
+                className="game-detail-header-status-badge px-3 py-1 bg-emerald-100 text-emerald-700 border-emerald-200"
               >
                 {GAME_STATUS_LABELS[state.game.status]}
               </Badge>
@@ -709,10 +710,10 @@ export default function GameDetailPage() {
 
             {/* Center: Game title + date */}
             <div className="flex-1 text-center min-w-0">
-              <h1 className="text-xl font-semibold text-neutral-900 truncate">
+              <h1 className="game-detail-header-title text-xl font-semibold text-neutral-900 truncate">
                 {state.game.title}
               </h1>
-              <p className="text-sm text-neutral-500">
+              <p className="game-detail-header-date text-sm text-neutral-500">
                 <time dateTime={state.game.game_date}>
                   {formatDate(state.game.game_date)}
                 </time>
@@ -726,7 +727,7 @@ export default function GameDetailPage() {
                   onClick={() => setState(prev => ({ ...prev, showCloseRegistrationsModal: true }))}
                   variant="warning"
                   size="sm"
-                  className="px-3 py-2 h-9"
+                  className="game-detail-header-action-btn px-3 py-2 h-9"
                   aria-label="Cerrar Registraciones"
                   title="Cerrar Registraciones"
                 >
@@ -736,6 +737,7 @@ export default function GameDetailPage() {
                     <path d="M15 15.5V14a2 2 0 0 1 4 0v1.5"/>
                     <rect width="8" height="5" x="13" y="16" rx=".899"/>
                   </svg>
+                  <span className="game-detail-header-action-btn-text">Cerrar</span>
                 </Button>
               )}
 
@@ -744,10 +746,10 @@ export default function GameDetailPage() {
                   onClick={() => handleStatusChange('completed')}
                   variant="ghost"
                   size="sm"
-                  className="gap-2 text-neutral-700 hover:text-neutral-900 hover:bg-neutral-50 border border-neutral-300 font-medium px-4 py-2 h-9"
+                  className="game-detail-header-action-btn gap-2 text-neutral-700 hover:text-neutral-900 hover:bg-neutral-50 border border-neutral-300 font-medium px-4 py-2 h-9"
                 >
                   <CheckCircleIcon size={16} />
-                  Marcar como Completado
+                  <span className="game-detail-header-action-btn-text">Marcar como Completado</span>
                 </Button>
               )}
               
@@ -756,7 +758,7 @@ export default function GameDetailPage() {
                   onClick={handleCancelGame}
                   variant="destructive"
                   size="sm"
-                  className="font-medium px-3 py-2 h-9"
+                  className="game-detail-header-action-btn font-medium px-3 py-2 h-9"
                   aria-label="Cancelar Partido"
                   title="Cancelar Partido"
                 >
@@ -765,6 +767,7 @@ export default function GameDetailPage() {
                     <path d="M3 6h18"/>
                     <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
                   </svg>
+                  <span className="game-detail-header-action-btn-text">Cancelar</span>
                 </Button>
               )}
             </div>
@@ -774,18 +777,18 @@ export default function GameDetailPage() {
 
       {/* Navigation Tabs */}
       <div className="bg-neutral-50 pb-8">
-        <div className="max-w-7xl mx-auto px-4 md:px-6">
+        <div className="max-w-7xl mx-auto game-detail-tabs-container px-4 md:px-6">
           {/* Clear visual separator from header */}
           <div className="h-6"></div>
           
           <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm overflow-hidden px-3 py-2">
-            <nav className="flex gap-2" role="tablist">
+            <nav className="game-detail-tabs-nav" role="tablist">
               {[
                 { 
                   id: 'overview', 
                   label: 'Resumen', 
                   icon: ({ size, className }: { size: number; className?: string }) => (
-                    <svg className={`w-[${size}px] h-[${size}px] ${className}`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                    <svg className={`w-[${size}px] h-[${size}px] ${className} game-detail-tab-icon`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
                       <path d="M3 3v16a2 2 0 0 0 2 2h16"/>
                       <path d="M18 17V9"/>
                       <path d="M13 17V5"/>
@@ -798,7 +801,7 @@ export default function GameDetailPage() {
                   id: 'players', 
                   label: 'Jugadores', 
                   icon: ({ size, className }: { size: number; className?: string }) => (
-                    <svg className={`w-[${size}px] h-[${size}px] ${className}`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                    <svg className={`w-[${size}px] h-[${size}px] ${className} game-detail-tab-icon`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
                       <path d="M18 21a8 8 0 0 0-16 0"/>
                       <circle cx="10" cy="8" r="5"/>
                       <path d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3"/>
@@ -809,14 +812,16 @@ export default function GameDetailPage() {
                 { 
                   id: 'teams', 
                   label: 'Equipos', 
-                  icon: ShieldIcon,
+                  icon: ({ size, className }: { size: number; className?: string }) => (
+                    <ShieldIcon size={size} className={`${className} game-detail-tab-icon`} />
+                  ),
                   count: null 
                 },
                 { 
                   id: 'resultado', 
                   label: 'Resultado', 
                   icon: ({ size, className }: { size?: number; className?: string }) => (
-                    <svg xmlns="http://www.w3.org/2000/svg" width={size || 24} height={size || 24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width={size || 24} height={size || 24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`${className} game-detail-tab-icon`}>
                       <path d="M10 14.66v1.626a2 2 0 0 1-.976 1.696A5 5 0 0 0 7 21.978"/>
                       <path d="M14 14.66v1.626a2 2 0 0 0 .976 1.696A5 5 0 0 1 17 21.978"/>
                       <path d="M18 9h1.5a1 1 0 0 0 0-5H18"/>
@@ -836,8 +841,7 @@ export default function GameDetailPage() {
                     key={tab.id}
                     onClick={() => handleTabChange(tab.id as GameDetailState['activeTab'])}
                     className={`
-                      flex-1 flex items-center justify-center gap-2 py-4 px-4
-                      font-medium text-base transition-all duration-200 rounded-xl
+                      game-detail-tab-button
                       ${isActive
                         ? 'bg-green-100/70 text-green-700' 
                         : 'text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900'
@@ -848,20 +852,20 @@ export default function GameDetailPage() {
                     aria-controls={`${tab.id}-panel`}
                   >
                     <IconComponent size={18} className="flex-shrink-0" />
-                    <span className="flex items-center gap-2 whitespace-nowrap">
+                    <span className="game-detail-tab-text">
                       {tab.label}
-                      {tab.count !== null && (
-                        <span className={`
-                          text-sm font-semibold px-2 py-1 rounded-full min-w-6 text-center
-                          ${isActive 
-                            ? 'bg-green-200/60 text-green-700' 
-                            : 'bg-neutral-100 text-neutral-600'
-                          }
-                        `}>
-                          {tab.count}
-                        </span>
-                      )}
                     </span>
+                    {tab.count !== null && (
+                      <span className={`
+                        game-detail-tab-count text-sm font-semibold px-2 py-1 rounded-full min-w-6 text-center
+                        ${isActive 
+                          ? 'bg-green-200/60 text-green-700' 
+                          : 'bg-neutral-100 text-neutral-600'
+                        }
+                      `}>
+                        {tab.count}
+                      </span>
+                    )}
                   </button>
                 );
               })}
