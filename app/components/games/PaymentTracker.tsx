@@ -6,7 +6,7 @@ import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { Input } from '../ui/Input';
 import { Select } from '../ui/Select';
-import { LoadingSpinner } from '../ui/Loading';
+import { LoadingSpinner, InlineLoadingSpinner } from '../ui/LoadingSpinner';
 import { 
   GameRegistration, 
   PAYMENT_STATUS_LABELS,
@@ -349,7 +349,7 @@ export function PaymentTracker({
                 disabled={loading}
                 className="flex-1 md:flex-none flex items-center gap-2"
               >
-                {loading ? <LoadingSpinner size="sm" color="text-white" /> : null}
+                {loading ? <InlineLoadingSpinner size="sm" /> : null}
                 Marcar Pagados
               </Button>
               <Button
@@ -359,7 +359,7 @@ export function PaymentTracker({
                 disabled={loading}
                 className="flex-1 md:flex-none flex items-center gap-2"
               >
-                {loading ? <LoadingSpinner size="sm" color="text-white" /> : null}
+                {loading ? <InlineLoadingSpinner size="sm" /> : null}
                 Marcar Pendientes
               </Button>
             </div>

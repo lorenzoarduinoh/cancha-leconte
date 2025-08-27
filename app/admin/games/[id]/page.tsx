@@ -12,6 +12,8 @@ import {
   AlertTriangleIcon
 } from '@/app/components/ui/Icons';
 import { ConfirmationModal } from '@/app/components/ui/ConfirmationModal';
+import { CloseRegistrationsModal } from '@/app/components/ui/CloseRegistrationsModal';
+import { LoadingSpinner } from '@/app/components/ui/LoadingSpinner';
 import { 
   GameWithDetails, 
   GAME_STATUS_LABELS,
@@ -370,7 +372,9 @@ interface GameDetailState {
   loading: boolean;
   error: string | null;
   showCancelModal: boolean;
+  showCloseRegistrationsModal: boolean;
   isDeleting: boolean;
+  isClosingRegistrations: boolean;
   activeTab: 'overview' | 'players' | 'teams' | 'resultado';
   teamAssignment: TeamAssignment | null;
 }
@@ -387,7 +391,9 @@ export default function GameDetailPage() {
     loading: true,
     error: null,
     showCancelModal: false,
+    showCloseRegistrationsModal: false,
     isDeleting: false,
+    isClosingRegistrations: false,
     activeTab: 'overview',
     teamAssignment: null,
   });
@@ -512,13 +518,46 @@ export default function GameDetailPage() {
     }
   };
 
+  // Handle close registrations
+  const handleCloseRegistrations = async () => {
+    if (!state.game) return;
+
+    setState(prev => ({ ...prev, isClosingRegistrations: true }));
+
+    try {
+      const response = await fetch(`/api/admin/games/${gameId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ status: 'closed' }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al cerrar las inscripciones');
+      }
+
+      await fetchGameDetails(); // Refresh data
+      setState(prev => ({ 
+        ...prev, 
+        showCloseRegistrationsModal: false,
+        isClosingRegistrations: false 
+      }));
+    } catch (error) {
+      setState(prev => ({ 
+        ...prev, 
+        isClosingRegistrations: false,
+        showCloseRegistrationsModal: false 
+      }));
+      alert('Error al cerrar las inscripciones: ' + (error instanceof Error ? error.message : 'Error desconocido'));
+    }
+  };
+
   if (state.loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-neutral-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-neutral-600">Cargando detalles del partido...</p>
-        </div>
+        <LoadingSpinner size="lg" message="Cargando detalles del partido..." />
       </div>
     );
   }
@@ -643,8 +682,8 @@ export default function GameDetailPage() {
 
   return (
     <div className="min-h-screen bg-neutral-50">
-      {/* Header */}
-      <header className="bg-white border-b border-neutral-200 shadow-sm">
+      {/* Header - Fixed with transparency */}
+      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-4">
           <div className="flex items-center justify-between gap-4">
             {/* Left: Back button + Status badge */}
@@ -684,7 +723,7 @@ export default function GameDetailPage() {
             <div className="flex items-center gap-3 flex-shrink-0">
               {state.game.status === 'open' && (
                 <Button
-                  onClick={() => handleStatusChange('closed')}
+                  onClick={() => setState(prev => ({ ...prev, showCloseRegistrationsModal: true }))}
                   variant="warning"
                   size="sm"
                   className="px-3 py-2 h-9"
@@ -941,10 +980,7 @@ export default function GameDetailPage() {
 
                 {/* Payment Status - New Design */}
                 <Suspense fallback={
-                  <div className="flex items-center justify-center py-12">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mr-3"></div>
-                    <span className="text-neutral-600">Cargando estado de pagos...</span>
-                  </div>
+                  <LoadingSpinner message="Cargando estado de pagos..." />
                 }>
                   <PaymentStatusCard
                     paidAmount={paymentStats.paidAmount}
@@ -961,10 +997,7 @@ export default function GameDetailPage() {
                 <Card className="md:col-span-2 xl:col-span-1 bg-white rounded-3xl border border-neutral-200 shadow-lg min-h-[320px] overviewFadeInUp overviewCardHover" style={{ '--delay': '400ms' } as React.CSSProperties}>
                 <CardContent className="px-12 py-16 h-full flex flex-col" style={{ marginBottom: '0 !important' }}>
                   <Suspense fallback={
-                    <div className="flex items-center justify-center py-8">
-                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mr-3"></div>
-                      <span className="text-neutral-600">Cargando enlace...</span>
-                    </div>
+                    <LoadingSpinner size="sm" message="Cargando enlace..." />
                   }>
                     <GameShareLink 
                       shareToken={state.game.share_token} 
@@ -982,10 +1015,7 @@ export default function GameDetailPage() {
         {state.activeTab === 'players' && (
           <div id="players-panel" role="tabpanel" aria-labelledby="players-tab">
             <Suspense fallback={
-              <div className="flex items-center justify-center py-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mr-3"></div>
-                <span className="text-neutral-600">Cargando jugadores...</span>
-              </div>
+              <LoadingSpinner message="Cargando jugadores..." />
             }>
               <PlayerRegistrations 
                 gameId={state.game.id} 
@@ -1003,10 +1033,7 @@ export default function GameDetailPage() {
             <style dangerouslySetInnerHTML={{ __html: teamsAnimationStyles }} />
             <div id="teams-panel" role="tabpanel" aria-labelledby="teams-tab">
               <Suspense fallback={
-                <div className="flex items-center justify-center py-12">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mr-3"></div>
-                  <span className="text-neutral-600">Cargando equipos...</span>
-                </div>
+                <LoadingSpinner message="Cargando equipos..." />
               }>
                 <TeamManagement 
                   gameId={state.game.id}
@@ -1030,10 +1057,7 @@ export default function GameDetailPage() {
             <div id="resultado-panel" role="tabpanel" aria-labelledby="resultado-tab">
             {state.game.status === 'completed' ? (
               <Suspense fallback={
-                <div className="flex items-center justify-center py-12">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mr-3"></div>
-                  <span className="text-neutral-600">Cargando resultados...</span>
-                </div>
+                <LoadingSpinner message="Cargando resultados..." />
               }>
                 <GameResultForm 
                   gameId={state.game.id}
@@ -1076,7 +1100,7 @@ export default function GameDetailPage() {
         isOpen={state.showCancelModal}
         onClose={() => setState(prev => ({ ...prev, showCancelModal: false }))}
         onConfirm={confirmCancelGame}
-        title="Cancelar Partido"
+        title={`¿Seguro que querés eliminar el partido "${state.game?.title}"?`}
         message={
           <div>
             <p className="mb-3">
@@ -1099,6 +1123,16 @@ export default function GameDetailPage() {
         cancelText="No, Mantener"
         variant="danger"
         isLoading={state.isDeleting}
+      />
+
+      {/* Close Registrations Confirmation Modal */}
+      <CloseRegistrationsModal
+        isOpen={state.showCloseRegistrationsModal}
+        onClose={() => setState(prev => ({ ...prev, showCloseRegistrationsModal: false }))}
+        onConfirm={handleCloseRegistrations}
+        gameTitle={state.game?.title || ''}
+        currentPlayers={state.game?.current_players || 0}
+        isLoading={state.isClosingRegistrations}
       />
     </div>
   );

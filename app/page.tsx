@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { LoadingSpinner } from './components/ui/LoadingSpinner';
 
 export default function Home() {
   const router = useRouter();
@@ -13,10 +14,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-neutral-50">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-        <p className="text-neutral-600">Redirigiendo al panel de administración...</p>
-      </div>
+      <LoadingSpinner size="lg" message="Redirigiendo al panel de administración..." />
     </div>
   );
 }

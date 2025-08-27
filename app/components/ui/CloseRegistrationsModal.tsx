@@ -5,19 +5,16 @@ import { Button } from './Button';
 import { AlertTriangleIcon } from './Icons';
 import { InlineLoadingSpinner } from './LoadingSpinner';
 
-interface ConfirmationModalProps {
+interface CloseRegistrationsModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  title: string;
-  message: string | ReactNode;
-  confirmText?: string;
-  cancelText?: string;
-  variant?: 'danger' | 'warning' | 'info';
+  gameTitle: string;
+  currentPlayers: number;
   isLoading?: boolean;
 }
 
-// Animation styles
+// Animation styles (same as ConfirmationModal)
 const modalAnimationStyles = `
   .modal-overlay-enter {
     animation: modalOverlayEnter 0.3s ease-out both;
@@ -89,24 +86,21 @@ const modalAnimationStyles = `
   }
 `;
 
-export function ConfirmationModal({
+export function CloseRegistrationsModal({
   isOpen,
   onClose,
   onConfirm,
-  title,
-  message,
-  confirmText = 'Confirmar',
-  cancelText = 'Cancelar',
-  variant = 'danger',
+  gameTitle,
+  currentPlayers,
   isLoading = false,
-}: ConfirmationModalProps) {
+}: CloseRegistrationsModalProps) {
   const [isAnimatingOut, setIsAnimatingOut] = useState(false);
   const [shouldRender, setShouldRender] = useState(isOpen);
 
   // Inject animation styles when modal opens
   useEffect(() => {
     if (isOpen) {
-      const styleId = 'modal-animations';
+      const styleId = 'close-registrations-modal-animations';
       if (!document.getElementById(styleId)) {
         const style = document.createElement('style');
         style.id = styleId;
@@ -135,7 +129,7 @@ export function ConfirmationModal({
   // Clean up when component unmounts
   useEffect(() => {
     return () => {
-      const existingStyle = document.getElementById('modal-animations');
+      const existingStyle = document.getElementById('close-registrations-modal-animations');
       if (existingStyle) {
         existingStyle.remove();
       }
@@ -164,21 +158,22 @@ export function ConfirmationModal({
           {/* Title */}
           <div className="text-center" style={{ marginBottom: '24px' }}>
             <h2 className="text-xl font-semibold text-neutral-900">
-              {title}
+              ¿Querés cerrar las inscripciones para "{gameTitle}"?
             </h2>
           </div>
 
-          {/* Warning Card */}
+          {/* Info Card */}
           <div style={{ marginBottom: '32px' }}>
-            <div className="bg-red-50/80 backdrop-blur-sm border border-red-200/60 rounded-xl p-4">
-              <div className="flex items-center gap-2 font-medium mb-3 text-red-800">
-                <AlertTriangleIcon size={18} className="text-red-600" />
-                Esta acción:
+            <div className="bg-amber-50/80 backdrop-blur-sm border border-amber-200/60 rounded-xl p-4">
+              <div className="flex items-center gap-2 font-medium mb-3 text-amber-800">
+                <AlertTriangleIcon size={18} className="text-amber-600" />
+                Al cerrar las inscripciones:
               </div>
-              <ul className="list-disc list-inside space-y-1 ml-6 text-sm text-red-800">
-                <li>Eliminará el partido permanentemente</li>
-                <li>Notificará a todos los jugadores registrados</li>
-                <li>No se puede deshacer</li>
+              <ul className="list-disc list-inside space-y-1 ml-6 text-sm text-amber-800">
+                <li>No se podrán registrar más jugadores</li>
+                <li>Los {currentPlayers} jugadores actuales se mantendrán</li>
+                <li>Podrás proceder a formar equipos y completar el partido</li>
+                <li>Se puede reabrir más tarde si es necesario</li>
               </ul>
             </div>
           </div>
@@ -195,17 +190,17 @@ export function ConfirmationModal({
             </Button>
             <Button
               onClick={onConfirm}
-              variant="destructive"
+              variant="warning"
               disabled={isLoading}
               className="flex-1 h-12 px-6 transition-all duration-200 rounded-xl font-medium"
             >
               {isLoading ? (
                 <div className="flex items-center justify-center gap-2">
                   <InlineLoadingSpinner size="sm" />
-                  <span>Procesando...</span>
+                  <span>Cerrando...</span>
                 </div>
               ) : (
-                'Sí, Cancelar'
+                'Sí, Cerrar'
               )}
             </Button>
           </div>

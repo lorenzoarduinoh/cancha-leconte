@@ -415,7 +415,7 @@ export function GameResultForm({ gameId, existingResult, onResultSaved, teamANam
                 variant="ghost"
                 size="sm"
                 onClick={handleEnableEdit}
-                className="gap-2 px-6 text-sm font-medium text-neutral-700 hover:text-neutral-900 hover:bg-neutral-50 border border-neutral-300 rounded-xl buttonHover fadeInUp"
+                className="gap-2 px-6 text-sm font-medium text-neutral-700 hover:text-neutral-900 hover:bg-neutral-50 border border-neutral-300 rounded-xl buttonHover fadeInUp mt-6"
                 style={{ 
                   height: '48px', 
                   boxSizing: 'border-box',

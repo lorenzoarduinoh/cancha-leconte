@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { XIcon } from '../ui/Icons';
-import { InlineLoading } from '../ui/Loading';
+import { InlineLoadingSpinner, LoadingSpinner } from '../ui/LoadingSpinner';
 import { 
   GameRegistration, 
   PAYMENT_STATUS_LABELS,
@@ -308,10 +308,7 @@ export function PlayerRegistrations({
   // Show loading state when registrations are being loaded
   if (state.loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mr-3"></div>
-        <span className="text-neutral-600">Cargando jugadores...</span>
-      </div>
+      <LoadingSpinner message="Cargando jugadores..." />
     );
   }
 
@@ -671,7 +668,10 @@ export function PlayerRegistrations({
                         className="px-4 py-2 text-sm font-medium bg-green-600 hover:bg-green-700 text-white border-0 shadow-sm playersButtonHover"
                       >
                         {state.paymentLoading ? (
-                          <InlineLoading message="Actualizando..." size="sm" />
+                          <div className="flex items-center gap-2">
+                            <InlineLoadingSpinner size="sm" />
+                            <span className="text-sm">Actualizando...</span>
+                          </div>
                         ) : (
                           <>
                             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">

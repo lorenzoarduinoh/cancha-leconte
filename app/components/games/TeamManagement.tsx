@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
+import { LoadingSpinner } from '../ui/LoadingSpinner';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
 import { EditableTeamName } from './EditableTeamName';
@@ -280,10 +281,7 @@ export function TeamManagement({
   // Show loading state when loading teams
   if (state.loading && regs.length >= 4) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mr-3"></div>
-        <span className="text-neutral-600">Cargando equipos...</span>
-      </div>
+      <LoadingSpinner message="Cargando equipos..." />
     );
   }
 

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { LoadingSpinner } from '../ui/Loading';
+import { LoadingSpinner } from '../ui/LoadingSpinner';
 
 interface LoadingStateProps {
   message?: string;
@@ -19,8 +19,8 @@ export function LoadingState({ message = 'Cargando información del partido...' 
       <div className="max-w-sm w-full">
         <div className="bg-white rounded-lg border border-neutral-200 p-8 text-center">
           {/* Loading Spinner */}
-          <div className="w-12 h-12 mx-auto mb-6">
-            <LoadingSpinner size="lg" color="text-primary" />
+          <div className="mb-6">
+            <LoadingSpinner size="lg" />
           </div>
 
           {/* Loading Message */}
@@ -79,21 +79,8 @@ export function InlineLoadingState({
   };
 
   return (
-    <div className="flex items-center justify-center gap-3 p-4">
-      <LoadingSpinner size={size} color="text-primary" />
-      
-      <span className={`${textSizeClasses[size]} text-neutral-700 font-medium`}>
-        {message}
-      </span>
-      
-      {/* Screen reader announcement */}
-      <div 
-        className="sr-only" 
-        aria-live="polite" 
-        aria-atomic="true"
-      >
-        {message}
-      </div>
+    <div className="p-4">
+      <LoadingSpinner size={size} message={message} />
     </div>
   );
 }

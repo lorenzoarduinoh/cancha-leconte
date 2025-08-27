@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Button } from '../ui/Button';
 import { CopyIcon, CheckIcon, WhatsAppIcon, UsersIcon } from '../ui/Icons';
+import { LoadingSpinner } from '../ui/LoadingSpinner';
 
 interface GameShareLinkProps {
   shareToken: string;
@@ -33,10 +34,7 @@ export function GameShareLink({ shareToken, gameTitle }: GameShareLinkProps) {
   // Show loading state while generating URL
   if (isLoading || !friendUrl) {
     return (
-      <div className="flex items-center justify-center py-8">
-        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mr-3"></div>
-        <span className="text-neutral-600">Generando enlace...</span>
-      </div>
+      <LoadingSpinner size="sm" message="Generando enlace..." className="py-8" />
     );
   }
   
