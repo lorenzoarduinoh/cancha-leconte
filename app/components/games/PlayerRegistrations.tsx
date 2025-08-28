@@ -619,93 +619,161 @@ export function PlayerRegistrations({
           </div>
 
           <div className="space-y-4">
+            <style>{`
+              .desktop-only { display: flex; }
+              .mobile-only { display: none; }
+
+              @media (max-width: 767px) {
+                .player-card-content-wrapper {
+                  flex-direction: column;
+                  align-items: stretch;
+                  gap: 1rem;
+                  padding-left: 0 !important;
+                }
+                .player-card-main-info {
+                  gap: 1.5rem;
+                  align-items: flex-start; /* Changed from center to flex-start to eliminate vertical centering spacing */
+                  margin-top: 0; /* Reset to match left spacing exactly */
+                }
+                .player-card-avatar {
+                  margin-top: 0; /* Removed top margin to match visual spacing with left margin */
+                  margin-left: 0.5rem;
+                }
+                .player-card-actions {
+                  padding-top: 0.25rem; /* Reduced from 0.5rem */
+                  margin-top: 0.25rem; /* Reduced from 0.5rem */
+                  /* border-top: 1px solid #e5e7eb; */ /* neutral-200 */
+                  display: flex;
+                  gap: 0.75rem;
+                  padding-left: 0.5rem; /* Moved to left */
+                  padding-right: 1rem; /* Added padding */
+                  justify-content: flex-start; /* Align to start */
+                  padding-bottom: 0.25rem; /* Reduced from 0.5rem to make more compact */
+                }
+                .player-card-actions > button {
+                  flex: 1; /* Make wider */
+                  height: 36px; /* Less tall */
+                  padding: 0 1rem; /* Adjust padding */
+                }
+                .player-card-actions .button-text {
+                  display: none;
+                }
+                .player-card-payment-amount-mobile {
+                  margin-bottom: 0.5rem;
+                  margin-top: -1rem; /* Pull payment amount very close to registration info */
+                }
+                .player-card-details-mobile {
+                  margin-bottom: 0.75rem; /* Reduce bottom margin to bring closer to registration details */
+                }
+                .player-card-registration-details {
+                  margin-top: -0.5rem; /* Pull registration details closer to phone info */
+                }
+                .player-card-mobile-padding {
+                  padding-top: 0.5rem; /* Same as avatar margin-left for consistent spacing */
+                  padding-bottom: 0.5rem; /* Further reduced from 0.75rem to make card more compact */
+                }
+                .desktop-only { display: none; }
+                .mobile-only { display: flex; }
+              }
+            `}</style>
             {filteredRegistrations.map((registration, index) => (
               <div 
                 key={registration.id} 
-                className="group relative bg-white border border-neutral-200 rounded-xl p-6 hover:border-green-200 hover:bg-green-50/30 transition-all duration-300 hover:shadow-sm playerCardAnimate"
+                className="group relative bg-white border border-neutral-200 rounded-xl p-6 hover:border-green-200 hover:bg-green-50/30 transition-all duration-300 hover:shadow-sm playerCardAnimate player-card-mobile-padding"
                 style={{ 
                   '--delay': `${400 + index * 80}ms`
                 } as React.CSSProperties}
               >
-                <div className="flex items-center gap-6" style={{ paddingLeft: '8px' }}>
-                  {/* Avatar */}
-                  <div className={`w-12 h-12 text-white rounded-lg flex items-center justify-center font-medium text-base shadow-sm ${
-                    registration.payment_status === 'paid' 
-                      ? 'bg-gradient-to-br from-green-500 to-green-600'
-                      : 'bg-gradient-to-br from-amber-500 to-amber-600'
-                  }`}>
-                    {getInitials(registration.player_name)}
-                  </div>
-                  
-                  {/* Player Info */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between mb-2">
-                      <h4 className="text-lg font-semibold text-neutral-900 truncate pr-4">
-                        {registration.player_name}
-                      </h4>
-                      <div className="flex items-center gap-3 flex-shrink-0">
-                        {/* Payment Status - Only show for failed/refunded states */}
-                        {(registration.payment_status === 'failed' || registration.payment_status === 'refunded') && (
-                          <div className={`px-3 py-1.5 rounded-lg text-sm font-medium ${
-                            registration.payment_status === 'failed' 
-                              ? 'bg-red-100 text-red-700 border border-red-200' :
-                              'bg-neutral-100 text-neutral-600 border border-neutral-200'
-                          }`}>
-                            {PAYMENT_STATUS_LABELS[registration.payment_status]}
+                <div className="player-card-content-wrapper flex items-center gap-6" style={{ paddingLeft: '8px' }}>
+                  <div className="player-card-main-info flex-1 flex items-center gap-6">
+                    {/* Avatar */}
+                    <div className={`player-card-avatar w-12 h-12 text-white rounded-lg flex items-center justify-center font-medium text-base shadow-sm flex-shrink-0 ${
+                      registration.payment_status === 'paid' 
+                        ? 'bg-gradient-to-br from-green-500 to-green-600'
+                        : 'bg-gradient-to-br from-amber-500 to-amber-600'
+                    }`}>
+                      {getInitials(registration.player_name)}
+                    </div>
+                    
+                    {/* Player Info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between mb-2">
+                        <h4 className="text-lg font-semibold text-neutral-900 truncate pr-4">
+                          {registration.player_name}
+                        </h4>
+                        <div className="flex items-center gap-3 flex-shrink-0">
+                          {/* Payment Status - Only show for failed/refunded states */}
+                          {(registration.payment_status === 'failed' || registration.payment_status === 'refunded') && (
+                            <div className={`px-3 py-1.5 rounded-lg text-sm font-medium ${
+                              registration.payment_status === 'failed' 
+                                ? 'bg-red-100 text-red-700 border border-red-200' :
+                                'bg-neutral-100 text-neutral-600 border border-neutral-200'
+                            }`}>
+                              {PAYMENT_STATUS_LABELS[registration.payment_status]}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-6 text-sm text-neutral-600 mb-3 player-card-details-mobile">
+                        <div className="flex items-center gap-2">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                          </svg>
+                          <span>{registration.player_phone}</span>
+                        </div>
+                        
+                        {registration.payment_amount && (
+                          <div className="desktop-only items-center gap-2 font-semibold text-neutral-900">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                              <rect width="20" height="14" x="2" y="5" rx="2"/>
+                              <line x1="2" x2="22" y1="10" y2="10"/>
+                            </svg>
+                            <span>{formatCurrency(registration.payment_amount)}</span>
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Registration Details */}
+                      <div className="flex md:items-center items-start gap-6 text-xs text-neutral-500 md:flex-row flex-col player-card-registration-details">
+                        <div className="flex items-center gap-1">
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12,6 12,12 16,14"/>
+                          </svg>
+                          <span>Registrado: {formatDate(registration.registered_at)}</span>
+                        </div>
+
+                        {registration.payment_amount && (
+                          <div className="mobile-only items-center gap-2 font-semibold text-neutral-900 player-card-payment-amount-mobile">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                              <rect width="20" height="14" x="2" y="5" rx="2"/>
+                              <line x1="2" x2="22" y1="10" y2="10"/>
+                            </svg>
+                            <span>{formatCurrency(registration.payment_amount)}</span>
                           </div>
                         )}
                         
+                        {registration.paid_at && (
+                          <div className="flex items-center gap-1 text-green-600">
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                              <path d="M20 6 9 17l-5-5"/>
+                            </svg>
+                            <span>Pagado: {formatDate(registration.paid_at)}</span>
+                          </div>
+                        )}
+                        
+                        {registration.payment_id && (
+                          <div className="flex items-center gap-1 font-mono">
+                            <span>ID: {registration.payment_id}</span>
+                          </div>
+                        )}
                       </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-6 text-sm text-neutral-600 mb-3">
-                      <div className="flex items-center gap-2">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-                        </svg>
-                        <span>{registration.player_phone}</span>
-                      </div>
-                      
-                      {registration.payment_amount && (
-                        <div className="flex items-center gap-2 font-semibold text-neutral-900">
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                            <rect width="20" height="14" x="2" y="5" rx="2"/>
-                            <line x1="2" x2="22" y1="10" y2="10"/>
-                          </svg>
-                          <span>{formatCurrency(registration.payment_amount)}</span>
-                        </div>
-                      )}
-                    </div>
-                    
-                    {/* Registration Details */}
-                    <div className="flex items-center gap-6 text-xs text-neutral-500">
-                      <div className="flex items-center gap-1">
-                        <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                          <circle cx="12" cy="12" r="10"/>
-                          <polyline points="12,6 12,12 16,14"/>
-                        </svg>
-                        <span>Registrado: {formatDate(registration.registered_at)}</span>
-                      </div>
-                      
-                      {registration.paid_at && (
-                        <div className="flex items-center gap-1 text-green-600">
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                            <path d="M20 6 9 17l-5-5"/>
-                          </svg>
-                          <span>Pagado: {formatDate(registration.paid_at)}</span>
-                        </div>
-                      )}
-                      
-                      {registration.payment_id && (
-                        <div className="flex items-center gap-1 font-mono">
-                          <span>ID: {registration.payment_id}</span>
-                        </div>
-                      )}
                     </div>
                   </div>
 
                   {/* Actions */}
-                  <div className="flex items-center gap-3" style={{ paddingRight: '8px' }}>
+                  <div className="player-card-actions flex items-center gap-3" style={{ paddingRight: '8px' }}>
                     {registration.payment_status !== 'paid' && (
                       <Button
                         variant="success"
@@ -717,14 +785,14 @@ export function PlayerRegistrations({
                         {state.paymentLoading ? (
                           <div className="flex items-center gap-2">
                             <InlineLoadingSpinner size="sm" />
-                            <span className="text-sm">Actualizando...</span>
+                            <span className="text-sm button-text">Actualizando...</span>
                           </div>
                         ) : (
                           <>
                             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
                               <path d="M20 6 9 17l-5-5"/>
                             </svg>
-                            Marcar Pagado
+                            <span className="button-text">Marcar Pagado</span>
                           </>
                         )}
                       </Button>
@@ -749,8 +817,6 @@ export function PlayerRegistrations({
                 </div>
               </div>
             ))}
-
-            {/* Empty State */}
             {filteredRegistrations.length === 0 && regs.length > 0 && (
               <div className="text-center py-12 playersFadeInUp" style={{ '--delay': '400ms' } as React.CSSProperties}>
                 <div className="flex items-center justify-center mb-6 playersScaleIn" style={{ '--delay': '500ms' } as React.CSSProperties}>
