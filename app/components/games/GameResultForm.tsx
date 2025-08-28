@@ -384,7 +384,7 @@ export function GameResultForm({ gameId, existingResult, onResultSaved, teamANam
       <Card className="shadow-sm border-neutral-200 rounded-xl bg-white fadeInUp" style={{ '--delay': '0ms' } as React.CSSProperties}>
         <CardContent className="p-8">
           {/* Action Buttons */}
-          <div className="flex justify-end gap-3 mb-8">
+          <div className="results-edit-button-container flex justify-end gap-3 mb-8">
             {!state.isReadOnly && (
               <Button
                 onClick={handleSubmitResult}
@@ -415,7 +415,7 @@ export function GameResultForm({ gameId, existingResult, onResultSaved, teamANam
                 variant="ghost"
                 size="sm"
                 onClick={handleEnableEdit}
-                className="gap-2 px-6 text-sm font-medium text-neutral-700 hover:text-neutral-900 hover:bg-neutral-50 border border-neutral-300 rounded-xl buttonHover fadeInUp mt-6"
+                className="results-edit-button gap-2 px-6 text-sm font-medium text-neutral-700 hover:text-neutral-900 hover:bg-neutral-50 border border-neutral-300 rounded-xl buttonHover fadeInUp mt-6"
                 style={{ 
                   height: '48px', 
                   boxSizing: 'border-box',
@@ -456,8 +456,8 @@ export function GameResultForm({ gameId, existingResult, onResultSaved, teamANam
 
           {/* Winner Badge */}
           {hasResult && (
-            <div className="flex justify-center mb-8">
-              <div className={`px-6 py-3 rounded-xl text-lg font-semibold border slideDownBounce ${
+            <div className="results-winner-banner-container flex justify-center mb-8">
+              <div className={`results-winner-banner px-6 py-3 rounded-xl text-lg font-semibold border slideDownBounce ${
                 state.gameResult.winning_team === 'draw' 
                   ? 'bg-amber-50 text-amber-700 border-amber-200'
                   : 'bg-green-50 text-green-700 border-green-200'
@@ -486,9 +486,9 @@ export function GameResultForm({ gameId, existingResult, onResultSaved, teamANam
           )}
 
             {/* Score Layout - Clean and Readable */}
-            <div className="grid grid-cols-3 gap-8 items-center mb-8">
+            <div className="results-teams-section grid grid-cols-3 gap-8 items-center mb-8">
               {/* Team A */}
-              <div className="text-center">
+              <div className="results-team-a text-center">
                 <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center text-white font-bold text-xl mx-auto mb-4 scaleInBounce" style={{ '--delay': '400ms' } as React.CSSProperties}>
                   A
                 </div>
@@ -509,14 +509,14 @@ export function GameResultForm({ gameId, existingResult, onResultSaved, teamANam
               </div>
 
               {/* VS Separator */}
-              <div className="text-center">
+              <div className="results-vs-separator text-center">
                 <div className="w-16 h-16 border border-neutral-200 rounded-full flex items-center justify-center bg-white mx-auto shadow-md pulseOnLoad" style={{ '--delay': '450ms' } as React.CSSProperties}>
                   <span className="text-lg font-extrabold text-neutral-500">VS</span>
                 </div>
               </div>
 
               {/* Team B */}
-              <div className="text-center">
+              <div className="results-team-b text-center">
                 <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center text-white font-bold text-xl mx-auto mb-4 scaleInBounce" style={{ '--delay': '500ms' } as React.CSSProperties}>
                   B
                 </div>

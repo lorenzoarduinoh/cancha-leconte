@@ -682,8 +682,8 @@ export default function GameDetailPage() {
 
   return (
     <div className="min-h-screen bg-neutral-50">
-      {/* Header - Fixed with transparency */}
-      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md">
+      {/* Header - Static without sticky behavior */}
+      <header className="bg-white border-b border-neutral-200">
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-4">
           {/* DESKTOP: Original structure preserved */}
           <div className="game-detail-header-desktop flex items-center justify-between gap-4">

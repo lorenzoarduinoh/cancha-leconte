@@ -2184,16 +2184,7 @@ body {
   }
   
   .game-detail-tab-count {
-    font-size: 10px;
-    font-weight: 600;
-    padding: 1px 4px;
-    border-radius: 6px;
-    min-width: 16px;
-    height: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
+    display: none !important; /* Hide player count in mobile for better alignment */
   }
 }
 
@@ -2219,10 +2210,7 @@ body {
   }
   
   .game-detail-tab-count {
-    font-size: 9px;
-    padding: 1px 3px;
-    min-width: 14px;
-    height: 14px;
+    display: none !important; /* Hide player count in extra small mobile for consistency */
   }
 }
 
@@ -2570,6 +2558,36 @@ body {
   .teams-status-container {
     width: 100% !important;
     margin-top: 8px !important;
+  }
+  
+  /* Results Section Mobile Responsive - Spacing fixes */
+  .results-edit-button-container {
+    margin-bottom: 24px !important; /* Add space between edit button and winner banner */
+    margin-top: -16px !important; /* Move edit button closer to top edge */
+    margin-right: -16px !important; /* Move edit button closer to right edge */
+  }
+  
+  .results-winner-banner-container {
+    margin-bottom: 32px !important; /* Add space between winner banner and teams */
+  }
+  
+  .results-teams-section {
+    grid-template-columns: 1fr auto 1fr !important; /* Maintain 3-column grid but optimize spacing */
+    gap: 24px !important; /* Increase gap between teams for better touch targets */
+    align-items: center !important; /* Ensure teams are properly aligned */
+  }
+  
+  .results-vs-separator {
+    padding: 0 8px !important; /* Add horizontal padding to VS separator */
+  }
+  
+  /* Ensure team columns are properly aligned */
+  .results-team-a,
+  .results-team-b {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 }
 
