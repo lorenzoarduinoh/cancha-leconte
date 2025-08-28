@@ -309,14 +309,14 @@ export function TeamManagement({
   return (
     <div className="space-y-8 teamsFadeInUp" style={{ '--delay': '0ms' } as React.CSSProperties}>
       {/* Action Buttons and Team Balance Status */}
-      <div className={`flex flex-wrap items-center gap-4 teamsFadeInUp ${isReadOnly ? 'justify-center' : 'justify-between'}`} style={{ '--delay': '100ms' } as React.CSSProperties}>
+      <div className={`teams-action-buttons-container flex flex-wrap items-center gap-4 teamsFadeInUp ${isReadOnly ? 'justify-center' : 'justify-between'}`} style={{ '--delay': '100ms' } as React.CSSProperties}>
         {/* Action Buttons */}
         {!isReadOnly && (
-          <div className="flex flex-wrap gap-1">
+          <div className="teams-action-buttons-group flex flex-wrap gap-1">
             <button
               onClick={handleRandomAssignment}
               disabled={state.loading || regs.length < 2}
-              className="px-6 text-sm font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2 bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50 hover:border-neutral-300 disabled:opacity-50 disabled:cursor-not-allowed teamsButtonHover"
+              className="teams-action-btn teams-random-btn px-6 text-sm font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2 bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50 hover:border-neutral-300 disabled:opacity-50 disabled:cursor-not-allowed teamsButtonHover"
               style={{ 
                 height: '48px', 
                 boxSizing: 'border-box',
@@ -331,7 +331,7 @@ export function TeamManagement({
             <button
               onClick={handleClearAssignments}
               disabled={state.loading}
-              className="px-6 text-sm font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2 bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50 hover:border-neutral-300 disabled:opacity-50 disabled:cursor-not-allowed teamsButtonHover"
+              className="teams-action-btn teams-clear-btn px-6 text-sm font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2 bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-50 hover:border-neutral-300 disabled:opacity-50 disabled:cursor-not-allowed teamsButtonHover"
               style={{ 
                 height: '48px', 
                 boxSizing: 'border-box',
@@ -346,7 +346,7 @@ export function TeamManagement({
             <button
               onClick={handleSaveAssignment}
               disabled={state.loading || !hasChanges || hasUnassignedPlayers}
-              className={`px-6 text-sm font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed teamsButtonHover ${
+              className={`teams-action-btn teams-save-btn px-6 text-sm font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed teamsButtonHover ${
                 state.saved 
                   ? 'bg-green-100 text-green-700 border border-green-200 shadow-sm'
                   : 'bg-green-600 hover:bg-green-700 text-white border border-green-600'
@@ -375,7 +375,7 @@ export function TeamManagement({
         )}
 
         {/* Status Alerts */}
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div className="teams-status-container" style={{ display: 'flex', justifyContent: 'center' }}>
           {/* Unassigned Players Warning */}
           {hasUnassignedPlayers && !isReadOnly ? (
             <div className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-medium bg-red-50 text-red-700 border border-red-200 teamsBadgeFloat" style={{ '--delay': '200ms' } as React.CSSProperties}>
@@ -455,37 +455,40 @@ export function TeamManagement({
                     onDragStart={isReadOnly ? undefined : () => handleDragStart(player)}
                     onDragEnd={isReadOnly ? undefined : handleDragEnd}
                   >
-                    <div className="flex items-center gap-4">
-                      {/* Player Avatar */}
-                      <div className="w-10 h-10 text-white rounded-lg flex items-center justify-center font-medium text-sm bg-gradient-to-br from-blue-500 to-blue-600">
-                        {getInitials(player.player_name)}
-                      </div>
-                      
-                      {/* Player Name */}
-                      <div className="flex-1 min-w-0">
-                        <div className="font-medium text-neutral-900 truncate">{player.player_name}</div>
+                    <div className="teams-player-card-content flex items-center gap-4">
+                      {/* First Row: Avatar + Name */}
+                      <div className="teams-player-info-row flex items-center gap-4 flex-1">
+                        {/* Player Avatar */}
+                        <div className="w-10 h-10 text-white rounded-lg flex items-center justify-center font-medium text-sm bg-gradient-to-br from-blue-500 to-blue-600">
+                          {getInitials(player.player_name)}
+                        </div>
+                        
+                        {/* Player Name */}
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-neutral-900 truncate">{player.player_name}</div>
+                        </div>
                       </div>
                       
                       {/* Actions */}
                       {!isReadOnly && (
-                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="teams-player-card-actions flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => movePlayer(player, 'team_b')}
                             aria-label="Mover a Equipo B"
-                            className="p-1 h-7 w-7 text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100"
+                            className="teams-player-card-action-btn p-1 h-7 w-7 text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100"
                           >
-                            <ArrowRightIcon size={12} />
+                            {teamNames.team_b_name}
                           </Button>
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => movePlayer(player, 'unassigned')}
                             aria-label="Quitar del equipo"
-                            className="p-1 h-7 w-7 text-neutral-500 hover:text-red-600 hover:bg-red-50"
+                            className="teams-player-card-action-btn teams-player-remove-btn p-1 h-7 w-7 text-neutral-500 hover:text-red-600 hover:bg-red-50"
                           >
-                            <XIcon size={12} />
+                            <XIcon size={14} />
                           </Button>
                         </div>
                       )}
@@ -545,39 +548,42 @@ export function TeamManagement({
                     onDragStart={isReadOnly ? undefined : () => handleDragStart(player)}
                     onDragEnd={isReadOnly ? undefined : handleDragEnd}
                   >
-                    <div className="flex items-center gap-4">
-                      {/* Player Avatar */}
-                      <div className="w-10 h-10 text-white rounded-lg flex items-center justify-center font-medium text-sm bg-gradient-to-br from-amber-500 to-amber-600">
-                        {getInitials(player.player_name)}
-                      </div>
-                      
-                      {/* Player Name */}
-                      <div className="flex-1 min-w-0">
-                        <div className="font-medium text-neutral-900 truncate">{player.player_name}</div>
+                    <div className="teams-player-card-content flex items-center gap-4">
+                      {/* First Row: Avatar + Name */}
+                      <div className="teams-player-info-row flex items-center gap-4 flex-1">
+                        {/* Player Avatar */}
+                        <div className="w-10 h-10 text-white rounded-lg flex items-center justify-center font-medium text-sm bg-gradient-to-br from-amber-500 to-amber-600">
+                          {getInitials(player.player_name)}
+                        </div>
+                        
+                        {/* Player Name */}
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-neutral-900 truncate">{player.player_name}</div>
+                        </div>
                       </div>
                       
                       {/* Actions */}
                       {!isReadOnly && (
-                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="teams-player-card-actions flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => movePlayer(player, 'team_a')}
                             aria-label="Mover a Equipo A"
-                            className="p-1 h-7 w-7 text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100"
+                            className="teams-player-card-action-btn p-1 h-7 w-7 text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100"
                             title="Mover a Equipo A"
                           >
-                            <ArrowLeftIcon size={12} />
+                            {teamNames.team_a_name}
                           </Button>
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => movePlayer(player, 'team_b')}
                             aria-label="Mover a Equipo B"
-                            className="p-1 h-7 w-7 text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100"
+                            className="teams-player-card-action-btn p-1 h-7 w-7 text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100"
                             title="Mover a Equipo B"
                           >
-                            <ArrowRightIcon size={12} />
+                            {teamNames.team_b_name}
                           </Button>
                         </div>
                       )}
@@ -644,37 +650,40 @@ export function TeamManagement({
                     onDragStart={isReadOnly ? undefined : () => handleDragStart(player)}
                     onDragEnd={isReadOnly ? undefined : handleDragEnd}
                   >
-                    <div className="flex items-center gap-4">
-                      {/* Player Avatar */}
-                      <div className="w-10 h-10 text-white rounded-lg flex items-center justify-center font-medium text-sm bg-gradient-to-br from-green-500 to-green-600">
-                        {getInitials(player.player_name)}
-                      </div>
-                      
-                      {/* Player Name */}
-                      <div className="flex-1 min-w-0">
-                        <div className="font-medium text-neutral-900 truncate">{player.player_name}</div>
+                    <div className="teams-player-card-content flex items-center gap-4">
+                      {/* First Row: Avatar + Name */}
+                      <div className="teams-player-info-row flex items-center gap-4 flex-1">
+                        {/* Player Avatar */}
+                        <div className="w-10 h-10 text-white rounded-lg flex items-center justify-center font-medium text-sm bg-gradient-to-br from-green-500 to-green-600">
+                          {getInitials(player.player_name)}
+                        </div>
+                        
+                        {/* Player Name */}
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-neutral-900 truncate">{player.player_name}</div>
+                        </div>
                       </div>
                       
                       {/* Actions */}
                       {!isReadOnly && (
-                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="teams-player-card-actions flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => movePlayer(player, 'team_a')}
                             aria-label="Mover a Equipo A"
-                            className="p-1 h-7 w-7 text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100"
+                            className="teams-player-card-action-btn p-1 h-7 w-7 text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100"
                           >
-                            <ArrowLeftIcon size={12} />
+                            {teamNames.team_a_name}
                           </Button>
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => movePlayer(player, 'unassigned')}
                             aria-label="Quitar del equipo"
-                            className="p-1 h-7 w-7 text-neutral-500 hover:text-red-600 hover:bg-red-50"
+                            className="teams-player-card-action-btn teams-player-remove-btn p-1 h-7 w-7 text-neutral-500 hover:text-red-600 hover:bg-red-50"
                           >
-                            <XIcon size={12} />
+                            <XIcon size={14} />
                           </Button>
                         </div>
                       )}

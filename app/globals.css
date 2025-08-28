@@ -2474,3 +2474,128 @@ body {
 .last\:border-r-0:last-child {
   border-right-width: 0;
 }
+
+/* Team Management - Player Cards Mobile Responsive */
+.teams-player-card-content {
+  /* Base styles already defined via Tailwind classes in component */
+}
+
+.teams-player-card-actions {
+  /* Base styles already defined via Tailwind classes in component */
+}
+
+.teams-player-card-action-btn {
+  /* Base styles already defined via Tailwind classes in component */
+}
+
+/* Mobile-specific responsive player cards - Transform layout to 2 rows */
+@media (max-width: 767px) {
+  .teams-player-card-content {
+    flex-direction: column !important;
+    gap: 12px;
+    align-items: stretch;
+  }
+  
+  /* First row: Avatar + Name wrapper stays horizontal */
+  .teams-player-info-row {
+    justify-content: center !important; /* Center the avatar + name row in mobile */
+    align-items: center;
+  }
+  
+  /* Action buttons row - center them and make them touch-friendly */
+  .teams-player-card-actions {
+    justify-content: center !important;
+    gap: 12px !important; /* Increased gap for better touch targets */
+    opacity: 1 !important; /* Always show on mobile for better UX */
+    align-self: center; /* Center the buttons row */
+  }
+  
+  /* Increase button size for mobile touch accessibility (44px minimum) */
+  .teams-player-card-action-btn {
+    min-height: 44px !important;
+    min-width: 80px !important; /* Fixed width for consistency */
+    height: auto !important;
+    width: auto !important;
+    padding: 12px 20px !important; /* Increased horizontal padding for wider buttons */
+    border: 1px solid var(--color-neutral-300) !important; /* Add border for visibility */
+    background: var(--color-white) !important;
+    font-size: 12px !important; /* Smaller text for mobile */
+    font-weight: 500 !important;
+    white-space: nowrap !important; /* Prevent text wrapping */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  /* Enhanced hover states for mobile buttons */
+  .teams-player-card-action-btn:hover {
+    border-color: var(--color-neutral-400) !important;
+    background: var(--color-neutral-50) !important;
+  }
+  
+  /* Red styling for remove/unassign buttons (X button) */
+  .teams-player-remove-btn {
+    background: var(--color-error) !important;
+    border-color: var(--color-error) !important;
+    color: white !important;
+  }
+  
+  .teams-player-remove-btn:hover {
+    background: #c62828 !important;
+    border-color: #c62828 !important;
+    color: white !important;
+  }
+  
+  /* Teams Action Buttons Mobile Responsive */
+  .teams-action-buttons-container {
+    flex-direction: column !important;
+    gap: 16px !important;
+    align-items: stretch !important;
+  }
+  
+  .teams-action-buttons-group {
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+  
+  .teams-action-btn {
+    width: 100% !important;
+    min-height: 52px !important; /* Increased from 48px for better touch */
+    padding: 14px 20px !important;
+    font-size: 16px !important; /* Larger text for mobile */
+    justify-content: center !important;
+  }
+  
+  .teams-status-container {
+    width: 100% !important;
+    margin-top: 8px !important;
+  }
+}
+
+/* Extra small mobile phones */
+@media (max-width: 350px) {
+  .teams-player-card-content {
+    gap: 8px;
+  }
+  
+  .teams-player-card-actions {
+    gap: 8px;
+  }
+  
+  .teams-player-card-action-btn {
+    min-height: 40px !important;
+    min-width: 70px !important; /* Slightly smaller for extra small screens */
+    height: auto !important;
+    width: auto !important;
+    padding: 10px 16px !important;
+    font-size: 11px !important;
+  }
+  
+  /* Teams Action Buttons - Extra Small Screens */
+  .teams-action-btn {
+    min-height: 48px !important; /* Slightly smaller for extra small screens */
+    padding: 12px 16px !important;
+    font-size: 14px !important;
+  }
+}
